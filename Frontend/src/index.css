@@ -1,17 +1,2 @@
-.main-container {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-}
 
-.header {
-  width: 100%;
-  z-index: 10;
-}
 
-.content {
-  flex: 1;
-  padding: 20px;
-  overflow-y: auto;
-  background-color: #f1f1f1; 
-}

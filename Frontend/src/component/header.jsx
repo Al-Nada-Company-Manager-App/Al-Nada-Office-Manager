@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import Container from 'react-bootstrap/Container';
-import Form from 'react-bootstrap/Form';
-import Navbar from 'react-bootstrap/Navbar';
-import Nav from 'react-bootstrap/Nav';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import Dropdown from 'react-bootstrap/Dropdown';
-import logo from '../assets/logo.png';
-import userPhoto from '../assets/ahmedfathy.jpg';
-import './header.css'; // Add CSS styling here
+import userPhoto from '../assets/UserPhoto.jpg';
+import './header.css'; 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
-
-function NavScrollExample() {
+import { Button,Layout,theme } from 'antd';
+const { Header } = Layout;
+import {
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+} from '@ant-design/icons';
+function THeader({ collapsed, setCollapsed }) {
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const {
+    token: { colorBgContainer },
+  } = theme.useToken();
 
   const toggleNotificationDropdown = () => setShowNotificationDropdown(!showNotificationDropdown);
   const toggleUserDropdown = () => setShowUserDropdown(!showUserDropdown);
@@ -24,67 +24,83 @@ function NavScrollExample() {
     e.target.blur();
   };
 
+
   return (
-    <Navbar expand="lg" className="bg-body-light">
-      <Container fluid className="d-flex align-items-center">
-
-        {/* Logo */}
-        <Navbar.Brand href="#" className="me-auto">
-          <img src={logo} alt="Logo" width="95" height="60" className="d-inline-block align-top" />{' '}
-        </Navbar.Brand>
-
-        
-
-
-        {/* Notification Bell and User Profile */}
-        <Nav className="d-flex align-items-center ms-auto">
+    <Header style={{ padding: 0, background: colorBgContainer }}>
+        {/* Menu Toggle Button */}
+        <Button
+          type="text"
+          icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+          onClick={() => setCollapsed(!collapsed)}
+          style={{
+            fontSize: '16px',
+            width: 64,
+            height: 64,
+          }}
+        />
+      
+        {/* Navigation Bar */}
+        <div className="header-right">
           {/* Search Bar */}
           <div className="box">
-            <form name="search">
-              <input
-                type="text"
-                className="input"
-                name="txt"
-                onMouseOut={handleMouseOut}
-              />
-            </form>
-            <FontAwesomeIcon icon={faSearch} className="search-icon" />
+              <form name="search" className="d-flex">
+                <input
+                  type="text"
+                  className="form-control me-2 input"
+                  name="txt"
+                  onMouseOut={handleMouseOut}
+                  placeholder="Search..."
+                />
+                <FontAwesomeIcon icon={faSearch} className="search-icon" />
+              </form>
           </div>
+      
           {/* Notification Bell */}
-          <Nav.Item className="d-flex align-items-center mx-4 position-relative">
-            <button onClick={toggleNotificationDropdown} className="notification-bell">
-                <FontAwesomeIcon icon={faBell} className="bell-icon" />
+          <div >
+            <button
+              onClick={toggleNotificationDropdown}
+              className="btn btn-light notification-bell"
+              style={{ border: "none", background: "transparent" }}
+            >
+              <FontAwesomeIcon icon={faBell} className="bell-icon" />
             </button>
             {showNotificationDropdown && (
-                <Dropdown.Menu show className="notification-dropdown">
-                    <Dropdown.Item>No new notifications</Dropdown.Item>
-                </Dropdown.Menu>
+              <div className="dropdown-menu notification-dropdown show" style={{ position: "absolute", top: "100%" }}>
+                <button className="dropdown-item">No new notifications</button>
+              </div>
             )}
-        </Nav.Item>
-
-
+          </div>
+      
           {/* User Profile */}
-          <Nav.Item className="user-profile d-flex align-items-center mx-4">
+          <div className="user-profile">
             <img
               src={userPhoto}
               alt="User"
-              className="user-photo"
+              className="rounded-circle user-photo"
+              style={{ width: "40px", height: "40px", cursor: "pointer" }}
               onClick={toggleUserDropdown}
             />
-            <span onClick={toggleUserDropdown}>Ahmed Fathy</span>
+            <span
+              className="ms-2"
+              onClick={toggleUserDropdown}
+              style={{ cursor: "pointer" }}
+            >
+              User Name
+            </span>
             {showUserDropdown && (
-              <Dropdown.Menu show className="user-dropdown">
-                <Dropdown.Item href="#profile">Profile</Dropdown.Item>
-                <Dropdown.Item href="#settings">Settings</Dropdown.Item>
-                <Dropdown.Divider />
-                <Dropdown.Item href="#logout">Logout</Dropdown.Item>
-              </Dropdown.Menu>
+              <div className="dropdown-menu user-dropdown show" style={{ position: "absolute", top: "100%" }}>
+                <a href="#profile" className="dropdown-item">Profile</a>
+                <a href="#settings" className="dropdown-item">Settings</a>
+                <div className="dropdown-divider"></div>
+                <a href="#logout" className="dropdown-item">Logout</a>
+              </div>
             )}
-          </Nav.Item>
-        </Nav>
-      </Container>
-    </Navbar>
+          </div>
+        </div>
+      </Header>
   );
 }
 
-export default NavScrollExample;
+export default THeader;
+
+
