@@ -8,7 +8,7 @@ import './App.css';
 
 const {Sider, Content } = Layout;
 
-const App = () => {
+const App = ({ onLogout }) => {
     const [collapsed, setCollapsed] = useState(false);
     const {
         token: { colorBgContainer, borderRadiusLG },
@@ -23,7 +23,11 @@ const App = () => {
             <MenuList />
         </Sider>
         <Layout>
-            <THeader collapsed={collapsed} setCollapsed={setCollapsed} />
+            <THeader 
+            collapsed={collapsed} 
+            setCollapsed={setCollapsed} 
+            onLogout={onLogout}
+            />
             <Content
             style={{
                 margin: '24px 16px',

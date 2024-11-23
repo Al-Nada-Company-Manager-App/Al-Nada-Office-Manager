@@ -10,12 +10,18 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
 } from '@ant-design/icons';
-function THeader({ collapsed, setCollapsed }) {
+
+
+
+function THeader({ collapsed, setCollapsed ,onLogout}) {
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const {
     token: { colorBgContainer },
   } = theme.useToken();
+  const handleLogout = () => {
+    onLogout();
+  };
 
   const toggleNotificationDropdown = () => setShowNotificationDropdown(!showNotificationDropdown);
   const toggleUserDropdown = () => setShowUserDropdown(!showUserDropdown);
@@ -89,10 +95,13 @@ function THeader({ collapsed, setCollapsed }) {
             </span>
             {showUserDropdown && (
               <div className="dropdown-menu user-dropdown show" style={{ position: "absolute", top: "100%" }}>
-                <a href="#profile" className="dropdown-item">Profile</a>
-                <a href="#settings" className="dropdown-item">Settings</a>
+                <a href="" className="dropdown-item">Profile</a>
+                <a href="" className="dropdown-item">Settings</a>
                 <div className="dropdown-divider"></div>
-                <a href="#logout" className="dropdown-item">Logout</a>
+                <a href=""
+                 className="dropdown-item"
+                 onClick={handleLogout}
+                 >Logout</a>
               </div>
             )}
           </div>
