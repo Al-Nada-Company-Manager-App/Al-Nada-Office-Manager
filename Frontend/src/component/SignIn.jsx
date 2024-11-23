@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import './Sign.css';
 
 const SignIn = ({ onLoginSuccess }) => {
   const [username, setUsername] = useState('');
@@ -23,8 +24,9 @@ const SignIn = ({ onLoginSuccess }) => {
 
   return (
     <div>
-      <h2>Sign In</h2>
+    <div className="form-container sign-in-container">
       <form onSubmit={handleSubmit}>
+        <h1>Sign in</h1>
         <input
           type="text"
           placeholder="username"
@@ -39,10 +41,12 @@ const SignIn = ({ onLoginSuccess }) => {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
+        <a href="#">Forgot your password?</a>
         <button type="submit">Sign In</button>
         {error && <p style={{ color: 'red' }}>{error}</p>}
       </form>
     </div>
+      </div>
   );
 };
 

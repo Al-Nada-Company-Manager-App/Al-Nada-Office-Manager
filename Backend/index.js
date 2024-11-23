@@ -21,7 +21,7 @@ app.use(session({
     }}));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+app.use(cors({ origin: 'http://localhost:5174', credentials: true }));
 
 
 const users = [

@@ -10,7 +10,8 @@ header {
 	display: flex;
 	align-items: center;
 	justify-content: flex-end; 
-	gap: 40px; 
+	gap: 5
+	px; 
 	margin-right: 16px; 
   }
 .box{
@@ -22,7 +23,6 @@ header {
 	width: 40px;
 	height: 40px;
 	background: none;
-	border: 3px solid #010248;
 	border-radius: 50px;
 	box-sizing: border-box;
 	font-family: Comic Sans MS;
@@ -50,6 +50,7 @@ header {
 	transform: translateY(-50%);
 	font-size: 22px;
 	color: #010248;
+	cursor: pointer;
 }
 .box i{
 	position: absolute;

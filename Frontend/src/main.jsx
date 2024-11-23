@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App.jsx';
 import axios from 'axios';
-import SignIn from './SignIn.jsx';
+import Sign from './component/SignForm.jsx';
 
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -50,7 +50,7 @@ const Main = () => {
       {isLoggedIn ? (
         <App onLogout={handleLogout} />
       ) : (
-        <SignIn onLoginSuccess={handleLoginSuccess} />
+        <Sign onLoginSuccess={handleLoginSuccess} />
       )}
     </div>
   );
