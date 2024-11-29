@@ -1,0 +1,63 @@
+
+.ant-pagination-item a {
+    margin-top: 0;
+}
+.user-details{
+    padding: 10px;
+    margin-left: 10px;
+    border-bottom: 1px solid #f0f0f0;
+}
+.user-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; 
+    margin-top: 10px;
+  }
+  
+.user-actions-button {
+    width: 100%; /* Make buttons take full width */
+}
+.employee-form {
+    background-color: #f9f9f9; /* Light gray background */
+    padding: 20px; /* Add padding for spacing */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); /* Subtle shadow for depth */
+    display: flex;
+    flex-direction: column;
+    gap: 5px; /* Space between form items */
+    align-items: flex-start;
+}
+
+.employee-form .ant-form-item {
+    margin-bottom: 16px; /* Space between form items */
+}
+
+.employee-form .ant-form-item-label > label {
+    font-weight: bold; /* Make labels bold */
+    color: #333; /* Darker text color */
+}
+
+.employee-form .ant-input,
+.employee-form .ant-input-number,
+.employee-form .ant-picker,
+.employee-form .ant-radio-group {
+    border-radius: 4px; /* Slight rounding for input fields */
+}
+
+.employee-form .ant-upload-list-picture-card-container {
+    margin-bottom: 0; /* Align upload with form */
+}
+
+.submit-button {
+    width: 100%; /* Full-width button */
+    background-color: #4caf50; /* Green background for submit button */
+    border: none; /* Remove border */
+    font-size: 16px; /* Increase font size */
+    padding: 10px; /* Add padding */
+    border-radius: 4px; /* Round button corners */
+    color: white; /* White text */
+}
+
+.submit-button:hover {
+    background-color: #45a049; /* Slightly darker green on hover */
+}

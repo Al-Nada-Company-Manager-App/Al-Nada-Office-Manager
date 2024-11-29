@@ -5,11 +5,12 @@ import {
     UploadOutlined,
     UserOutlined,
     VideoCameraOutlined,
+    DashboardOutlined,
   } from '@ant-design/icons';
 import {Menu} from 'antd';
 import './Menulist.css';
 
-const MenuList  =() =>{
+const MenuList  =({setCurrentContent}) => {
     return (
         <Menu
         theme="dark"
@@ -19,26 +20,34 @@ const MenuList  =() =>{
         items={[
             {
             key: '1',
-            icon: <UserOutlined />,
-            label: 'Home',
+            icon: <DashboardOutlined />,
+            label: 'Dashboard',
+            onClick: () => setCurrentContent('1'),
             },
             {
             key: '2',
-            icon: <VideoCameraOutlined />,
-            label: 'Dashboard',
+            icon: <UserOutlined />,
+            label: 'Users Management',
+            children: [
+                { key: '3', label: 'Users' 
+                , onClick: () => setCurrentContent('3')},
+                { key: '4', label: 'Approve User' 
+                , onClick: () => setCurrentContent('4'),
+                },
+              ],
             },
             {
-            key: '3',
+            key: '7',
             icon: <UploadOutlined />,
             label: 'Stock',
             },
             {
-            key: '4',
+            key: '8',
             icon: <PayCircleOutlined />,
             label: 'Payment',
             },
             {
-            key: '5',
+            key: '9',
             icon: <SettingOutlined />,
             label: 'Setting',
             }

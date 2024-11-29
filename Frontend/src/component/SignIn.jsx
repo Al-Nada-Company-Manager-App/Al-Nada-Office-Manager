@@ -10,17 +10,19 @@ const SignIn = ({ onLoginSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:4000/login', { username, password }, { withCredentials: true });
-      if (response.data.success) {
-        onLoginSuccess();
-      } else {
-        setError(response.data.message || 'Login failed');
-      }
+        const response = await axios.post('http://localhost:4000/login', { username, password }, { withCredentials: true });
+        if (response.data.success) {
+            // Redirect or handle login success
+            onLoginSuccess();
+        } else {
+            // Display the error message returned from the server
+            setError(response.data.message || 'Login failed');
+        }
     } catch (err) {
-      console.error('Login error:', err);
-      setError('An error occurred during login.');
+        console.error('Login error:', err);
+        setError('An error occurred during login.');
     }
-  };
+};
 
   return (
     <div>

@@ -13,7 +13,7 @@ import {
 
 
 
-function THeader({ collapsed, setCollapsed ,onLogout}) {
+function THeader({ collapsed, setCollapsed ,onLogout, signedUser }) {
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const {
@@ -80,7 +80,7 @@ function THeader({ collapsed, setCollapsed ,onLogout}) {
           {/* User Profile */}
           <div className="user-profile">
             <img
-              src={userPhoto}
+              src={signedUser?.Photo || userPhoto}
               alt="User"
               className="rounded-circle user-photo"
               style={{ width: "40px", height: "40px", cursor: "pointer" }}
@@ -91,7 +91,7 @@ function THeader({ collapsed, setCollapsed ,onLogout}) {
               onClick={toggleUserDropdown}
               style={{ cursor: "pointer" }}
             >
-              User Name
+              {signedUser?.fName} {signedUser?.lName}
             </span>
             {showUserDropdown && (
               <div className="dropdown-menu user-dropdown show" style={{ position: "absolute", top: "100%" }}>
