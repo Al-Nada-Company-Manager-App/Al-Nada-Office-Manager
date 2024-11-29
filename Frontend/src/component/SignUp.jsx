@@ -30,15 +30,23 @@ function SignUpForm() {
             formData.append('photo', file); 
         }
         try {
-            await axios.post('http://localhost:4000/addUser', formData, {
+            const result = await axios.post('http://localhost:4000/addUser', formData, {
                 withCredentials: true,
                 headers: {
                     'Content-Type': 'multipart/form-data', 
                 },
             });
-            fetchUsers().then((data) => {
-                setUsersData(data);
+            console.log(formData);
+            const message= result.data.fName +" "+ result.data.lName +" need to be approved";
+            const NotificationData ={
+               n_message: message,
+               n_type: 'APPROVEUSER',
+               n_E_ID: result.data.id,
+            }
+            await axios.post('http://localhost:4000/sendNotification',NotificationData,{
+                withCredentials: true,
             });
+
             return true;
         } catch (error) {
             console.error('Error adding user:', error);

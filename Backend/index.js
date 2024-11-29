@@ -117,12 +117,15 @@ app.post('/addUser', upload.single('photo'), async (req, res) => {
         const photo = req.file ? req.file.filename : null; 
         const hashedPassword = await bcrypt.hash(pass, 10);
 
-         await db.query(
-          'INSERT INTO EMPLOYEE (F_NAME, L_NAME, Birth_Date, SALARY, E_ROLE, E_PHOTO, E_ADDRESS, E_CITY, E_COUNTRY, E_ZIPCODE, E_USERNAME, E_PASSWORD, E_GENDER) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)',
-           [fName, lName, BirthDate, salary, role, photo, address, city, country, zipcode, username, hashedPassword, gender]
-         );
-
-        res.json({ success: true, message: 'Employee added successfully!' });
+        const result = await db.query(
+            `INSERT INTO EMPLOYEE 
+             (F_NAME, L_NAME, Birth_Date, SALARY, E_ROLE, E_PHOTO, E_ADDRESS, E_CITY, E_COUNTRY, E_ZIPCODE, E_USERNAME, E_PASSWORD, E_GENDER) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) 
+             RETURNING *`,
+            [fName, lName, BirthDate, salary, role, photo, address, city, country, zipcode, username, hashedPassword, gender]
+          );
+          
+        res.json({ success: true, message: 'Employee added successfully!', id: result.rows[0].e_id,fName : result.rows[0].f_name, lName : result.rows[0].l_name});
     } catch (error) {
         console.error(error);
         res.status(500).json({ success: false, message: 'Failed to add employee!' });
@@ -131,11 +134,53 @@ app.post('/addUser', upload.single('photo'), async (req, res) => {
 
 app.get('/notificaions', async (req, res) => {
     const result = await db.query(
-        'SELECT N.N_ID, N.N_DATE, N.N_TYPE, N.N_MESSAGE, N.N_STATUS FROM NOTIFICATION N, NOTIFICATION_EMPLOYEE NE WHERE N.N_ID = NE.N_ID AND NE.E_ID = $1', [SignedUser.id]);
+        'SELECT N.N_ID, N.N_DATE, N.N_TYPE, N.N_MESSAGE, N.N_STATUS, N.E_ID FROM NOTIFICATION N, NOTIFICATION_EMPLOYEE NE WHERE N.N_ID = NE.N_ID AND NE.E_ID = $1', [SignedUser.id]);
     const rows = result.rows;
     res.json(rows);
 });
 
+app.post('/sendNotification', async (req, res) => {
+    const message = req.body.n_message;
+    const type = req.body.n_type;
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1; 
+    const day = date.getDate();
+    
+    const formattedDate = `${year}-${month}-${day}`;    const result = await db.query('INSERT INTO NOTIFICATION (N_DATE, N_TYPE, N_MESSAGE, N_STATUS,E_ID) VALUES ($1, $2, $3, $4,$5) RETURNING N_ID', [formattedDate, type, message, 'unread',req.body.n_E_ID]);
+    const nId = result.rows[0].n_id;
+    await db.query(
+        `
+        INSERT INTO NOTIFICATION_EMPLOYEE (N_ID, E_ID)
+        SELECT $1, E_ID
+        FROM EMPLOYEE
+        WHERE E_ROLE = 'Manager'
+        `,
+        [nId]
+      );    
+      res.json({ success: true, message: 'Notification sent successfully!' });
+});
+app.get('/getemployeebyid',async (req, res) => {
+    const { e_id } = req.query; 
+    const result = await db.query(
+      'SELECT * FROM EMPLOYEE WHERE E_ID = $1', [e_id]
+    );
+    res.json(result.rows[0]);
+});
+app.post('/deleteNotification', async (req, res) => {
+    const { n_id } = req.body;  
+    console.log(n_id);
+
+    await db.query(
+        `
+        DELETE FROM 
+        NOTIFICATION
+        WHERE N_ID = $1
+        `, [n_id]
+    );
+
+    res.json({ success: true });
+});
 
 
 

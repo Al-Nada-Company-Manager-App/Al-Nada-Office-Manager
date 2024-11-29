@@ -6,6 +6,8 @@ import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { Button,Layout,theme } from 'antd';
 import axios from 'axios';
+import UserDetails from './Usersfeatures/UserDetails';
+
 const { Header } = Layout;
 import {
   MenuFoldOutlined,
@@ -27,6 +29,50 @@ function THeader({ collapsed, setCollapsed ,onLogout, signedUser }) {
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [getNotifications, setNotifications] = useState([]);
+  const [selectedUser, setSelectedUser] = React.useState(null);
+  const [isModalVisible, setIsModalVisible] = React.useState(false);
+
+  const handleModalClose = () => {
+    setIsModalVisible(false);
+    setSelectedUser(null);
+  };
+   
+  const handleDeleteUser = (id) => async () => {
+    try {
+        const response = await axios.post('http://localhost:4000/deleteUser', { id }, { withCredentials: true });
+        fetchUsers().then((data) => {
+            setUsersData(data);
+        });
+      handleModalClose();
+    } catch (error) {
+      console.error('Error deleting user:', error);
+    }
+  }
+
+  const handleactivateUser = (id) => async () => {
+    try {
+    const response = await axios.post('http://localhost:4000/activateUser', { id }, { withCredentials: true });
+        fetchUsers().then((data) => {
+            setUsersData(data);
+        });
+        handleModalClose();
+    } catch (error) {
+      console.error('Error activating user:', error);
+    }
+  }
+  const handledeactivateUser = (id) => async () => {
+        try {
+        const response = await axios.post('http://localhost:4000/deactivateUser', { id }, { withCredentials: true });
+        fetchUsers().then((data) => {
+            setUsersData(data);
+        });
+        handleModalClose();
+        } catch (error) {
+        console.error('Error deactivating user:', error);
+        }
+  }
+
+
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -45,11 +91,26 @@ function THeader({ collapsed, setCollapsed ,onLogout, signedUser }) {
 
   React.useEffect(() => {
     fetchNotifications().then((data) => {
-      console.log(data);
       setNotifications(data);
-      console.log(getNotifications);
     });
   }, []);
+
+  const handleNotification = async (Notification) => {
+    const result = await axios.get(`http://localhost:4000/getemployeebyid`,{
+      params: { e_id: Notification.e_id },
+      withCredentials: true,
+    });
+    setSelectedUser(result.data);
+    setIsModalVisible(true);
+    await axios.post('http://localhost:4000/deleteNotification', {
+      n_id: Notification.n_id 
+  }, {
+      withCredentials: true
+  });
+    fetchNotifications().then((data) => {
+      setNotifications(data);
+    });
+  };
 
 
   return (
@@ -95,7 +156,9 @@ function THeader({ collapsed, setCollapsed ,onLogout, signedUser }) {
               <div className="dropdown-menu notification-dropdown show" style={{ position: "absolute", top: "100%" }}>
                 {getNotifications.length > 0 ? (
                   getNotifications.map((notification, index) => (
-                    <button key={index} className="dropdown-item">{notification.n_message}</button>
+                    <button key={index} 
+                    onClick={() => handleNotification(notification)}
+                     className="dropdown-item">{notification.n_message}</button>
                   ))
                 ) : (
                   <button className="dropdown-item">No new notifications</button>
@@ -132,6 +195,16 @@ function THeader({ collapsed, setCollapsed ,onLogout, signedUser }) {
               </div>
             )}
           </div>
+          {selectedUser&&
+            <UserDetails
+              selectedUser={selectedUser}
+              isModalVisible={isModalVisible}
+              handleModalClose={handleModalClose}
+              handleDeleteUser={handleDeleteUser}
+              handledeactivateUser={handledeactivateUser}
+              handleactivateUser={handleactivateUser}
+          />
+          }
         </div>
       </Header>
   );
