@@ -5,17 +5,28 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { Button,Layout,theme } from 'antd';
+import axios from 'axios';
 const { Header } = Layout;
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
 } from '@ant-design/icons';
 
+const fetchNotifications = async () => {
+  try {
+    const response = await axios.get('http://localhost:4000/notificaions');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching notifications:', error);
+  }
+}
+
 
 
 function THeader({ collapsed, setCollapsed ,onLogout, signedUser }) {
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const [getNotifications, setNotifications] = useState([]);
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -23,12 +34,22 @@ function THeader({ collapsed, setCollapsed ,onLogout, signedUser }) {
     onLogout();
   };
 
-  const toggleNotificationDropdown = () => setShowNotificationDropdown(!showNotificationDropdown);
+  const toggleNotificationDropdown = () => {
+    setShowNotificationDropdown(!showNotificationDropdown)
+  };
   const toggleUserDropdown = () => setShowUserDropdown(!showUserDropdown);
   const handleMouseOut = (e) => {
     e.target.value = "";
     e.target.blur();
   };
+
+  React.useEffect(() => {
+    fetchNotifications().then((data) => {
+      console.log(data);
+      setNotifications(data);
+      console.log(getNotifications);
+    });
+  }, []);
 
 
   return (
@@ -62,7 +83,7 @@ function THeader({ collapsed, setCollapsed ,onLogout, signedUser }) {
           </div>
       
           {/* Notification Bell */}
-          <div >
+          <div style={{ position: 'relative' }} >
             <button
               onClick={toggleNotificationDropdown}
               className="btn btn-light notification-bell"
@@ -72,9 +93,15 @@ function THeader({ collapsed, setCollapsed ,onLogout, signedUser }) {
             </button>
             {showNotificationDropdown && (
               <div className="dropdown-menu notification-dropdown show" style={{ position: "absolute", top: "100%" }}>
-                <button className="dropdown-item">No new notifications</button>
+                {getNotifications.length > 0 ? (
+                  getNotifications.map((notification, index) => (
+                    <button key={index} className="dropdown-item">{notification.n_message}</button>
+                  ))
+                ) : (
+                  <button className="dropdown-item">No new notifications</button>
+                )} 
               </div>
-            )}
+              )}
           </div>
       
           {/* User Profile */}

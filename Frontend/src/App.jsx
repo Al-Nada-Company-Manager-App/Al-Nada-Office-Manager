@@ -4,6 +4,7 @@ import logo from './assets/logo.png';
 import MenuList from './component/Menulist';
 import THeader from './component/header';
 import Users from './component/Users';
+import ApproveUser from './component/ApproveUser';
 import axios from 'axios';
 import './App.css';
 
@@ -55,6 +56,7 @@ const App = ({ onLogout }) => {
             }}
             >
                 {currentContent === '3' && <Users />}
+                {currentContent === '4' && <ApproveUser />}
             </Content>
         </Layout>
         </Layout>

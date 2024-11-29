@@ -129,6 +129,14 @@ app.post('/addUser', upload.single('photo'), async (req, res) => {
     }
 });
 
+app.get('/notificaions', async (req, res) => {
+    const result = await db.query(
+        'SELECT N.N_ID, N.N_DATE, N.N_TYPE, N.N_MESSAGE, N.N_STATUS FROM NOTIFICATION N, NOTIFICATION_EMPLOYEE NE WHERE N.N_ID = NE.N_ID AND NE.E_ID = $1', [SignedUser.id]);
+    const rows = result.rows;
+    res.json(rows);
+});
+
+
 
 
 
