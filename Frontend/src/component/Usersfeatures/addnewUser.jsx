@@ -1,72 +1,33 @@
 import React from "react";
-import "./Sign.css";
-import { Modal, Form, Input, Button, DatePicker, InputNumber, Radio, Upload, Row, Col } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
-import axios from "axios";
+import { Form, Input, Button, Modal, Row, Col, Radio, DatePicker, InputNumber, Upload } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import { UserAddOutlined } from '@ant-design/icons';
 
-function SignUpForm() {
-    const [state, setState] = React.useState({
-      name: "",
-      email: "",
-      password: ""
-    });
+const AddnewUser = ({ handleFinish, handleUploadChange }) => {
     const [isnewModalVisible, setIsnewModalVisible] = React.useState(false);
-    const [file, setFile] = React.useState(null);
-      const handlenewModalClose = () => {
+    const handlenewModalClose = () => {
         setIsnewModalVisible(false);
     };
-    const handlenewModalOpen = (e) => {
-      e.preventDefault(); 
+    const handlenewModalOpen = () => {
         setIsnewModalVisible(true);
     };
-    const handleFinish = async (values) => {
-        const formData = new FormData();
-        values.birth_date = values.birth_date ? values.birth_date.format('YYYY-MM-DD') : null;
-    
-        Object.keys(values).forEach((key) => {
-        formData.append(key, values[key]);
-        }); 
-        if (file) {
-            formData.append('photo', file); 
-        }
-        try {
-            await axios.post('http://localhost:4000/addUser', formData, {
-                withCredentials: true,
-                headers: {
-                    'Content-Type': 'multipart/form-data', 
-                },
-            });
-            fetchUsers().then((data) => {
-                setUsersData(data);
-            });
-            return true;
-        } catch (error) {
-            console.error('Error adding user:', error);
-            return false;
-        }
-    };
-    const handleUploadChange = (info) => {
-      console.log(info.fileList);
-      if (info.fileList.length > 0) {
-          const filee = info.fileList[0].originFileObj;
-          setFile(filee);
-      } else {
-          setFile(null); 
-      }
-  };
-
-
-  
     return (
-      <div className="form-container sign-up-container">
-        <form onSubmit={handlenewModalOpen}>
-          <h1>Create Account</h1>
-          <button
-            style={{margin: '20px'}}
-          >Sign Up</button>
-        </form>
-        <Modal
-            title="Register"
+        <div>
+             <Button 
+                style={{ 
+                    marginBottom: '16px', 
+                    backgroundColor: '#389e0d',
+                    marginLeft: 'auto', 
+                    display: 'flex',   
+                    alignItems: 'center', 
+                }}
+                type="primary"
+                onClick={handlenewModalOpen}
+                icon={<UserAddOutlined />} iconPosition='start'>
+                    Add User
+                </Button> 
+           <Modal
+            title="Add New Employee"
             centered
             open={isnewModalVisible}
             onCancel={handlenewModalClose}
@@ -235,15 +196,14 @@ function SignUpForm() {
                 <Row>
                     <Col span={24} style={{ textAlign: 'right' }}>
                         <Button type="primary" htmlType="submit" className="submit-button">
-                            Sign Up
+                            Add Employee
                         </Button>
                     </Col>
                 </Row>
             </Form>
         </Modal>
-      </div>
+        </div>
     );
-  }
-  
-  export default SignUpForm;
-  
+};
+
+export default AddnewUser;

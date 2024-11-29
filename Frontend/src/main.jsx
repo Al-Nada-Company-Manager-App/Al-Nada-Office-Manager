@@ -1,6 +1,7 @@
 import React, { useState,useEffect } from 'react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import {theme,ConfigProvider} from 'antd';
 import './index.css';
 import App from './App.jsx';
 import axios from 'axios';
@@ -47,11 +48,22 @@ const Main = () => {
 
   return (
     <div>
-      {isLoggedIn ? (
+      <ConfigProvider
+          theme={{
+            token: {
+              colorPrimary: '#0958d9',
+              borderRadius: 2,
+              colorBgContainer: '#f6ffed',
+              contentBg: '#e6f4ff',
+            },
+          }}
+        >{isLoggedIn ? (
         <App onLogout={handleLogout} />
       ) : (
         <Sign onLoginSuccess={handleLoginSuccess} />
       )}
+      </ConfigProvider>
+      
     </div>
   );
 };

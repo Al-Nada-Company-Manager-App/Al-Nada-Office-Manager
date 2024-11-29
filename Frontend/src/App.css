@@ -8,10 +8,14 @@
     padding: 10px ;
 }
 .logo-img{
-    width: 70px;
-    height: 70px;
+    width: 100px;
+    height: 100px;
     display: flex;
     align-items: center;
     justify-content: center;
 
 }
+.collapsed-logo {
+    display: none;
+
+  }
