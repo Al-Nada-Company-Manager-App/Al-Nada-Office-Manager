@@ -8,6 +8,7 @@ import {
     DashboardOutlined,
   } from '@ant-design/icons';
 import {Menu} from 'antd';
+import { CashCoin } from 'react-bootstrap-icons';
 import './Menulist.css';
 
 const MenuList  =({setCurrentContent}) => {
@@ -42,12 +43,27 @@ const MenuList  =({setCurrentContent}) => {
             label: 'Stock',
             },
             {
-            key: '8',
+              key: '8',
+              icon: <CashCoin />,
+              label: 'Sales Management',
+              children: [
+                  { key: '9', label: 'Sales' 
+                  , onClick: () => setCurrentContent('9')},
+                  { key: '10', label: 'Price Quatation' 
+                  , onClick: () => setCurrentContent('10'),
+                  },
+                  { key: '11', label: 'Debts',
+                    onClick: () => setCurrentContent('11')
+                  },
+                ],
+            },
+            {
+            key: '12',
             icon: <PayCircleOutlined />,
             label: 'Payment',
             },
             {
-            key: '9',
+            key: '13',
             icon: <SettingOutlined />,
             label: 'Setting',
             }

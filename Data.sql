@@ -38,30 +38,30 @@ CREATE TABLE SUPPLIER (
 CREATE TABLE STOCK (
     P_ID SERIAL  PRIMARY KEY,
     P_NAME VARCHAR(50),
-    P_COSTPRICE INT,
-    P_SELLPRICE INT,
+    P_COSTPRICE FLOAT,
+    P_SELLPRICE FLOAT,
     P_QUANTITY INT,
     P_PHOTO VARCHAR(100),
-    P_DESCRIPTION VARCHAR(100),
+    P_DESCRIPTION TEXT,
     P_CATEGORY VARCHAR(50),
     MODEL_CODE VARCHAR(50),
     EXPIRE_DATE DATE,
     P_STATUS VARCHAR(50)
 );
 CREATE TABLE SALES (
-    SL_ID SERIAL  PRIMARY KEY,
+    SL_ID SERIAL PRIMARY KEY,
     SL_DATE DATE,
-    SL_TOTAL INT,
-    SL_DISCOUNT INT,
-    SL_TAX INT,
+    SL_TOTAL FLOAT,
+    SL_DISCOUNT FLOAT,
+    SL_TAX FLOAT,
     SL_STATUS VARCHAR(50),
     SL_TYPE VARCHAR(50),
-    SL_INAMOUNT INT,
-    SL_COST INT,
+    SL_INAMOUNT FLOAT,
+    SL_COST FLOAT,
     SL_BILLNUM INT UNIQUE,
-    SL_PAYED INT,
+    SL_PAYED FLOAT,
     SL_CURRENCY VARCHAR(50),
-    C_ID SERIAL ,
+    C_ID SERIAL,
     FOREIGN KEY (C_ID) REFERENCES CUSTOMER(C_ID)
 );
 CREATE TABLE PURCHASE (
@@ -94,6 +94,13 @@ CREATE TABLE SELL_ITEMS (
     SL_ID SERIAL ,
     SI_QUANTITY INT,
     SI_TOTAL INT,
+    FOREIGN KEY (P_ID) REFERENCES STOCK(P_ID),
+    FOREIGN KEY (SL_ID) REFERENCES SALES(SL_ID),
+    PRIMARY KEY (P_ID, SL_ID)
+);
+CREATE TABLE ADDDUM (
+    P_ID SERIAL ,
+    SL_ID SERIAL ,
     FOREIGN KEY (P_ID) REFERENCES STOCK(P_ID),
     FOREIGN KEY (SL_ID) REFERENCES SALES(SL_ID),
     PRIMARY KEY (P_ID, SL_ID)
@@ -194,3 +201,25 @@ VALUES ('Ahmed', 'Fathy', '2004-04-19', 10000, 'Manager', 'ahmed.jpg', 'Giza', '
 
 INSERT INTO NOTIFICATION (N_DATE, N_TYPE, N_MESSAGE, N_STATUS)
 VALUE ('2021-04-19', 'APPROVEUSER', 'There is some account to be approved', 'unread');
+
+INSERT INTO SALES (SL_DATE, SL_TOTAL, SL_DISCOUNT, SL_TAX, SL_STATUS, SL_TYPE, SL_INAMOUNT, SL_COST, SL_BILLNUM, SL_PAYED, SL_CURRENCY, C_ID)
+VALUES
+('2024-11-01', 345.00, 10.00, 25.00, 'Completed', 'SELLITEMS', 475.00, 300.00, 1001, 345.00, 'USD', 1),
+('2024-11-02', 852.00, 8.00, 50.00, 'Pending', 'SELLITEMS', 850.00, 600.00, 1002, 852.00, 'EUR', 2),
+('2024-11-03', 500.00, 12.00, 37.00, 'Completed', 'SELLITEMS', 638.00, 400.00, 1003, 500.00, 'EGP', 3),
+('2024-11-04', 1160.00, 15.00, 60.00, 'Cancelled', 'REPAIR', 1020.00, 800.00, 1004, 1160.00, 'USD', 1),
+('2024-11-05', 402.50, 5.00, 20.00, 'Completed', 'SERVICE', 550.00, 350.00, 1005, 402.50, 'CAD', 4);
+
+INSERT INTO STOCK (P_NAME, P_COSTPRICE, P_SELLPRICE, P_QUANTITY, P_PHOTO, P_DESCRIPTION, P_CATEGORY, MODEL_CODE, EXPIRE_DATE, P_STATUS)
+VALUES
+('Product 1', 15.50, 25.75, 100, 'product1.jpg', 'This is a description of Product 1. It has a long and detailed description.', 'Category A', 'AB123', '2025-12-31', 'Available'),
+('Product 2', 20.30, 30.00, 200, 'product2.jpg', 'Product 2 description goes here. It might be a bit longer than 100 characters.', 'Category B', 'BC234', '2026-01-15', 'Available');
+
+
+INSERT INTO CUSTOMER (C_NAME, C_ADDRESS, C_CITY, C_COUNTRY, C_ZIPCODE, C_FAX, C_PHOTO)
+VALUES 
+('John Doe', '123 Main St', 'New York', 'USA', '10001', '123-456-7890', 'john_doe.jpg'),
+('Jane Smith', '456 Elm St', 'Los Angeles', 'USA', '90001', '987-654-3210', 'jane_smith.jpg'),
+('Ahmed Hassan', '12 Al Tahrir St', 'Cairo', 'Egypt', '11511', '02-34567890', 'ahmed_hassan.jpg'),
+('Emma Johnson', '789 Maple Ave', 'Toronto', 'Canada', 'M5G 2C3', '+1-416-789-4567', 'emma_johnson.jpg'),
+('Carlos Gonzalez', '15 Calle Sol', 'Madrid', 'Spain', '28001', '+34-91-123-4567', 'carlos_gonzalez.jpg');

@@ -144,11 +144,11 @@ const Users = () => {
 
   return (
     <>
-       
-        <AddnewUser
+       <AddnewUser
             handleFinish={handleFinish}
             handleUploadChange={handleUploadChange}
         />
+        
 
       <Table
         columns={columns}
