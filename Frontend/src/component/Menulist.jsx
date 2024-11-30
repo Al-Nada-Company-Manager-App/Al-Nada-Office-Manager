@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from "react";
 import {
     PayCircleOutlined,
@@ -10,6 +11,7 @@ import {
 import {Menu} from 'antd';
 import './Menulist.css';
 
+// eslint-disable-next-line react/prop-types
 const MenuList  =({setCurrentContent}) => {
     return (
         <Menu
@@ -40,14 +42,21 @@ const MenuList  =({setCurrentContent}) => {
             key: '7',
             icon: <UploadOutlined />,
             label: 'Stock',
+            children: [
+              { key: '8', label: 'Products' 
+                , onClick: () => setCurrentContent('8')},
+                { key: '9', label: 'Products are repairing' 
+                , onClick: () => setCurrentContent('9'),
+                },
+            ],
             },
             {
-            key: '8',
+            key: '10',
             icon: <PayCircleOutlined />,
             label: 'Payment',
             },
             {
-            key: '9',
+            key: '11',
             icon: <SettingOutlined />,
             label: 'Setting',
             }

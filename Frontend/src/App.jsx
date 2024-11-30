@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+// eslint-disable-next-line no-unused-vars
 import { Button, Layout, theme } from 'antd';
 import logo from './assets/logo.png';
 import MenuList from './component/Menulist';
 import THeader from './component/header';
 import Users from './component/Users';
+import Products from './component/Products'
 import axios from 'axios';
 import './App.css';
 
@@ -12,10 +14,12 @@ const getSignedUser = async () => {
     const response = await axios.get('http://localhost:4000/SignedUser');
     return response.data;
 }
+// eslint-disable-next-line react/prop-types
 const App = ({ onLogout }) => {
     const [collapsed, setCollapsed] = useState(false);
     const [currentContent, setCurrentContent] = useState('1');
     const {
+        // eslint-disable-next-line no-unused-vars
         token: { colorBgContainer, borderRadiusLG,contentBg
         },
     } = theme.useToken();
@@ -55,6 +59,8 @@ const App = ({ onLogout }) => {
             }}
             >
                 {currentContent === '3' && <Users />}
+                {currentContent === '8' && <Products/>}
+                {currentContent === '9' && <Products/>}
             </Content>
         </Layout>
         </Layout>

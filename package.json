@@ -12,6 +12,7 @@
     "concurrently": "^9.1.0"
   },
   "dependencies": {
-    "antd": "^5.22.2"
+    "antd": "^5.22.2",
+    "react-highlight-words": "^0.20.0"
   }
 }
