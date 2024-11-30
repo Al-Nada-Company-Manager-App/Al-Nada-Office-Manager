@@ -81,13 +81,21 @@ const AddnewProduct = ({ handleFinish, handleUploadChange }) => {
                         >
                         <Input />
                         </Form.Item>
-
+                        <Form.Item
+                        label="Opening Stock"
+                        labelCol={{ span: 11 }}
+                        wrapperCol={{ span: 16 }}
+                        name="quantity"
+                        rules={[{ required: true, message: 'Quantity is required!' }]}
+                        >
+                        <InputNumber  style={{ width: '100%' }} />
+                    </Form.Item>
                     <Form.Item
                         label="Cost Price"
                         labelCol={{ span: 11 }}
                         wrapperCol={{ span: 16 }}
                         name="costprice"
-                        rules={[{ required: true, message: 'Price Price is required!' }]}
+                        rules={[{ required: true, message: 'Price is required!' }]}
                         >
                         <InputNumber suffix="EGP" style={{ width: '100%' }} />
                     </Form.Item>

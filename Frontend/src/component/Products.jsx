@@ -1,5 +1,6 @@
 import { Table, Space, Button, Input } from "antd";
-import {useState, useRef} from 'react';
+import {useState, useRef,useEffect} from 'react';
+import axios from "axios";
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined } from '@ant-design/icons';
 import './Products.css';
@@ -7,45 +8,30 @@ import AddnewProduct from "./Productfeatures/addnewProduct";
 import { Form, Popconfirm, Typography } from 'antd';
 import EditableCell from './Productfeatures/EditableCell'; // Import your EditableCell component
 
+const fetchProducts = async () => {
+  try {
+      const response = await axios.get('http://localhost:4000/AllProducts'); 
+      return(response.data); 
+  } catch (error) {
+      console.error('Error fetching products:', error);
+  }
+};
 const Products = () => {
-    // for testing should be remove and using data from database
-    const Data = [
-        {
-          key: '1',
-          productname: 'John Brown',
-          sellprice: 32,
-          costprice: 'New York No. 1 Lake Park',
-        },
-        {
-          key: '2',
-          productname: 'John Brown',
-          sellprice: 32,
-          costprice: 'New York No. 1 Lake Park',
-        },
-        {
-          key: '3',
-          productname: 'John Brown',
-          sellprice: 36,
-          costprice: 'New York No. 1 Lake Park',
-        },
-        {
-          key: '4',
-          productname: 'John Brown',
-          sellprice: 42,
-          costprice: 'New York No. 1 Lake Park',
-        },
-      ];
-      
+    
     // product data to show in table
     // eslint-disable-next-line no-unused-vars
-    const [productData, setproductData] = useState([]);
+    const [Data, setproductData] = useState([]);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [file, setFile] = useState(null);
 
-    //const [sortedInfo, setSortedInfo] = useState({});
-
-// for editing rows
     const [form] = Form.useForm();
-    const [data, setData] = useState(Data);
+    ///const [data, setData] = useState(Data);
     const [editingKey, setEditingKey] = useState('');
+   useEffect(() => {
+    fetchProducts().then((data) => {
+      setproductData(data);
+      } );
+      }, []);
     const isEditing = (record) => record.key === editingKey;
     const edit = (record) => {
     form.setFieldsValue({
@@ -64,28 +50,28 @@ const Products = () => {
   const cancel = () => {
     setEditingKey('');
   };
-  const save = async (key) => {
-    try {
-      const row = await form.validateFields();
-      const newData = [...data];
-      const index = newData.findIndex((item) => key === item.key);
-      if (index > -1) {
-        const item = newData[index];
-        newData.splice(index, 1, {
-          ...item,
-          ...row,
-        });
-        setData(newData);
-        setEditingKey('');
-      } else {
-        newData.push(row);
-        setData(newData);
-        setEditingKey('');
-      }
-    } catch (errInfo) {
-      console.log('Validate Failed:', errInfo);
-    }
-  };
+  // const save = async (key) => {
+  //   try {
+  //     const row = await form.validateFields();
+  //     const newData = [...data];
+  //     const index = newData.findIndex((item) => key === item.key);
+  //     if (index > -1) {
+  //       const item = newData[index];
+  //       newData.splice(index, 1, {
+  //         ...item,
+  //         ...row,
+  //       });
+  //       setData(newData);
+  //       setEditingKey('');
+  //     } else {
+  //       newData.push(row);
+  //       setData(newData);
+  //       setEditingKey('');
+  //     }
+  //   } catch (errInfo) {
+  //     console.log('Validate Failed:', errInfo);
+  //   }
+  // };
 
 
     // search for spacific element
@@ -204,39 +190,47 @@ const Products = () => {
     // setSortedInfo({});
     // };
 
-    const handleDelete = (key) => {
-        // should update the database after deleting
-        // using table data instead of Data, setdata
-        const newData = data.filter((item) => item.key !== key);
-        setData(newData);
+
+
+
+
+
+
+
+
+    const handleDelete = async (id) => {
+      try {
+        const response = await axios.post('http://localhost:4000/DeleteProduct', { id }, { withCredentials: true });
+        fetchProducts().then((data) => {
+            setproductData(data);
+        });
+    } catch (error) {
+      console.error('Error deleting user:', error);
+    }
       };
 
 
     const columns = [
         {
           title: 'Product Photo',
-          dataIndex: 'productphoto',
-          key: 'productphoto',
+          dataIndex: 'p_photo',
           editable: true,
         },
         {
           title: 'Product Name',
-          dataIndex: 'productname',
-          key: 'productname',
+          dataIndex: 'p_name',
           editable: true,
           ...getColumnSearchProps('productname'),
         },
         {
           title: 'Category',
-          dataIndex: 'category',
-          key: 'category',
+          dataIndex: 'p_category',
           editable: true,
           ...getColumnSearchProps('category'),
         },
         {
             title: 'Cost Price',
-            dataIndex: 'costprice',
-            key: 'costprice',
+            dataIndex: 'p_costprice',
             // sorter: (a, b) => a.costprice - b.costprice,
             // sortOrder: sortedInfo.columnKey === 'costprice' ? sortedInfo.order : null,
             // ellipsis: true,
@@ -249,8 +243,7 @@ const Products = () => {
         },
         {
             title: 'Sell Price',
-            dataIndex: 'sellprice',
-            key: 'sellprice',
+            dataIndex: 'p_sellprice',
             // sorter: (a, b) => a.sellprice - b.sellprice,
             // sortOrder: sortedInfo.columnKey === 'sellprice' ? sortedInfo.order : null,
             // ellipsis: true,
@@ -263,8 +256,7 @@ const Products = () => {
         },
         {
             title: 'Quantity',
-            dataIndex: 'quantity',
-            key: 'quantity',
+            dataIndex: 'p_quantity',
             // sorter: (a, b) => a.quantity - b.quantity,
             // sortOrder: sortedInfo.columnKey === 'qunatity' ? sortedInfo.order : null,
             // ellipsis: true,
@@ -277,15 +269,18 @@ const Products = () => {
         },
         {
             title: 'Expire Date',
-            dataIndex: 'expiredate',
-            key: 'expiredate',
+            dataIndex: 'expire_date',
             editable: true,
-            ...getColumnSearchProps('expiredata'),
+            sorter: (a, b) => new Date(a.sl_date) - new Date(b.sl_date),
+        sortDirections: ['descend', 'ascend'],
+        render: (date) => {
+            const formattedDate = new Date(date).toLocaleDateString('en-GB').replace(/\//g, '-');
+            return <span>{formattedDate}</span>;
+        },
         },
         {
             title: 'Model Code',
-            dataIndex: 'modelcode',
-            key: 'modelcode',
+            dataIndex: 'model_code',
             editable: true,
             ...getColumnSearchProps('modelcode'),
         },
@@ -295,7 +290,7 @@ const Products = () => {
         key: 'x',
         render: (_, record) =>
             Data.length >= 1 ? (
-              <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
+              <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.p_id)}>
                 <a>Delete</a>
               </Popconfirm>
             ) : null,
@@ -330,30 +325,77 @@ const Products = () => {
     
 
 
-      const mergedColumns = columns.map((col) => {
-        if (!col.editable) {
-          return col;
+      // const mergedColumns = columns.map((col) => {
+      //   if (!col.editable) {
+      //     return col;
+      //   }
+      //   return {
+      //     ...col,
+      //     onCell: (record) => ({
+      //       record,
+      //       inputType: col.dataIndex === 'sellprice' | 'costprice' | 'qunatity' ? 'number' : 'text',
+      //       dataIndex: col.dataIndex,
+      //       title: col.title,
+      //       editing: isEditing(record),
+      //     }),
+      //   };
+      // });
+      const handleUploadChange = (info) => {
+        console.log(info.fileList);
+        if (info.fileList.length > 0) {
+            const filee = info.fileList[0].originFileObj;
+            setFile(filee);
+        } else {
+            setFile(null);
         }
-        return {
-          ...col,
-          onCell: (record) => ({
-            record,
-            inputType: col.dataIndex === 'sellprice' | 'costprice' | 'qunatity' ? 'number' : 'text',
-            dataIndex: col.dataIndex,
-            title: col.title,
-            editing: isEditing(record),
-          }),
-        };
-      });
-
+    };
+    
+    const handleFinish = async (values) => {
+        const formData = new FormData(); 
+        values.expiredate = values.expiredate ? values.expiredate.format('YYYY-MM-DD') : null;
+    
+        Object.keys(values).forEach((key) => {
+            formData.append(key, values[key]);
+        });
+    
+        if (file) {
+            formData.append('photo', file); 
+        }
+    
+        try {
+            await axios.post('http://localhost:4000/AddProduct', formData, {
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'multipart/formdata',
+                },
+            });
+    
+            const updatedData = await fetchProducts();
+            setproductData(updatedData); 
+            return true;
+        } catch (error) {
+            console.error('Error adding Product:', error);
+            return false;
+        }
+    };
+    
+    const fetchProducts = async () => {
+        try {
+            const response = await axios.get('http://localhost:4000/AllProducts');
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching products:', error);
+            return [];
+        }
+    };
         return (
     <>
         {/* section of table */}
         <h2 style = {{textAlign: "left", fontWeight: "500"}}>Products</h2>
+        
             <AddnewProduct 
-            // To get inserted data from user
-            handleFinish={{}}
-            handleUploadChange={{}}
+            handleFinish={handleFinish}
+            handleUploadChange={handleUploadChange}
             />
         <div className = "table-container">
             <Space
@@ -365,23 +407,23 @@ const Products = () => {
             </Space>
             <Form form={form} component={false}>
             <Table
-            components={{
-                body: {
-                cell: EditableCell,
-            },
-        }}
-        bordered
-        dataSource={data}
-        columns={mergedColumns}
-        rowClassName="editable-row"
-        showSorterTooltip={{
-            target: 'sorter-icon',
-        }}
-        rowKey={(record) => record.id} // Ensure rows have unique keys
-        pagination={{
-          onChange: cancel,
-        }}
-      />
+                  components={{
+                      body: {
+                      cell: EditableCell,
+                  },
+              }}
+              bordered
+              dataSource={Data}
+              columns={columns}
+              rowClassName="editable-row"
+              showSorterTooltip={{
+                  target: 'sorter-icon',
+              }}
+              rowKey={(record) => record.id} // Ensure rows have unique keys
+              pagination={{
+                onChange: cancel,
+              }}
+            />
       </Form>
         </div>
         
