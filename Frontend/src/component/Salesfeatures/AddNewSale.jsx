@@ -3,14 +3,13 @@ import { Modal, Form, Input, Button, Row, Col, DatePicker, InputNumber, Select }
 import { PlusOutlined } from '@ant-design/icons';
 import CustomerModal from './CustomerModal';
 import ProductModal from './ProductModal';
+import axios from 'axios';
 
-// Dummy data for customers and products
-const customers = [{ C_ID: 1, name: "Customer 1" }, { C_ID: 2, name: "Customer 2" }];
-const products = [{ P_ID: 1, name: "Product 1" }, { P_ID: 2, name: "Product 2" }];
+
 const statuses = ["Pending", "Completed", "Canceled"];
 const currencies = ["USD", "EUR", "EGP"];
 
-const AddNewSale = ({ handleSaleFinish }) => {
+const AddNewSale = () => {
   const [isSaleModalVisible, setIsSaleModalVisible] = useState(false);
   const [saleType, setSaleType] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState(null);
@@ -20,9 +19,10 @@ const AddNewSale = ({ handleSaleFinish }) => {
   const [tax, setTax] = useState(0);
   const [paidAmount, setPaidAmount] = useState(0);
   const [insuranceAmount, setInsuranceAmount] = useState(0);
-  const [total, setTotal] = useState(0);
+  const [Total, setTotal] = useState(0);
   const [currency, setCurrency] = useState("USD");
   const [status, setStatus] = useState("Pending");
+
 
   // Modal visibility states
   const [isCustomerModalVisible, setIsCustomerModalVisible] = useState(false);
@@ -49,10 +49,35 @@ const AddNewSale = ({ handleSaleFinish }) => {
     closeProductModal();
   };
 
-  useEffect(() => {
+  const calculateTotal = () => {
     const calculatedTotal = cost - (cost * (discount / 100)) + (cost * (tax / 100));
     setTotal(calculatedTotal);
-  }, [cost, discount, tax]);
+  };
+  useEffect(() => {
+    calculateTotal();
+    console.log('Total:', Total);
+}, [cost, discount, tax]);
+
+const handleSaleFinish = async (values) => {
+    const saleData = {
+        ...values,
+        customer: selectedCustomer,
+        products: selectedProducts,
+        total: Total,
+    };
+    console.log('Sale Data:', saleData);
+    try {
+        const response = await axios.post('http://localhost:4000/addSale', saleData);
+        console.log('Sale added successfully:', response.data);
+    }
+    catch (error) {
+        console.error('Error adding sale:', error);
+    }
+}
+
+
+
+  
 
   return (
     <div>
@@ -64,7 +89,6 @@ const AddNewSale = ({ handleSaleFinish }) => {
       >
         Add Sale
       </Button>
-
       <Modal
         title="Add New Sale"
         open={isSaleModalVisible}
@@ -88,6 +112,7 @@ const AddNewSale = ({ handleSaleFinish }) => {
                 <Select onChange={onSaleTypeChange}>
                   <Select.Option value="SELLITEMS">Sell Items</Select.Option>
                   <Select.Option value="REPAIR">Repair</Select.Option>
+                  <Select.Option value="SERVICE">Service</Select.Option>
                 </Select>
               </Form.Item>
             </Col>
@@ -96,7 +121,7 @@ const AddNewSale = ({ handleSaleFinish }) => {
             <Col span={24}>
               <Form.Item label="Select Customer" name="customer" required>
                 <Button onClick={openCustomerModal}>
-                  {selectedCustomer ? selectedCustomer.name : 'Select Customer'}
+                  {selectedCustomer ? selectedCustomer.c_name : 'Select Customer'}
                 </Button>
               </Form.Item>
             </Col>
@@ -108,10 +133,6 @@ const AddNewSale = ({ handleSaleFinish }) => {
                   <Button onClick={openProductModal}>
                     {selectedProducts.length > 0 ? `${selectedProducts.length} Products Selected` : 'Select Products'}
                   </Button>
-                </Form.Item>
-                {/* Add Product Quantity */}
-                <Form.Item label="Quantity" name="quantity" required>
-                  <InputNumber min={1} style={{ width: "100%" }} />
                 </Form.Item>
               </Col>
             )}
@@ -126,11 +147,12 @@ const AddNewSale = ({ handleSaleFinish }) => {
             {/* Cost */}
             <Col span={12}>
               <Form.Item label="Cost" name="cost" required>
-                <InputNumber 
-                  value={cost} 
-                  onChange={(value) => setCost(value)} 
-                  min={0} 
-                  style={{ width: "100%" }} 
+                <InputNumber
+                  value={cost || 0}
+                  onChange={(value) => setCost(value)}
+                  min={0}
+                  style={{ width: "100%" }}
+                  onBlur={calculateTotal}
                 />
               </Form.Item>
             </Col>
@@ -138,12 +160,13 @@ const AddNewSale = ({ handleSaleFinish }) => {
             {/* Discount */}
             <Col span={12}>
               <Form.Item label="Discount (%)" name="discount" required>
-                <InputNumber 
-                  value={discount} 
-                  onChange={(value) => setDiscount(value)} 
-                  min={0} 
-                  max={100} 
-                  style={{ width: "100%" }} 
+                <InputNumber
+                  value={discount || 0}
+                  onChange={(value) => setDiscount(value)}
+                  min={0}
+                  max={100}
+                  style={{ width: "100%" }}
+                  onBlur={calculateTotal}
                 />
               </Form.Item>
             </Col>
@@ -151,12 +174,13 @@ const AddNewSale = ({ handleSaleFinish }) => {
             {/* Tax */}
             <Col span={12}>
               <Form.Item label="Tax (%)" name="tax" required>
-                <InputNumber 
-                  value={tax} 
-                  onChange={(value) => setTax(value)} 
-                  min={0} 
-                  max={100} 
-                  style={{ width: "100%" }} 
+                <InputNumber
+                  value={tax || 0}
+                  onChange={(value) => setTax(value)}
+                  min={0}
+                  max={100}
+                  style={{ width: "100%" }}
+                  onBlur={calculateTotal}
                 />
               </Form.Item>
             </Col>
@@ -164,10 +188,11 @@ const AddNewSale = ({ handleSaleFinish }) => {
             {/* Total (Calculated) */}
             <Col span={12}>
               <Form.Item label="Total" name="total" required>
-                <InputNumber 
-                  value={total} 
-                  readOnly 
-                  style={{ width: "100%" }} 
+                <InputNumber
+                  value={Total}
+                  placeholder= {Total}
+                  readOnly
+                  style={{ width: "100%" }}
                 />
               </Form.Item>
             </Col>
@@ -175,11 +200,11 @@ const AddNewSale = ({ handleSaleFinish }) => {
             {/* Paid Amount */}
             <Col span={12}>
               <Form.Item label="Paid Amount" name="paidAmount" required>
-                <InputNumber 
-                  value={paidAmount} 
-                  onChange={(value) => setPaidAmount(value)} 
-                  min={0} 
-                  style={{ width: "100%" }} 
+                <InputNumber
+                  value={paidAmount}
+                  onChange={(value) => setPaidAmount(value)}
+                  min={0}
+                  style={{ width: "100%" }}
                 />
               </Form.Item>
             </Col>
@@ -187,11 +212,11 @@ const AddNewSale = ({ handleSaleFinish }) => {
             {/* Insurance Amount */}
             <Col span={12}>
               <Form.Item label="Insurance Amount" name="insuranceAmount" required>
-                <InputNumber 
-                  value={insuranceAmount} 
-                  onChange={(value) => setInsuranceAmount(value)} 
-                  min={0} 
-                  style={{ width: "100%" }} 
+                <InputNumber
+                  value={insuranceAmount}
+                  onChange={(value) => setInsuranceAmount(value)}
+                  min={0}
+                  style={{ width: "100%" }}
                 />
               </Form.Item>
             </Col>
@@ -199,9 +224,9 @@ const AddNewSale = ({ handleSaleFinish }) => {
             {/* Status */}
             <Col span={12}>
               <Form.Item label="Status" name="status" required>
-                <Select 
-                  value={status} 
-                  onChange={(value) => setStatus(value)} 
+                <Select
+                  value={status}
+                  onChange={(value) => setStatus(value)}
                 >
                   {statuses.map((status) => (
                     <Select.Option key={status} value={status}>{status}</Select.Option>
@@ -213,9 +238,9 @@ const AddNewSale = ({ handleSaleFinish }) => {
             {/* Currency */}
             <Col span={12}>
               <Form.Item label="Currency" name="currency" required>
-                <Select 
-                  value={currency} 
-                  onChange={(value) => setCurrency(value)} 
+                <Select
+                  value={currency}
+                  onChange={(value) => setCurrency(value)}
                 >
                   {currencies.map((currency) => (
                     <Select.Option key={currency} value={currency}>{currency}</Select.Option>
@@ -248,7 +273,6 @@ const AddNewSale = ({ handleSaleFinish }) => {
         visible={isCustomerModalVisible}
         onClose={closeCustomerModal}
         onSelectCustomer={handleSelectCustomer}
-        customers={customers}
       />
 
       {/* Product Modal */}
@@ -256,7 +280,7 @@ const AddNewSale = ({ handleSaleFinish }) => {
         visible={isProductModalVisible}
         onClose={closeProductModal}
         onSelectProducts={handleSelectProducts}
-        products={products}
+        type={saleType}
       />
     </div>
   );

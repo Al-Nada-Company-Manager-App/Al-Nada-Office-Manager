@@ -203,8 +203,109 @@ app.get('/allSales', async (req, res) => {
     res.json(rows);
 });
 
+app.get('/allCustomerSales', async (req, res) => {
+    const result = await db.query(`
+        SELECT
+            C_ID,
+            C_NAME
+        FROM
+            CUSTOMER
+    `);
+    const rows = result.rows;
+    res.json(rows);
+});
 
+app.get('/allProductsSales', async (req, res) => {
+    const result = await db.query(`
+        SELECT
+            P_ID,
+            P_NAME,
+            P_SELLPRICE,
+            P_QUANTITY
+        FROM
+            STOCK
+    `);
+    const rows = result.rows;
+    console.log(rows);
 
+    res.json(rows);
+});
+
+app.post('/addSale', async (req, res) => {
+    try {
+      const {
+        saleType,
+        customer,
+        billNumber,
+        cost,
+        discount,
+        tax,
+        total,
+        paidAmount,
+        insuranceAmount,
+        status,
+        currency,
+        saleDate,
+        products, // Array of product objects: [{ p_id, quantity }]
+      } = req.body;
+  
+      const formatDate = new Date(saleDate);
+      const year = formatDate.getFullYear();
+      const month = formatDate.getMonth() + 1;
+      const day = formatDate.getDate();
+      const formattedDate = `${year}-${month}-${day}`;
+  
+      // Insert the sale into the SALES table
+      const saleResult = await db.query(
+        `INSERT INTO SALES 
+          (C_ID, SL_DATE, SL_TOTAL, SL_DISCOUNT, SL_TAX, SL_STATUS, SL_TYPE, SL_INAMOUNT, SL_COST, SL_BILLNUM, SL_PAYED, SL_CURRENCY) 
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) 
+         RETURNING SL_ID`,
+        [
+          customer.c_id,
+          formattedDate,
+          total,
+          discount,
+          tax,
+          status,
+          saleType,
+          insuranceAmount,
+          cost,
+          billNumber,
+          paidAmount,
+          currency,
+        ]
+      );
+  
+      const saleId = saleResult.rows[0].sl_id;
+  
+      // Insert products into the SELL_ITEMS table
+      const productValues = products.map(
+        (product) => `(${product.p_id}, ${saleId}, ${product.quantity}, ${product.totalCost})`
+      ).join(", ");
+      
+      await db.query(
+        `INSERT INTO SELL_ITEMS (P_ID, SL_ID, SI_QUANTITY, SI_TOTAL) 
+         VALUES ${productValues}`
+      );
+  
+      // Update product quantities in the STOCK table
+      for (const product of products) {
+        await db.query(
+          `UPDATE STOCK 
+           SET P_QUANTITY = P_QUANTITY - $1 
+           WHERE P_ID = $2 AND P_QUANTITY >= $1`,
+          [product.quantity, product.p_id]
+        );
+      }
+  
+      res.json({ success: true, message: "Sale and products added successfully!" });
+    } catch (error) {
+      console.error("Error adding sale:", error);
+      res.status(500).json({ success: false, message: "Failed to add sale", error: error.message });
+    }
+  });
+  
 
 
 

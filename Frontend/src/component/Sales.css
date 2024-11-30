@@ -61,3 +61,7 @@
 .submit-button:hover {
     background-color: #45a049; /* Slightly darker green on hover */
 }
+
+.ant-input-number-input::placeholder {
+    opacity: 1 !important;  
+  }

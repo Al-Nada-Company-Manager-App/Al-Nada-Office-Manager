@@ -1,24 +1,35 @@
 import React, { useState } from 'react';
 import { Modal, Table, Input, Button } from 'antd';
+import axios from 'axios';
+
+
+const getCustomers = async () => {
+    try {
+        const response = await axios.get('http://localhost:4000/allCustomerSales');
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching customers:', error);
+    }
+};
+
 
 const CustomerModal = ({ visible, onClose, onSelectCustomer }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  
-  // Dummy customers data
-  const customers = [
-    { C_ID: 1, name: "Customer 1" },
-    { C_ID: 2, name: "Customer 2" },
-    { C_ID: 3, name: "Customer 3" },
-  ];
+  const [customers, setCustomers] = useState([]);
 
-  const filteredCustomers = customers.filter(customer =>
-    customer.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+    React.useEffect(() => {
+        const fetchCustomers = async () => {
+            const customers = await getCustomers();
+            setCustomers(customers);
+        };
+        fetchCustomers();
+    }, []);
+
 
   const columns = [
     {
       title: 'Customer Name',
-      dataIndex: 'name',
+      dataIndex: 'c_name',
       key: 'name',
     },
     {
@@ -32,7 +43,7 @@ const CustomerModal = ({ visible, onClose, onSelectCustomer }) => {
   return (
     <Modal
       title="Select Customer"
-      visible={visible}
+      open={visible}
       onCancel={onClose}
       footer={null}
       width={600}
@@ -43,7 +54,7 @@ const CustomerModal = ({ visible, onClose, onSelectCustomer }) => {
         style={{ marginBottom: '10px' }}
       />
       <Table
-        dataSource={filteredCustomers}
+        dataSource={customers}
         columns={columns}
         rowKey="C_ID"
         pagination={false}

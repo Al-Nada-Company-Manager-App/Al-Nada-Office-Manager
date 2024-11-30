@@ -3,7 +3,7 @@ import { SearchOutlined } from '@ant-design/icons';
 import { Button, Input, Space, Table } from 'antd';
 import Highlighter from 'react-highlight-words';
 import axios from 'axios';
-//import './Sales.css';
+import './Sales.css';
 import SaleDetails from './Salesfeatures/SalesDetails';
 import AddNewSale from './Salesfeatures/AddNewSale';
 
