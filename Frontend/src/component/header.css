@@ -71,6 +71,7 @@ header {
 	font-size: 24px; /* Larger icon for better visibility */
 	color: #555;
 	cursor: pointer;
+	margin:25px;
 	background: linear-gradient(145deg, #f0f0f0, #dcdcdc); /* Subtle gradient */
 	border: none;
 	padding: 2px;
