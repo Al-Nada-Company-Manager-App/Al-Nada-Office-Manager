@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Row, Col, Table } from "antd";
-
+import axios from "axios";
 const CustomerDetails = ({
   selectedCustomer,
   isModalVisible,
@@ -11,7 +11,7 @@ const CustomerDetails = ({
 
   useEffect(() => {
     if (selectedCustomer) {
-      fetchSalesHistory(selectedCustomer.C_ID);
+      fetchSalesHistory(selectedCustomer.c_id);
     }
   }, [selectedCustomer]);
 
@@ -21,6 +21,7 @@ const CustomerDetails = ({
       const response = await axios.get(
         `http://localhost:4000/getCustomerSales/${customerId}`
       );
+      console.log(response);
       setSalesHistory(response.data);
     } catch (error) {
       console.error("Failed to fetch sales history:", error);
@@ -31,36 +32,94 @@ const CustomerDetails = ({
 
   const salesColumns = [
     {
-      title: "Date",
-      dataIndex: "SL_DATE",
-      key: "SL_DATE",
+        title: 'Sale ID',
+        dataIndex: 'sl_id',
+        sorter: (a, b) => a.sl_id - b.sl_id,
+        sortDirections: ['descend', 'ascend'],
+        defaultSortOrder: 'descend',
     },
     {
-      title: "Total",
-      dataIndex: "SL_TOTAL",
-      key: "SL_TOTAL",
+        title: 'Bill Number',
+        dataIndex: 'sl_billnum',
     },
     {
-      title: "Discount",
-      dataIndex: "SL_DISCOUNT",
-      key: "SL_DISCOUNT",
+        title: 'Sale Date',
+        dataIndex: 'sl_date',
+        sorter: (a, b) => new Date(a.sl_date) - new Date(b.sl_date),
+        sortDirections: ['descend', 'ascend'],
+        render: (date) => {
+            const formattedDate = new Date(date).toLocaleDateString('en-GB').replace(/\//g, '-');
+            return <span>{formattedDate}</span>;
+        },
     },
-    {
-      title: "Tax",
-      dataIndex: "SL_TAX",
-      key: "SL_TAX",
+  {
+    title: 'Discount',
+    dataIndex: 'sl_discount',
+  },
+  {
+    title: 'Tax',
+    dataIndex: 'sl_tax',
+  },
+  {
+    title: 'Total',
+    dataIndex: 'sl_total',
+    sorter: (a, b) => a.sl_total - b.sl_total,
+  },
+  {
+    title: 'Currency',
+    dataIndex: 'sl_currency',
+    filters: [
+        {
+            text: 'USD',
+            value: 'USD',
+        },
+        {
+            text: 'EUR',
+            value: 'EUR',
+        },
+        {
+            text: 'EGP',
+            value: 'EGP',
+        },
+
+    ],
+    onFilter: (value, record) => record.sl_currency.indexOf(value) === 0,
+  },
+  {
+    title: 'Status',
+    dataIndex: 'sl_status',
+    filters: [
+        {
+            text: 'Completed',
+            value: 'Completed',
+        },
+        {
+            text: 'Pending',
+            value: 'Pending',
+        },
+        {
+            text: 'Cancelled',
+            value: 'Cancelled',
+        },
+    ],
+    onFilter: (value, record) => record.sl_status.indexOf(value) === 0,
+    render: (status) => {
+        let statusColor = '';
+        let statusText = status;
+
+        // Check the status and apply appropriate color
+        if (status === 'Completed') {
+            statusColor = 'green';
+        } else if (status === 'Pending') {
+            statusColor = 'gray';
+        } else if (status === 'Cancelled') {
+            statusColor = 'red';
+        }
+        return <span style={{ color: statusColor }}>{statusText}</span>;
     },
-    {
-      title: "Status",
-      dataIndex: "SL_STATUS",
-      key: "SL_STATUS",
     },
-    {
-      title: "Bill Number",
-      dataIndex: "SL_BILLNUM",
-      key: "SL_BILLNUM",
-    },
-  ];
+];
+
 
   return (
     <>
