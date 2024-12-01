@@ -229,14 +229,20 @@ const Customer = () => {
           <Button
             type="link"
             className="update-btn"
-            onClick={() => handleEdit(record)}
+            onClick={(e) => {
+              e.stopPropagation(); // Prevent triggering row click
+              handleEdit(record);
+            }}
           >
             Update
           </Button>
           <Button
             type="link"
             className="delete-btn"
-            onClick={() => handleDelete(record.c_id)}
+            onClick={(e) => {
+              e.stopPropagation(); // Prevent triggering row click
+              handleDelete(record.c_id);
+            }}
           >
             Delete
           </Button>
