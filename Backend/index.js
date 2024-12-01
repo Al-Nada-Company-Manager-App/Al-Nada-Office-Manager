@@ -378,6 +378,62 @@ app.post('/updatecustomer', upload.single('photo'), async (req, res) => {
         res.status(500).send('Error updating customer');  // Error response
     }
 });
+app.get('/customersales', async (req, res) => {
+    const { id } = req.body;
+    console.log(id);
+        try {
+        // Fetch customer details
+        const customerQuery = `
+            SELECT C_ID, C_NAME, C_ADDRESS, C_CITY, C_COUNTRY, C_ZIPCODE, C_FAX, C_PHOTO 
+            FROM CUSTOMER 
+            WHERE C_ID = $1
+        `;
+        const customerResult = await db.query(customerQuery, [id]);
+
+        // If the customer is not found
+        if (customerResult.rows.length === 0) {
+            return res.status(404).send('Customer not found');
+        }
+
+        const customer = customerResult.rows[0];
+
+        // Fetch customer's sales history
+        const salesQuery = `
+            SELECT SL_ID, SL_DATE, SL_TOTAL, SL_DISCOUNT, SL_TAX, SL_STATUS, SL_TYPE, SL_INAMOUNT, SL_COST, SL_BILLNUM, SL_PAYED, SL_CURRENCY
+            FROM SALES 
+            WHERE C_ID = $1
+            ORDER BY SL_DATE DESC
+        `;
+        const salesResult = await db.query(salesQuery, [id]);
+
+        // Combine customer details and sales history
+        const response = {
+            customerDetails: customer,
+            salesHistory: salesResult.rows,
+        };
+
+        res.json(response);
+    } catch (err) {
+        console.error(err); // Log the error for debugging
+        res.status(500).send('Error fetching customer details and sales history');
+    }
+});
+// Example Node.js/Express endpoint
+app.get('/getCustomerSales/:id', async (req, res) => {
+    const customerId = req.params.id;
+    console.log(customerId);
+    try {
+      const sales = await db.query(
+        `SELECT * FROM SALES WHERE C_ID = $1 ORDER BY SL_DATE DESC`,
+        [customerId]
+      );
+      res.json(sales.rows);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Failed to fetch sales history." });
+    }
+  });
+  
 
 
 
