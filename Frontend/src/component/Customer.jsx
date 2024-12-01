@@ -165,8 +165,7 @@ const Customer = () => {
     { title: "Zip Code", dataIndex: "c_zipcode" },
     { title: "Fax", dataIndex: "c_fax" },
     {
-      title: "Photo",
-      dataIndex: "c_name",
+      
       title: "Photo",
       dataIndex: "c_name",
       render: (text) =>
