@@ -1,0 +1,147 @@
+.ant-pagination-item a {
+    margin-top: 0;
+}
+
+.customer-details {
+    padding: 10px;
+    margin-left: 10px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.customer-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; 
+    margin-top: 10px;
+}
+
+.customer-actions-button {
+    width: 100%; /* Make buttons take full width */
+}
+
+.customer-form {
+    background-color: #f9f9f9; /* Light gray background */
+    padding: 20px; /* Add padding for spacing */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); /* Subtle shadow for depth */
+    display: flex;
+    flex-direction: column;
+    gap: 5px; /* Space between form items */
+    align-items: flex-start;
+}
+
+.customer-form .ant-form-item {
+    margin-bottom: 16px; /* Space between form items */
+}
+
+.customer-form .ant-form-item-label > label {
+    font-weight: bold; /* Make labels bold */
+    color: #333; /* Darker text color */
+}
+
+.customer-form .ant-input,
+.customer-form .ant-input-number,
+.customer-form .ant-picker,
+.customer-form .ant-radio-group {
+    border-radius: 4px; /* Slight rounding for input fields */
+}
+
+.customer-form .ant-upload-list-picture-card-container {
+    margin-bottom: 0; /* Align upload with form */
+}
+
+.submit-button {
+    width: 100%; /* Full-width button */
+    background-color: #4caf50; /* Green background for submit button */
+    border: none; /* Remove border */
+    font-size: 16px; /* Increase font size */
+    padding: 10px; /* Add padding */
+    border-radius: 4px; /* Round button corners */
+    color: white; /* White text */
+}
+
+.submit-button:hover {
+    background-color: #45a049; /* Slightly darker green on hover */
+}
+/* Container for the search form */
+.box {
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+  }
+  
+  /* Styling for the form */
+  form[name="search"] {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 400px; /* Set a max width for the search bar */
+    border: 1px solid #ddd;
+    border-radius: 30px;
+    padding: 5px 15px;
+    background-color: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Styling for the input field */
+  input.form-control {
+    flex-grow: 1;
+    border: none;
+    outline: none;
+    padding: 8px 10px;
+    font-size: 14px;
+    border-radius: 30px;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  /* Focus effect on the input field */
+  input.form-control:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 5px rgba(0, 128, 0, 0.2);
+  }
+  
+  /* Styling for the search icon */
+  .search-icon {
+    font-size: 20px;
+    color: #555;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+  
+  /* Hover effect for the search icon */
+  .search-icon:hover {
+    color: #4CAF50;
+  }
+  
+  /* Optional: Add some spacing between the search box and other content */
+  .box + .box {
+    margin-top: 20px;
+  }
+  .update-btn,
+.delete-btn {
+  font-size: 16px;                /* Set font size */
+  margin: 2px;
+  border-radius: 4px;             /* Rounded corners */
+  transition: all 0.3s ease;      /* Smooth transition */
+  cursor: pointer;               /* Pointer cursor on hover */
+}
+
+.update-btn {
+  color: #1890ff;                 /* Blue color for 'Update' */
+  border: 1px solid #1890ff;      /* Border matching color */
+}
+
+.update-btn:hover {
+  background-color: #e6f7ff;      /* Light blue on hover */
+  color: #0050b3;                 /* Dark blue text on hover */
+}
+
+.delete-btn {
+  color: #ff4d4f;                 /* Red color for 'Delete' */
+  border: 1px solid #ff4d4f;      /* Red border */
+}
+
+.delete-btn:hover {
+  background-color: #fff1f0;      /* Light red on hover */
+  color: #d4380d;                 /* Darker red text on hover */
+}

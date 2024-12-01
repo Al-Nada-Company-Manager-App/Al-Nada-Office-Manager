@@ -48,10 +48,20 @@ const storage = multer.diskStorage({
     destination: (req, file, cb) => {
       cb(null, '../Frontend/public'); 
     },
-    filename: (req, file, cb) => {
+    filename: (req,  file, cb) => {
+        let photoname="";
+      if(req.body.username){
+         photoname=req.body.username;
+      }
+      else if (req.body.C_NAME) {
+        const firstName = req.body.C_NAME.split(' ')[0]; // Take the first part before a space
+        photoname = firstName;
+    }
+      console.log(photoname);
+      console.log(req.body);
       const username = req.body.username; 
       const ext = path.extname(file.originalname); 
-      cb(null, `${username}${ext}`);
+      cb(null, `${photoname}${ext}`);
     },
   });
   
@@ -305,7 +315,70 @@ app.post('/addSale', async (req, res) => {
       res.status(500).json({ success: false, message: "Failed to add sale", error: error.message });
     }
   });
-  
+  //customer function
+app.get('/allcustomers', async (req, res) => {
+    try {
+        const result = await db.query('SELECT * FROM Customer');
+        res.json(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error fetching customers');
+    }
+});
+
+// Add a customer
+app.post('/addcustomer', upload.single('photo'), async (req, res) => {
+    const { C_NAME, C_ADDRESS, C_CITY, C_COUNTRY, C_ZIPCODE, C_FAX } = req.body;
+    const C_PHOTO = req.file ? req.file.filename : null;
+    try {
+        await db.query(
+            'INSERT INTO Customer (C_NAME, C_ADDRESS, C_CITY, C_COUNTRY, C_ZIPCODE, C_FAX, C_PHOTO) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+            [C_NAME, C_ADDRESS, C_CITY, C_COUNTRY, C_ZIPCODE, C_FAX, C_PHOTO]
+        );
+        res.send('Customer added successfully');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error adding customer');
+    }
+});
+
+// Delete a customer
+app.post('/deletecustomer', async (req, res) => {
+    const { id } = req.body;
+    try {
+        await db.query('DELETE FROM Customer WHERE C_ID = $1', [id]);
+        res.send('Customer deleted successfully');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error deleting customer');
+    }
+});
+app.post('/updatecustomer', upload.single('photo'), async (req, res) => {
+    const { C_ID, C_NAME, C_ADDRESS, C_CITY, C_COUNTRY, C_ZIPCODE, C_FAX } = req.body;
+    const C_PHOTO = req.file ? req.file.filename : null;  // If a new photo is uploaded, use the new filename
+    try {
+        // Correct the SQL query
+        await db.query(
+            'UPDATE Customer SET C_NAME = $1, C_ADDRESS = $2, C_CITY = $3, C_COUNTRY = $4, C_ZIPCODE = $5, C_FAX = $6, C_PHOTO = $7 WHERE C_ID = $8',
+            [
+                C_NAME, 
+                C_ADDRESS, 
+                C_CITY, 
+                C_COUNTRY, 
+                C_ZIPCODE, 
+                C_FAX, 
+                C_PHOTO,  // Add the photo to the update query
+                C_ID       // Use C_ID as the identifier to update the correct customer
+            ]
+        );
+
+        res.send('Customer updated successfully');  // Success message
+    } catch (err) {
+        console.error(err);  // Log the error for debugging
+        res.status(500).send('Error updating customer');  // Error response
+    }
+});
+
 
 
 
