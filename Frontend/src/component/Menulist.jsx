@@ -67,6 +67,12 @@ const MenuList  =({setCurrentContent}) => {
             key: '13',
             icon: <SettingOutlined />,
             label: 'Setting',
+            },
+            {
+            key: '22',
+            icon: <DashboardOutlined />,
+            label: 'Dashboard',
+            onClick: () => setCurrentContent('1'),
             }
         ]}
         />
