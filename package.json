@@ -13,6 +13,9 @@
   },
   "dependencies": {
     "antd": "^5.22.2",
-    "prop-types": "^15.8.1"
+    "prop-types": "^15.8.1",
+    "jspdf": "^2.5.2",
+    "jspdf-autotable": "^3.8.4",
+    "xlsx": "^0.18.5"
   }
 }

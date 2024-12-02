@@ -48,10 +48,20 @@ const storage = multer.diskStorage({
     destination: (req, file, cb) => {
       cb(null, '../Frontend/public'); 
     },
-    filename: (req, file, cb) => {
+    filename: (req,  file, cb) => {
+        let photoname="";
+      if(req.body.username){
+         photoname=req.body.username;
+      }
+      else if (req.body.C_NAME) {
+        const firstName = req.body.C_NAME.split(' ')[0]; // Take the first part before a space
+        photoname = firstName;
+    }
+      console.log(photoname);
+      console.log(req.body);
       const username = req.body.username; 
       const ext = path.extname(file.originalname); 
-      cb(null, `${username}${ext}`);
+      cb(null, `${photoname}${ext}`);
     },
   });
   
@@ -305,6 +315,124 @@ app.post('/addSale', async (req, res) => {
       res.status(500).json({ success: false, message: "Failed to add sale", error: error.message });
     }
   });
+  //customer function
+app.get('/allcustomers', async (req, res) => {
+    try {
+        const result = await db.query('SELECT * FROM Customer');
+        res.json(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error fetching customers');
+    }
+});
+
+// Add a customer
+app.post('/addcustomer', upload.single('photo'), async (req, res) => {
+    const { C_NAME, C_ADDRESS, C_CITY, C_COUNTRY, C_ZIPCODE, C_FAX } = req.body;
+    const C_PHOTO = req.file ? req.file.filename : null;
+    try {
+        await db.query(
+            'INSERT INTO Customer (C_NAME, C_ADDRESS, C_CITY, C_COUNTRY, C_ZIPCODE, C_FAX, C_PHOTO) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+            [C_NAME, C_ADDRESS, C_CITY, C_COUNTRY, C_ZIPCODE, C_FAX, C_PHOTO]
+        );
+        res.send('Customer added successfully');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error adding customer');
+    }
+});
+
+// Delete a customer
+app.post('/deletecustomer', async (req, res) => {
+    const { id } = req.body;
+    try {
+        await db.query('DELETE FROM Customer WHERE C_ID = $1', [id]);
+        res.send('Customer deleted successfully');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error deleting customer');
+    }
+});
+app.post('/updatecustomer', upload.single('photo'), async (req, res) => {
+    const { C_ID, C_NAME, C_ADDRESS, C_CITY, C_COUNTRY, C_ZIPCODE, C_FAX } = req.body;
+    const C_PHOTO = req.file ? req.file.filename : null;  // If a new photo is uploaded, use the new filename
+    try {
+        // Correct the SQL query
+        await db.query(
+            'UPDATE Customer SET C_NAME = $1, C_ADDRESS = $2, C_CITY = $3, C_COUNTRY = $4, C_ZIPCODE = $5, C_FAX = $6, C_PHOTO = $7 WHERE C_ID = $8',
+            [
+                C_NAME, 
+                C_ADDRESS, 
+                C_CITY, 
+                C_COUNTRY, 
+                C_ZIPCODE, 
+                C_FAX, 
+                C_PHOTO,  // Add the photo to the update query
+                C_ID       // Use C_ID as the identifier to update the correct customer
+            ]
+        );
+
+        res.send('Customer updated successfully');  // Success message
+    } catch (err) {
+        console.error(err);  // Log the error for debugging
+        res.status(500).send('Error updating customer');  // Error response
+    }
+});
+app.get('/customersales', async (req, res) => {
+    const { id } = req.body;
+    console.log(id);
+        try {
+        // Fetch customer details
+        const customerQuery = `
+            SELECT C_ID, C_NAME, C_ADDRESS, C_CITY, C_COUNTRY, C_ZIPCODE, C_FAX, C_PHOTO 
+            FROM CUSTOMER 
+            WHERE C_ID = $1
+        `;
+        const customerResult = await db.query(customerQuery, [id]);
+
+        // If the customer is not found
+        if (customerResult.rows.length === 0) {
+            return res.status(404).send('Customer not found');
+        }
+
+        const customer = customerResult.rows[0];
+
+        // Fetch customer's sales history
+        const salesQuery = `
+            SELECT SL_ID, SL_DATE, SL_TOTAL, SL_DISCOUNT, SL_TAX, SL_STATUS, SL_TYPE, SL_INAMOUNT, SL_COST, SL_BILLNUM, SL_PAYED, SL_CURRENCY
+            FROM SALES 
+            WHERE C_ID = $1
+            ORDER BY SL_DATE DESC
+        `;
+        const salesResult = await db.query(salesQuery, [id]);
+
+        // Combine customer details and sales history
+        const response = {
+            customerDetails: customer,
+            salesHistory: salesResult.rows,
+        };
+
+        res.json(response);
+    } catch (err) {
+        console.error(err); // Log the error for debugging
+        res.status(500).send('Error fetching customer details and sales history');
+    }
+});
+// Example Node.js/Express endpoint
+app.get('/getCustomerSales/:id', async (req, res) => {
+    const customerId = req.params.id;
+    console.log(customerId);
+    try {
+      const sales = await db.query(
+        `SELECT * FROM SALES WHERE C_ID = $1 ORDER BY SL_DATE DESC`,
+        [customerId]
+      );
+      res.json(sales.rows);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Failed to fetch sales history." });
+    }
+  });
   
 
 
@@ -478,6 +606,7 @@ app.post('/addPch', async (req, res) => {
   });
   
   
+
 
 
 

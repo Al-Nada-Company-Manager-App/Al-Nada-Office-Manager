@@ -70,9 +70,9 @@ const MenuList  =({setCurrentContent}) => {
             },
             {
             key: '22',
-            icon: <DashboardOutlined />,
-            label: 'Dashboard',
-            onClick: () => setCurrentContent('1'),
+            icon: <UserOutlined />,
+            label: 'Customer',
+            onClick: () => setCurrentContent('22'),
             }
         ]}
         />
