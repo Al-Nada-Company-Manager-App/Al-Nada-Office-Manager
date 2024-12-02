@@ -17,6 +17,8 @@ import userPhoto from "../assets/UserPhoto.jpg";
 import CustomerDetails from "./Customerfeatures/CustomerDetails";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
+import * as XLSX from "xlsx";
+
 const Customer = () => {
   const [customersData, setCustomersData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -57,6 +59,7 @@ const Customer = () => {
       "Zip Code",
       "Fax",
     ];
+    
     const tableRows = customersData.map((customer) => [
       customer.c_name,
       customer.c_address,
@@ -76,6 +79,35 @@ const Customer = () => {
     // Save the PDF
     doc.save("Customer_List.pdf");
   };
+  const exportToExcel = () => {
+    if (customersData.length === 0) {
+      message.error("No data available to export.");
+      return;
+    }
+  
+    // Create a new array without the `photo` field
+    const dataWithoutPhoto = customersData.map(({ c_name, c_address, c_city, c_country, c_zipcode, c_fax }) => ({
+      c_name,
+      c_address,
+      c_city,
+      c_country,
+      c_zipcode,
+      c_fax,
+    }));
+  
+    // Convert the filtered data to a worksheet
+    const worksheet = XLSX.utils.json_to_sheet(dataWithoutPhoto);
+    
+    // Create a new workbook and append the worksheet
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Customers");
+  
+    // Export the workbook as an Excel file
+    XLSX.writeFile(workbook, "Customer_List.xlsx");
+  };
+  
+  
+
   // Search functionality
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
@@ -467,6 +499,14 @@ const Customer = () => {
       <Button type="primary" onClick={exportToPDF} style={{ marginBottom: 16 }}>
         Export to PDF
       </Button>
+      <Button
+  type="primary"
+  onClick={exportToExcel}
+  style={{ marginBottom: 16, marginLeft: 16 }}
+>
+  Export to Excel
+</Button>
+
       {addCustomerModal}
       {updateCustomerModal}
       <Table

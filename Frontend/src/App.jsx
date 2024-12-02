@@ -12,6 +12,7 @@ import Customer from './component/Customer';
 
 const {Sider, Content } = Layout;
 const getSignedUser = async () => {
+    
     const response = await axios.get('http://localhost:4000/SignedUser');
     return response.data;
 }
