@@ -77,7 +77,6 @@ const AddNewPurchase = ({ handleFinish }) => {
     console.log("Purchase Data:", purchasedata);
     try {
       handleFinish(purchasedata);
-      console.log("Purchase added successfully:", response.data);
     } catch (error) {
       console.error("Error adding Purchase:", error);
     }
@@ -97,7 +96,7 @@ const AddNewPurchase = ({ handleFinish }) => {
         }}
         icon={<PlusOutlined />}
       >
-        Add Sale
+        Add Purchase
       </Button>
       <Modal
         title="Add New Purchase"

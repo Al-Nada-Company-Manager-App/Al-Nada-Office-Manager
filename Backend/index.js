@@ -343,7 +343,6 @@ app.get('/allProductsPch', async (req, res) => {
         FROM STOCK
     `);
     const rows = result.rows;
-    console.log(rows);
 
     res.json(rows);
 });
@@ -372,9 +371,6 @@ app.post('/addPch', async (req, res) => {
         const month = formatDate.getMonth() + 1;
         const day = formatDate.getDate();
         const formattedDate = `${year}-${month}-${day}`;
-        console.log("Request Body:", req.body);
-        console.log(customscost);
-        console.log(customsnum);
 
       const purchaseResult = await db.query(
         `INSERT INTO PURCHASE 
@@ -424,7 +420,8 @@ app.post('/addPch', async (req, res) => {
   
 
    app.post('/deletePurchase', async (req, res) => {
-    const { id } = req.body;
+    const { id } = req.body; 
+  console.log('Received ID:', id);
     try {
       await db.query('DELETE FROM PURCHASE WHERE PCH_ID = $1', [id]);
       res.json({ success: true });
@@ -433,6 +430,53 @@ app.post('/addPch', async (req, res) => {
       res.status(500).json({ success: false, message: 'Failed to delete purchase', error: error.message });
     }
   });
+
+
+  app.post('/updatePurchase', async (req, res) => {
+    const {
+      id,
+      date,
+      total,
+      tax,
+      cost,
+      billnum,
+      currency,
+      expense,
+      customscost,
+      customsnum,
+      s_id
+    } = req.body; 
+  
+    console.log('Received ID:', id);
+  
+    if (!id) {
+      return res.status(400).json({ success: false, message: 'ID is required to update a purchase' });
+    }
+  
+    try {
+      await db.query(
+        `UPDATE PURCHASE
+         SET PCH_DATE = $1,
+             PCH_TOTAL = $2,
+             PCH_TAX = $3,
+             PCH_COST = $4,
+             PCH_BILLNUM = $5,
+             PCH_CURRENCY = $6,
+             PCH_EXPENSE = $7,
+             PCH_CUSTOMSCOST = $8,
+             PCH_CUSTOMSNUM = $9,
+             S_ID = $10
+         WHERE PCH_ID = $11`,
+        [date, total, tax, cost, billnum, currency, expense, customscost, customsnum, s_id, id]
+      );
+  
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Error updating purchase:', error);
+      res.status(500).json({ success: false, message: 'Failed to update purchase', error: error.message });
+    }
+  });
+  
   
 
 

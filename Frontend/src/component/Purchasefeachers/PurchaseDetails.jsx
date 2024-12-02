@@ -2,8 +2,7 @@ import React from "react";
 import { Modal, Button, Row, Col } from 'antd';
 
 
-const PurchaseDetails = ({ selectedPurchase, isModalVisible, handleModalClose, handleDeletePurchase, handleActivatePurchase}) => {
-  console.log(selectedPurchase);
+const PurchaseDetails = ({ selectedPurchase, isModalVisible, handleModalClose, handleDeletePurchase,handleUpdatePurchase}) => {
   return (
       <Modal
           title="Purchase Details"
@@ -14,10 +13,10 @@ const PurchaseDetails = ({ selectedPurchase, isModalVisible, handleModalClose, h
               <Button key="close" onClick={handleModalClose}>
                   Close
               </Button>,
-              <Button key="Delete Purchase" onClick={() => handleDeletePurchase(selectedPurchase.pch_id)} type="primary" danger>
+              <Button key="Delete Purchase" onClick={() => handleDeletePurchase(selectedPurchase.pch_id)  } type="primary" danger >
                   Delete Purchase
               </Button>,
-              <Button key='Update Purchase' onClick={() => handleActivatePurchase(selectedPurchase.pch_id)} type="primary">
+              <Button key='Update Purchase' onClick={() => handleUpdatePurchase(selectedPurchase.pch_id)}  type="primary">
                   Update Purchase
               </Button>,
               

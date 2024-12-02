@@ -153,22 +153,33 @@ const purchase = () => {
     setselectedpurchase(null);
   };
 
-  const handleDeletePurchase = (id) => async () => {
+  const handleDeletePurchase =async  (id)=>  {
     try {
       const response = await axios.post(
         "http://localhost:4000/deletePurchase",
         { id },
         { withCredentials: true }
-      ); /////
-      fetchPurchase().then((data) => {
-        setPurchaseData(data);
-      });
+      ); 
+      fetchPurchase().then((data) => setPurchaseData(data));
       handleModalClose();
     } catch (error) {
       console.error("Error deleting purchase:", error);
     }
   };
 
+  const handleUpdatePurchase =async  (id)=>  {
+    try {
+      const response = await axios.post(
+        "http://localhost:4000/updatePurchase",
+        { id },
+        { withCredentials: true }
+      ); 
+      fetchPurchase().then((data) => setPurchaseData(data));
+      handleModalClose();
+    } catch (error) {
+      console.error("Error update purchase:", error);
+    }
+  };
   const handleFinish = async (values) => {
     try {
       const response = await axios.post("http://localhost:4000/addPch", values, {
@@ -278,7 +289,7 @@ const purchase = () => {
           margin: "24px 16px",
         }}
       >
-        <h1>Sales</h1>
+        <h1>Purchase</h1>
       </div>
       <Table
         columns={columns}
@@ -293,6 +304,7 @@ const purchase = () => {
         isModalVisible={isModalVisible}
         handleModalClose={handleModalClose}
         handleDeletePurchase={handleDeletePurchase}
+        handleUpdatePurchase={handleUpdatePurchase}
       />
     </>
   );
