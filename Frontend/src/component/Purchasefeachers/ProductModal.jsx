@@ -21,6 +21,7 @@ const ProductModal = ({ visible, onClose, onSelectProducts, type }) => {
   useEffect(() => {
     const fetchProducts = async () => {
       const productss = await getProducts();
+      console.log(productss);
       setProducts(productss);
       setFilteredProducts(productss); 
     };
@@ -29,11 +30,13 @@ const ProductModal = ({ visible, onClose, onSelectProducts, type }) => {
 
   const handleSelect = (product) => {
     if (selectedProducts.some((item) => item.p_id === product.p_id)) {
+      // Deselect the product
       setSelectedProducts((prev) =>
         prev.filter((item) => item.p_id !== product.p_id)
       );
       setFilteredProducts((prev) => [...prev, product]);
     } else {
+      // Select the product
       setFilteredProducts((prev) =>
         prev.filter((item) => item.p_id !== product.p_id)
       );
@@ -89,7 +92,7 @@ const ProductModal = ({ visible, onClose, onSelectProducts, type }) => {
             render: (_, record) => (
               <InputNumber
                 min={1}
-                value={1}
+                defaultValue={1}
                 onChange={(value) =>
                   updateProductDetails(record.p_id, "quantity", value)
                 }
@@ -104,7 +107,7 @@ const ProductModal = ({ visible, onClose, onSelectProducts, type }) => {
             render: (_, record) => (
               <InputNumber
                 min={1}
-                value={record.p_costprice}
+                defaultValue={record.p_costprice}
                 onChange={(value) =>
                   updateProductDetails(record.p_id, "costprice", value)
                 }

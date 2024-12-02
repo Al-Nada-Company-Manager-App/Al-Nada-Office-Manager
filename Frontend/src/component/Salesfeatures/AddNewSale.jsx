@@ -9,7 +9,7 @@ import axios from 'axios';
 const statuses = ["Pending", "Completed", "Canceled"];
 const currencies = ["USD", "EUR", "EGP"];
 
-const AddNewSale = () => {
+const AddNewSale = ({handleFinish}) => {
   const [isSaleModalVisible, setIsSaleModalVisible] = useState(false);
   const [saleType, setSaleType] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState(null);
@@ -67,7 +67,7 @@ const handleSaleFinish = async (values) => {
     };
     console.log('Sale Data:', saleData);
     try {
-        const response = await axios.post('http://localhost:4000/addSale', saleData);
+        handleFinish(saleData);
         console.log('Sale added successfully:', response.data);
     }
     catch (error) {

@@ -17,7 +17,7 @@ import axios from "axios";
 
 const currencies = ["USD", "EUR", "EGP"];
 
-const AddNewPurchase = () => {
+const AddNewPurchase = ({ handleFinish }) => {
   const [isPurchaseModalVisible, setIsParchaseModalVisible] = useState(false);
   const [selectedSupplier, setSelectedSupplier] = useState(null); ////
   const [selectedProducts, setSelectedProducts] = useState([]);
@@ -59,7 +59,7 @@ const AddNewPurchase = () => {
   };
 
   const calculateTotal = () => {
-    const calculatedTotal = cost+cost*(tax/100);
+    const calculatedTotal = cost + cost * (tax / 100);
     setTotal(calculatedTotal);
   };
   useEffect(() => {
@@ -76,10 +76,7 @@ const AddNewPurchase = () => {
     };
     console.log("Purchase Data:", purchasedata);
     try {
-      const response = await axios.post(
-        "http://localhost:4000/addPch",
-        purchasedata
-      );
+      handleFinish(purchasedata);
       console.log("Purchase added successfully:", response.data);
     } catch (error) {
       console.error("Error adding Purchase:", error);
@@ -147,55 +144,39 @@ const AddNewPurchase = () => {
 
             {/* Bill Number */}
             <Col span={12}>
-              <Form.Item
-                label="Bill Number"
-                name="billNumber"
-                required
-                
-              >
-                <InputNumber 
-                onChange={(value) => setcustomscost(value)}
-                min={0}
-                style={{ width: "100%" }}/>
+              <Form.Item label="Bill Number" name="billNumber" required>
+                <InputNumber
+                  onChange={(value) => setcustomscost(value)}
+                  min={0}
+                  style={{ width: "100%" }}
+                />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item
-                label="Expense"
-                name="expense"
-                required
-                
-              >
+              <Form.Item label="Expense" name="expense" required>
                 <InputNumber
-                onChange={(value) => setexpense(value)}
-                min={0}
-                style={{ width: "100%" }} />
+                  onChange={(value) => setexpense(value)}
+                  min={0}
+                  style={{ width: "100%" }}
+                />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item
-                label="Customs Cost"
-                name="customscost"
-                required
-                
-              >
+              <Form.Item label="Customs Cost" name="customscost" required>
                 <InputNumber
-                onChange={(value) => setcustomscost(value)}
-                min={0}
-                style={{ width: "100%" }} />
+                  onChange={(value) => setcustomscost(value)}
+                  min={0}
+                  style={{ width: "100%" }}
+                />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item
-                label="Customs Num"
-                name="customsnum"
-                required
-                
-              >
+              <Form.Item label="Customs Num" name="customsnum" required>
                 <InputNumber
-                onChange={(value) => setcustomsnum(value)}
-                min={0}
-                style={{ width: "100%" }} />
+                  onChange={(value) => setcustomsnum(value)}
+                  min={0}
+                  style={{ width: "100%" }}
+                />
               </Form.Item>
             </Col>
 
@@ -269,7 +250,7 @@ const AddNewPurchase = () => {
                   htmlType="submit"
                   style={{ width: "100%" }}
                 >
-                  Add Sale
+                  Add Purchase
                 </Button>
               </Form.Item>
             </Col>

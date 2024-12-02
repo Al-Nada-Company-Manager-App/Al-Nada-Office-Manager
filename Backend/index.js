@@ -339,7 +339,7 @@ app.get('/allSupplierPch', async (req, res) => {
 
 app.get('/allProductsPch', async (req, res) => {
     const result = await db.query(`
-        SELECT P_ID, P_NAME, P_SELLPRICE,P_QUANTITY
+        SELECT P_ID, P_NAME, P_COSTPRICE,P_QUANTITY
         FROM STOCK
     `);
     const rows = result.rows;
