@@ -60,7 +60,9 @@ const MenuList  =({setCurrentContent}) => {
             {
             key: '12',
             icon: <PayCircleOutlined />,
-            label: 'Payment',
+            label: 'Purchase Items',
+            onClick: () => setCurrentContent('12'),/////
+
             },
             {
             key: '13',

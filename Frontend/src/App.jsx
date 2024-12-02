@@ -5,6 +5,7 @@ import MenuList from './component/Menulist';
 import THeader from './component/header';
 import Users from './component/Users';
 import Sales from './component/Sales';
+import Purchase from './component/Purchase';
 import ApproveUser from './component/ApproveUser';
 import axios from 'axios';
 import './App.css';
@@ -59,6 +60,8 @@ const App = ({ onLogout }) => {
                 {currentContent === '3' && <Users />}
                 {currentContent === '4' && <ApproveUser />}
                 {currentContent === '9' && <Sales />}
+                {currentContent === '12' && <Purchase />}
+
             </Content>
         </Layout>
         </Layout>
