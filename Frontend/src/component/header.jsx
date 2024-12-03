@@ -23,8 +23,6 @@ const fetchNotifications = async () => {
   }
 }
 
-
-
 function THeader({ collapsed, setCollapsed ,onLogout, signedUser }) {
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);

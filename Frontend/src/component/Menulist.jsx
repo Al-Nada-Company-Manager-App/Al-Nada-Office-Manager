@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from "react";
 import {
     PayCircleOutlined,
@@ -38,41 +39,48 @@ const MenuList  =({setCurrentContent}) => {
               ],
             },
             {
-            key: '7',
+            key: '5',
             icon: <UploadOutlined />,
             label: 'Stock',
+            children: [
+              { key: '6', label: 'Products' 
+                , onClick: () => setCurrentContent('8')},
+                { key: '7', label: 'Products are repairing' 
+                , onClick: () => setCurrentContent('9'),
+                },
+            ],
             },
             {
-              key: '8',
+            key: '8',
+            icon: <UserOutlined />,
+            label: 'Customer',
+            onClick: () => setCurrentContent('22'),
+            },
+            {
+              key: '9',
               icon: <CashCoin />,
               label: 'Sales Management',
               children: [
-                  { key: '9', label: 'Sales' 
+                  { key: '10', label: 'Sales' 
                   , onClick: () => setCurrentContent('9')},
-                  { key: '10', label: 'Price Quatation' 
+                  { key: '11', label: 'Price Quatation' 
                   , onClick: () => setCurrentContent('10'),
                   },
-                  { key: '11', label: 'Debts',
+                  { key: '12', label: 'Debts',
                     onClick: () => setCurrentContent('11')
                   },
                 ],
             },
             {
-            key: '12',
+            key: '13',
             icon: <PayCircleOutlined />,
             label: 'Payment',
             },
             {
-            key: '13',
+            key: '14',
             icon: <SettingOutlined />,
             label: 'Setting',
             },
-            {
-            key: '22',
-            icon: <UserOutlined />,
-            label: 'Customer',
-            onClick: () => setCurrentContent('22'),
-            }
         ]}
         />
     )

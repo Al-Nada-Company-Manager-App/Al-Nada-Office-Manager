@@ -434,7 +434,44 @@ app.get('/getCustomerSales/:id', async (req, res) => {
     }
   });
   
+// Get All Products
+app.get('/AllProducts', async (req, res) => {
+    const result = await db.query('SELECT * FROM STOCK');
+    const rows = result.rows;
+    res.json(rows);
+});
+// Delete Product
+app.post('/DeleteProduct', async (req, res) => {
+    const id = req.body.id;
+    await
+    db.query('DELETE FROM STOCK WHERE P_ID = $1', [id]);
+    res.json({ success: true });
+});
+//Add Product
+app.post('/AddProduct', upload.single('photo'), async (req, res) => {
+    try {
+        const PNAME = req.body. productname;
+        const CATEGORY = req.body.category;
+        const COSTPRICE = req.body.costprice;
+        const SELLPRICE = req.body.sellprice;
+        const QUANTITY = req.body.quantity;
+        const EXPIRE_DATE = req.body.expiredate;
+        const MODEL_CODE = req.body.modelcode;
+        const DESCRIPTION = req.body.pdescription;
+         const photo = req.file ? req.file.filename : null; 
+         await db.query(
+          'INSERT INTO STOCK (P_NAME, P_COSTPRICE, P_SELLPRICE, P_QUANTITY, P_PHOTO, P_DESCRIPTION, P_CATEGORY, EXPIRE_DATE, MODEL_CODE) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)',
+           [PNAME, COSTPRICE, SELLPRICE, QUANTITY, photo, DESCRIPTION, CATEGORY, EXPIRE_DATE, MODEL_CODE]
+         );
 
+        res.json({ success: true, message: 'Product added successfully!' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Failed to add Product!' });
+    }
+});
+
+// Edit Product
 
 
 

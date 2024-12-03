@@ -1,5 +1,6 @@
+// eslint-disable-next-line no-unused-vars
 import React, { useState,useEffect } from 'react';
-import { StrictMode } from 'react';
+// import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import {theme,ConfigProvider} from 'antd';
 import './index.css';
@@ -53,8 +54,8 @@ const Main = () => {
             token: {
               colorPrimary: '#0958d9',
               borderRadius: 2,
-              colorBgContainer: '#f6ffed',
-              contentBg: '#e6f4ff',
+              colorBgContainer: '#fff',
+              contentBg: '#f5f5f5',
             },
           }}
         >{isLoggedIn ? (

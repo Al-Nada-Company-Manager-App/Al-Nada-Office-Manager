@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+// eslint-disable-next-line no-unused-vars
 import { Button, Layout, theme } from 'antd';
 import logo from './assets/logo.png';
 import MenuList from './component/Menulist';
@@ -6,6 +7,7 @@ import THeader from './component/header';
 import Users from './component/Users';
 import Sales from './component/Sales';
 import ApproveUser from './component/ApproveUser';
+import Products from './component/Products'
 import axios from 'axios';
 import './App.css';
 import Customer from './component/Customer';
@@ -15,6 +17,7 @@ const getSignedUser = async () => {
     const response = await axios.get('http://localhost:4000/SignedUser');
     return response.data;
 }
+
 const App = ({ onLogout }) => {
     const [collapsed, setCollapsed] = useState(false);
     const [currentContent, setCurrentContent] = useState('1');
@@ -59,8 +62,11 @@ const App = ({ onLogout }) => {
             >
                 {currentContent === '3' && <Users />}
                 {currentContent === '4' && <ApproveUser />}
-                {currentContent === '9' && <Sales />}
-                {currentContent === '22' && <Customer />}
+                {currentContent === '6' && <Products/>}
+                {currentContent === '7' && <Products/>}
+                {currentContent === '8' && <Customer />}
+                {currentContent === '10' && <Sales />}
+
 
             </Content>
         </Layout>

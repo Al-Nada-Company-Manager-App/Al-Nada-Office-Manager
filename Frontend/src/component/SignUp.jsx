@@ -31,7 +31,6 @@ function SignUpForm() {
         }
         try {
             const result = await axios.post('http://localhost:4000/addUser', formData, {
-                withCredentials: true,
                 headers: {
                     'Content-Type': 'multipart/form-data', 
                 },
@@ -46,7 +45,6 @@ function SignUpForm() {
             await axios.post('http://localhost:4000/sendNotification',NotificationData,{
                 withCredentials: true,
             });
-
             return true;
         } catch (error) {
             console.error('Error adding user:', error);
