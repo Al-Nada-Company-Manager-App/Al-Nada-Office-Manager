@@ -11,7 +11,7 @@ import path from 'path';
 
 
 const db = new pg.Client({
-  connectionString: "postgresql://neondb_owner:C4VjIugfa2ye@ep-late-river-a55ncq5u.us-east-2.aws.neon.tech/neondb?sslmode=require",
+  connectionString: "postgresql://neondb_owner:Z50JaCBQWOMr@ep-nameless-darkness-a5mhhisx.us-east-2.aws.neon.tech/neondb?sslmode=require",
   ssl: {
     rejectUnauthorized: false 
   }

@@ -1,77 +1,70 @@
 import { Table, Space, Button, Input } from "antd";
-import {useState, useRef,useEffect} from 'react';
+import {useState, useRef, useEffect} from 'react';
 import axios from "axios";
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined } from '@ant-design/icons';
 import './Products.css';
 import AddnewProduct from "./Productfeatures/addnewProduct";
-import { Form, Popconfirm, Typography } from 'antd';
-import EditableCell from './Productfeatures/EditableCell'; // Import your EditableCell component
+import ProductDetails from './Productfeatures/ProductDetails';
+
 
 const fetchProducts = async () => {
-  try {
-      const response = await axios.get('http://localhost:4000/AllProducts'); 
-      return(response.data); 
-  } catch (error) {
-      console.error('Error fetching products:', error);
-  }
+    try {
+        const response = await axios.get('http://localhost:4000/AllProducts');
+        return (response.data);
+    } catch (error) {
+        console.error('Error fetching products:', error);
+    }
 };
+
+
 const Products = () => {
     
-    // product data to show in table
-    // eslint-disable-next-line no-unused-vars
-    const [Data, setproductData] = useState([]);
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [file, setFile] = useState(null);
+    const [Data,setproductData] = useState([]);
 
-    const [form] = Form.useForm();
-    ///const [data, setData] = useState(Data);
-    const [editingKey, setEditingKey] = useState('');
-   useEffect(() => {
-    fetchProducts().then((data) => {
-      setproductData(data);
-      } );
-      }, []);
-    const isEditing = (record) => record.key === editingKey;
-    const edit = (record) => {
-    form.setFieldsValue({
-      productphoto: '',
-      productname: '',
-      category: '',
-      quantity: '',
-      sellprice: '',
-      costprice: '',
-      expiredate: '',
-      modelcode: '',
-      ...record,
+    const [file, setFile] = useState(null);
+    const [selectedProduct, setSelectedProduct] = useState(null);
+
+    const [editedData, seteditedData] = useState({
+      p_photo: "",
+      p_name: "",
+      p_category: "",
+      p_costprice: "",
+      p_sellprice: "",
+      p_quantity: "",
+      expire_date: "",
+      model_code: "",
     });
-    setEditingKey(record.key);
-  };
-  const cancel = () => {
-    setEditingKey('');
-  };
-  // const save = async (key) => {
-  //   try {
-  //     const row = await form.validateFields();
-  //     const newData = [...data];
-  //     const index = newData.findIndex((item) => key === item.key);
-  //     if (index > -1) {
-  //       const item = newData[index];
-  //       newData.splice(index, 1, {
-  //         ...item,
-  //         ...row,
-  //       });
-  //       setData(newData);
-  //       setEditingKey('');
-  //     } else {
-  //       newData.push(row);
-  //       setData(newData);
-  //       setEditingKey('');
-  //     }
-  //   } catch (errInfo) {
-  //     console.log('Validate Failed:', errInfo);
-  //   }
-  // };
+
+    const [isPDetailsOpen, setisPDetailsOpen] = useState(false);
+
+    //set the product details is open
+    const openPDetails = () => setisPDetailsOpen(true);
+    const closePDetails = () => {
+      setisPDetailsOpen(false);
+      setSelectedProduct(null);
+    };
+
+
+
+    const saveEditedProductData = () => {
+      // setproductData((prevData) => {
+      //   return prevData.map((row) => {
+      //     if (row.id === editedData.id) {
+      //       return { ...row, ...editedData };
+      //     }
+      //     return row;
+      //   });
+      // });
+      // setSelectedProduct(editedData);
+    };
+
+
+    const handleRowClick = (record) => {
+      setSelectedProduct(record);
+      seteditedData(record);
+      openPDetails();
+    };
 
 
     // search for spacific element
@@ -185,25 +178,14 @@ const Products = () => {
       });
     //   end search handle
 
-    // when using clear sort button
-    // const clearAll = () => {
-    // setSortedInfo({});
-    // };
-
-
-
-
-
-
-
-
 
     const handleDelete = async (id) => {
       try {
         const response = await axios.post('http://localhost:4000/DeleteProduct', { id }, { withCredentials: true });
         fetchProducts().then((data) => {
             setproductData(data);
-        });
+          });
+          console.log('delete');
     } catch (error) {
       console.error('Error deleting user:', error);
     }
@@ -212,65 +194,49 @@ const Products = () => {
 
     const columns = [
         {
-          title: 'Product Photo',
-          dataIndex: 'p_photo',
-          editable: true,
-        },
-        {
           title: 'Product Name',
           dataIndex: 'p_name',
-          editable: true,
-          ...getColumnSearchProps('productname'),
+          key:'p_name',
+          ...getColumnSearchProps('p_name'),
         },
         {
           title: 'Category',
           dataIndex: 'p_category',
-          editable: true,
-          ...getColumnSearchProps('category'),
+          key: 'p_category',
+          ...getColumnSearchProps('p_category'),
         },
         {
             title: 'Cost Price',
             dataIndex: 'p_costprice',
-            // sorter: (a, b) => a.costprice - b.costprice,
-            // sortOrder: sortedInfo.columnKey === 'costprice' ? sortedInfo.order : null,
-            // ellipsis: true,
+            key: 'p_costprice',
             sorter: {
-                compare: (a, b) => a.costprice - b.costprice,
+                compare: (a, b) => a.p_costprice - b.p_costprice,
                 multiple: 3,
               },
-            editable: true,
-            ...getColumnSearchProps('costprice'),
         },
         {
             title: 'Sell Price',
             dataIndex: 'p_sellprice',
-            // sorter: (a, b) => a.sellprice - b.sellprice,
-            // sortOrder: sortedInfo.columnKey === 'sellprice' ? sortedInfo.order : null,
-            // ellipsis: true,
-            ...getColumnSearchProps('sellprice'),
+            key: 'p_sellprice',
             sorter: {
-                compare: (a, b) => a.sellprice - b.sellprice,
+                compare: (a, b) => a.p_sellprice - b.p_sellprice,
                 multiple: 2,
               },
-            editable: true,
         },
         {
             title: 'Quantity',
             dataIndex: 'p_quantity',
-            // sorter: (a, b) => a.quantity - b.quantity,
-            // sortOrder: sortedInfo.columnKey === 'qunatity' ? sortedInfo.order : null,
-            // ellipsis: true,
-            ...getColumnSearchProps('quantity'),
+            key: 'p_quantity',
+            ...getColumnSearchProps('p_quantity'),
             sorter: {
-                compare: (a, b) => a.quantity - b.quantity,
+                compare: (a, b) => a.p_quantity - b.p_quantity,
                 multiple: 1,
             },
-            editable: true,
         },
         {
             title: 'Expire Date',
             dataIndex: 'expire_date',
-            editable: true,
+            key: 'expire_date',
             sorter: (a, b) => new Date(a.sl_date) - new Date(b.sl_date),
         sortDirections: ['descend', 'ascend'],
         render: (date) => {
@@ -281,65 +247,13 @@ const Products = () => {
         {
             title: 'Model Code',
             dataIndex: 'model_code',
-            editable: true,
-            ...getColumnSearchProps('modelcode'),
+            key: 'model_code',
+            ...getColumnSearchProps('model_code'),
         },
-        {
-        title: 'Delete Operation',
-        dataIndex: '',
-        key: 'x',
-        render: (_, record) =>
-            Data.length >= 1 ? (
-              <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.p_id)}>
-                <a>Delete</a>
-              </Popconfirm>
-            ) : null,
-        },
-        {
-        title: 'Edit Operation',
-        dataIndex: 'operation',
-        render: (_, record) => {
-          const editable = isEditing(record);
-          return editable ? (
-            <span>
-              <Typography.Link
-                onClick={() => save(record.key)}
-                style={{
-                  marginInlineEnd: 8,
-                }}
-              >
-                Save
-              </Typography.Link>
-              <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-                <a>Cancel</a>
-              </Popconfirm>
-            </span>
-          ) : (
-            <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
-              Edit
-            </Typography.Link>
-          );
-        },
-          },
       ];
     
 
 
-      // const mergedColumns = columns.map((col) => {
-      //   if (!col.editable) {
-      //     return col;
-      //   }
-      //   return {
-      //     ...col,
-      //     onCell: (record) => ({
-      //       record,
-      //       inputType: col.dataIndex === 'sellprice' | 'costprice' | 'qunatity' ? 'number' : 'text',
-      //       dataIndex: col.dataIndex,
-      //       title: col.title,
-      //       editing: isEditing(record),
-      //     }),
-      //   };
-      // });
       const handleUploadChange = (info) => {
         console.log(info.fileList);
         if (info.fileList.length > 0) {
@@ -379,16 +293,17 @@ const Products = () => {
         }
     };
     
-    const fetchProducts = async () => {
-        try {
-            const response = await axios.get('http://localhost:4000/AllProducts');
-            return response.data;
-        } catch (error) {
-            console.error('Error fetching products:', error);
-            return [];
-        }
-    };
-        return (
+
+    useEffect(() => {
+      fetchProducts().then((data) => {
+        setproductData(data);
+      } );
+      }, []);
+
+
+console.log(Data);
+
+    return (
     <>
         {/* section of table */}
         <h2 style = {{textAlign: "left", fontWeight: "500"}}>Products</h2>
@@ -398,33 +313,27 @@ const Products = () => {
             handleUploadChange={handleUploadChange}
             />
         <div className = "table-container">
-            <Space
-            style={{
-               marginBottom: 16,
-            }}
-            >
-            {/* <Button onClick={clearAll}>Clear sorters</Button> */}
-            </Space>
-            <Form form={form} component={false}>
             <Table
-                  components={{
-                      body: {
-                      cell: EditableCell,
-                  },
-              }}
-              bordered
               dataSource={Data}
-              columns={columns}
-              rowClassName="editable-row"
               showSorterTooltip={{
-                  target: 'sorter-icon',
+                target: 'sorter-icon',
               }}
-              rowKey={(record) => record.id} // Ensure rows have unique keys
-              pagination={{
-                onChange: cancel,
-              }}
+              rowKey="p_id" // Ensure rows have unique keys
+              onRow={(record) => ({
+                onClick: () => handleRowClick(record),
+              })}
+              columns={columns}
             />
-      </Form>
+
+            <ProductDetails
+            selectedProduct={selectedProduct}
+            isPDetailsOpen={isPDetailsOpen}
+            handleModalClose={closePDetails}
+            handleDelete={handleDelete}
+            editedData= {editedData}
+            seteditedData= {seteditedData}
+            handleSaveData = {saveEditedProductData}
+            />
         </div>
         
         </>

@@ -13,6 +13,8 @@
   },
   "dependencies": {
     "antd": "^5.22.2",
+    "moment": "^2.30.1",
+    "prop-types": "^15.8.1",
     "react-highlight-words": "^0.20.0"
   }
 }
