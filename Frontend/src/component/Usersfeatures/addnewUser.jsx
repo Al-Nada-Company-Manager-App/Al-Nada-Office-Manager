@@ -13,11 +13,16 @@ import {
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { UserAddOutlined } from "@ant-design/icons";
-import { useSelector,useDispatch } from "react-redux";
-import { addUsers,fetchUsers,setadduserModalVisible,setFile } from "../../Store/Users";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  addUsers,
+  fetchUsers,
+  setadduserModalVisible,
+  setFile,
+} from "../../Store/Users";
 const AddnewUser = () => {
   const dispatch = useDispatch();
-  const { adduserModalVisible, file} = useSelector((state) => state.Users);
+  const { adduserModalVisible, file } = useSelector((state) => state.Users);
 
   const handleUploadChange = (info) => {
     if (info.fileList.length > 0) {

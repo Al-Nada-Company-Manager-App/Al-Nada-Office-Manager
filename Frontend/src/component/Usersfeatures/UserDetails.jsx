@@ -1,7 +1,14 @@
 import React from "react";
 import { Modal, Button, Row, Col } from "antd";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchUsers,deleteUser,activateUser,deactivateUser ,setSelectedUser,setUserModalVisible} from "../../Store/Users";
+import {
+  fetchUsers,
+  deleteUser,
+  activateUser,
+  deactivateUser,
+  setSelectedUser,
+  setUserModalVisible,
+} from "../../Store/Users";
 const UserDetails = () => {
   const dispatch = useDispatch();
   const { selectedUser, userModalVisible } = useSelector(

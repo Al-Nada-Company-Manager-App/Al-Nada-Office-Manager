@@ -4,8 +4,12 @@ import "../../Styles/Users.css";
 import axios from "axios";
 import UserDetails from "./UserDetails";
 import AddnewUser from "./addnewUser";
-import { useSelector,useDispatch } from "react-redux";
-import { fetchUsers ,setSelectedUser,setUserModalVisible} from "../../Store/Users";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  fetchUsers,
+  setSelectedUser,
+  setUserModalVisible,
+} from "../../Store/Users";
 const columns = [
   {
     title: "fName",
@@ -36,35 +40,31 @@ const columns = [
   },
 ];
 
-
 const Users = () => {
   const dispatch = useDispatch();
-  const {usersData} = useSelector((state) => state.Users);
-  
+  const { usersData } = useSelector((state) => state.Users);
 
   React.useEffect(() => {
     dispatch(fetchUsers());
   }, []);
 
   const handleRowClick = (record) => {
-    console.log(record);
     dispatch(setSelectedUser(record));
     dispatch(setUserModalVisible(true));
   };
-  
 
   return (
     <>
-      <AddnewUser/>
+      <AddnewUser />
       <Table
         columns={columns}
         dataSource={usersData}
         onRow={(record) => ({
           onClick: () => handleRowClick(record),
         })}
-        rowKey={(record) => record.id} 
+        rowKey={(record) => record.id}
       />
-      <UserDetails/>
+      <UserDetails />
     </>
   );
 };

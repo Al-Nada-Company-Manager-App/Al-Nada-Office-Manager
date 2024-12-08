@@ -1,41 +1,41 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axiosInstance from '../Utils/axiosInstance';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axiosInstance from "../Utils/axiosInstance";
 
 export const checkSession = createAsyncThunk(
-  'auth/checkSession',
+  "auth/checkSession",
   async (_, thunkAPI) => {
     try {
-      const response = await axiosInstance.get('/session'); 
-      return response.data.success; 
+      const response = await axiosInstance.get("/session");
+      return response.data.success;
     } catch (error) {
-      console.error('Session check failed:', error);
-      return thunkAPI.rejectWithValue(false); 
+      console.error("Session check failed:", error);
+      return thunkAPI.rejectWithValue(false);
     }
   }
 );
 
 export const handleLogout = createAsyncThunk(
-  'auth/logout',
+  "auth/logout",
   async (_, thunkAPI) => {
     try {
-      await axiosInstance.get('/logout'); 
-      return true; 
+      await axiosInstance.get("/logout");
+      return true;
     } catch (error) {
-      console.error('Logout failed:', error);
-      return thunkAPI.rejectWithValue(false); 
+      console.error("Logout failed:", error);
+      return thunkAPI.rejectWithValue(false);
     }
   }
 );
 
 export const fetchSignedUser = createAsyncThunk(
-  'auth/fetchSignedUser',
+  "auth/fetchSignedUser",
   async (_, thunkAPI) => {
     try {
-      const response = await axiosInstance.get('/SignedUser'); 
-      return response.data; 
+      const response = await axiosInstance.get("/SignedUser");
+      return response.data;
     } catch (error) {
-      console.error('Fetch user failed:', error);
-      return thunkAPI.rejectWithValue(null); 
+      console.error("Fetch user failed:", error);
+      return thunkAPI.rejectWithValue(null);
     }
   }
 );
@@ -49,7 +49,7 @@ const initialState = {
 
 // Slice
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
     setLoggedIn: (state, action) => {

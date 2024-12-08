@@ -1,18 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../Utils/axiosInstance";
-
-export const checkSession = createAsyncThunk(
-  "auth/checkSession",
-  async (_, thunkAPI) => {
-    try {
-      const response = await axiosInstance.get("/session");
-      return response.data.success;
-    } catch (error) {
-      console.error("Session check failed:", error);
-      return thunkAPI.rejectWithValue(false);
-    }
-  }
-);
+import { approveNotification } from "./Notification";
 
 export const fetchUsers = createAsyncThunk(
   "auth/fetchUsers",
@@ -80,12 +68,13 @@ const initialState = {
   selectedUser: null,
   userModalVisible: false,
   adduserModalVisible: false,
+  approvedUsers: [],
   usersData: [],
   file: null,
 };
 
 // Slice
-const authSlice = createSlice({
+const userSlice = createSlice({
   name: "Users",
   initialState,
   reducers: {
@@ -106,15 +95,29 @@ const authSlice = createSlice({
     builder
       .addCase(fetchUsers.pending, (state, action) => {
         state.usersData = [];
+        state.approvedUsers = [];
       })
       .addCase(fetchUsers.fulfilled, (state, action) => {
         state.usersData = Array.isArray(action.payload) ? action.payload : [];
-    })
+        state.approvedUsers = state.usersData.filter(
+          (user) => user.e_active === false
+        );
+      })
       .addCase(fetchUsers.rejected, (state, action) => {
         state.usersData = [];
       });
+
+    builder.addCase(approveNotification.fulfilled, (state, action) => {
+      state.selectedUser = action.payload;
+      console.log;
+    });
   },
 });
 
-export const { setSelectedUser, setUserModalVisible, setFile ,setadduserModalVisible} = authSlice.actions;
-export default authSlice.reducer;
+export const {
+  setSelectedUser,
+  setUserModalVisible,
+  setFile,
+  setadduserModalVisible,
+} = userSlice.actions;
+export default userSlice.reducer;

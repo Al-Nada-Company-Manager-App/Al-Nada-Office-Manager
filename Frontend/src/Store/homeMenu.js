@@ -1,10 +1,10 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const homeMenuSlice = createSlice({
-  name: 'homeMenu',
+  name: "homeMenu",
   initialState: {
     collapsed: false,
-    currentContent: '1',
+    currentContent: "1",
   },
   reducers: {
     toggleCollapsed: (state) => {
