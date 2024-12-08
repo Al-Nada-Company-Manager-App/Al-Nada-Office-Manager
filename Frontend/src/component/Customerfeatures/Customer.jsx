@@ -12,9 +12,9 @@ import {
 import { UploadOutlined, SearchOutlined } from "@ant-design/icons";
 import axios from "axios";
 import Highlighter from "react-highlight-words";
-import "./Customer.css";
-import userPhoto from "../assets/UserPhoto.jpg";
-import CustomerDetails from "./Customerfeatures/CustomerDetails";
+import "../../Styles/Customer.css";
+import userPhoto from "../../assets/UserPhoto.jpg";
+import CustomerDetails from "./CustomerDetails";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 const Customer = () => {

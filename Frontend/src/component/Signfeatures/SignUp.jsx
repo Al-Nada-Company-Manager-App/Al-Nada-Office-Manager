@@ -1,5 +1,5 @@
 import React from "react";
-import "./Sign.css";
+import "../../Styles/Sign.css";
 import { Modal, Form, Input, Button, DatePicker, InputNumber, Radio, Upload, Row, Col } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import axios from "axios";

@@ -1,77 +1,46 @@
-import React, { useState } from 'react';
-// eslint-disable-next-line no-unused-vars
-import { Button, Layout, theme } from 'antd';
-import logo from './assets/logo.png';
-import MenuList from './component/Menulist';
-import THeader from './component/header';
-import Users from './component/Users';
-import Sales from './component/Sales';
-import ApproveUser from './component/ApproveUser';
-import Products from './component/Products'
-import axios from 'axios';
-import './App.css';
-import Customer from './component/Customer';
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { theme, ConfigProvider } from "antd";
+import "./Styles/index.css";
+import HomePage from "./component/HomePage.jsx";
+import Sign from "./component/Signfeatures/SignForm.jsx";
+import { checkSession,fetchSignedUser } from "./Store/authSlice.js";
 
-const {Sider, Content } = Layout;
-const getSignedUser = async () => {
-    const response = await axios.get('http://localhost:4000/SignedUser');
-    return response.data;
-}
+const App = () => {
+  const dispatch = useDispatch();
+  const { isLoggedIn, loading } = useSelector((state) => state.auth);
 
-const App = ({ onLogout }) => {
-    const [collapsed, setCollapsed] = useState(false);
-    const [currentContent, setCurrentContent] = useState('1');
-    const {
-        token: { colorBgContainer, borderRadiusLG,contentBg
-        },
-    } = theme.useToken();
-    const [signedUser, setSignedUser] = useState(null);
-    React.useEffect(() => {
-        getSignedUser().then((data) => {
-            setSignedUser(data);
-        });
-    }, []);
+  useEffect(() => {
+    dispatch(checkSession());
+    dispatch(fetchSignedUser());
+    
+  }, [dispatch]);
 
-    return (
-        <Layout>
-        <Sider trigger={null} collapsible collapsed={collapsed} className='sidebar'>
-            <div className="logo">
-                <img
-                src={logo}
-                alt="Logo"
-                className={`logo-img ${collapsed ? 'collapsed-logo' : ''}`}
-                />
-            </div>
-            <MenuList setCurrentContent={setCurrentContent} />
-        </Sider>
-        <Layout>
-            <THeader 
-            collapsed={collapsed} 
-            setCollapsed={setCollapsed} 
-            onLogout={onLogout}
-            signedUser={signedUser}
-            />
-            <Content
-            style={{
-                margin: '24px 16px',
-                padding: 24,
-                minHeight: 280,
-                background: contentBg,
-                borderRadius: borderRadiusLG,
-            }}
-            >
-                {currentContent === '3' && <Users />}
-                {currentContent === '4' && <ApproveUser />}
-                {currentContent === '6' && <Products/>}
-                {currentContent === '7' && <Products/>}
-                {currentContent === '8' && <Customer />}
-                {currentContent === '10' && <Sales />}
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
-
-            </Content>
-        </Layout>
-        </Layout>
-    );
+  return (
+    <div>
+      <ConfigProvider
+        theme={{
+          token: {
+            colorPrimary: "#0958d9",
+            borderRadius: 2,
+            colorBgContainer: "#fff",
+            contentBg: "#f5f5f5",
+          },
+        }}
+      >
+        {isLoggedIn ? (
+          <HomePage />
+        ) : (
+          <Sign onLoginSuccess={() => dispatch(checkSession())} />
+        )}
+      </ConfigProvider>
+    </div>
+  );
 };
 
 export default App;
+

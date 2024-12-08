@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
 import userPhoto from '../assets/UserPhoto.jpg';
-import './header.css'; 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import { faBell } from "@fortawesome/free-solid-svg-icons";
-import { Button,Layout,theme } from 'antd';
-import axios from 'axios';
-import UserDetails from './Usersfeatures/UserDetails';
-
-const { Header } = Layout;
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
 } from '@ant-design/icons';
+import '../Styles/header.css'; 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch,faBell } from "@fortawesome/free-solid-svg-icons";
+import { Button,Layout,theme } from 'antd';
+import axios from 'axios';
+import UserDetails from './Usersfeatures/UserDetails';
+import { handleLogout } from '../Store/authSlice';
+import { toggleCollapsed } from '../Store/homeMenu';
+import { useSelector , useDispatch } from 'react-redux';
+
+const { Header } = Layout;
 
 const fetchNotifications = async () => {
   try {
@@ -23,12 +25,20 @@ const fetchNotifications = async () => {
   }
 }
 
-function THeader({ collapsed, setCollapsed ,onLogout, signedUser }) {
+function THeader() {
+  const {collapsed} = useSelector((state) => state.homeMenu);
+  const { SignedUser } = useSelector((state) => state.auth);
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [getNotifications, setNotifications] = useState([]);
   const [selectedUser, setSelectedUser] = React.useState(null);
   const [isModalVisible, setIsModalVisible] = React.useState(false);
+
+  const dispatch = useDispatch();
+
+  const handletoggleCollapsed = () => {
+    dispatch(toggleCollapsed());
+  };
 
   const handleModalClose = () => {
     setIsModalVisible(false);
@@ -74,10 +84,10 @@ function THeader({ collapsed, setCollapsed ,onLogout, signedUser }) {
   const {
     token: { colorBgContainer },
   } = theme.useToken();
-  const handleLogout = () => {
-    onLogout();
-  };
 
+  const Logout = () => {
+    dispatch(handleLogout());
+  };
   const toggleNotificationDropdown = () => {
     setShowNotificationDropdown(!showNotificationDropdown)
   };
@@ -117,7 +127,7 @@ function THeader({ collapsed, setCollapsed ,onLogout, signedUser }) {
         <Button
           type="text"
           icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-          onClick={() => setCollapsed(!collapsed)}
+          onClick={() => handletoggleCollapsed()}
           style={{
             fontSize: '16px',
             width: 64,
@@ -168,7 +178,7 @@ function THeader({ collapsed, setCollapsed ,onLogout, signedUser }) {
           {/* User Profile */}
           <div className="user-profile">
             <img
-              src={signedUser?.Photo || userPhoto}
+              src={SignedUser?.Photo || userPhoto}
               alt="User"
               className="rounded-circle user-photo"
               style={{ width: "40px", height: "40px", cursor: "pointer" }}
@@ -179,7 +189,7 @@ function THeader({ collapsed, setCollapsed ,onLogout, signedUser }) {
               onClick={toggleUserDropdown}
               style={{ cursor: "pointer" }}
             >
-              {signedUser?.fName} {signedUser?.lName}
+              {SignedUser?.fName} {SignedUser?.lName}
             </span>
             {showUserDropdown && (
               <div className="dropdown-menu user-dropdown show" style={{ position: "absolute", top: "100%" }}>
@@ -188,7 +198,7 @@ function THeader({ collapsed, setCollapsed ,onLogout, signedUser }) {
                 <div className="dropdown-divider"></div>
                 <a href=""
                  className="dropdown-item"
-                 onClick={handleLogout}
+                 onClick={Logout}
                  >Logout</a>
               </div>
             )}

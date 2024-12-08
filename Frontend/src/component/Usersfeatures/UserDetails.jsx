@@ -1,91 +1,152 @@
 import React from "react";
-import { Modal, Button, Row, Col } from 'antd';
+import { Modal, Button, Row, Col } from "antd";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchUsers,deleteUser,activateUser,deactivateUser ,setSelectedUser,setUserModalVisible} from "../../Store/Users";
+const UserDetails = () => {
+  const dispatch = useDispatch();
+  const { selectedUser, userModalVisible } = useSelector(
+    (state) => state.Users
+  );
+  const handleModalClose = () => {
+    dispatch(setUserModalVisible(false));
+    dispatch(setSelectedUser(null));
+  };
 
+  const handleDeleteUser = (id) => async () => {
+    await dispatch(deleteUser(id));
+    dispatch(fetchUsers());
+    handleModalClose();
+  };
 
-const UserDetails = ({ selectedUser, isModalVisible, handleModalClose, handleDeleteUser, handledeactivateUser, handleactivateUser }) => {
-
-
-    return (
-        <> {selectedUser && (
-            <Modal
-            title="Employee Details"
-            centered
-            open={isModalVisible}
-            onCancel={handleModalClose}
-            footer={[
-              <Button key="close" onClick={handleModalClose}>
-                Close
-              </Button>,
-            ]}
-            width={800} // Increased modal width
-          >
-            {selectedUser && (
-              <div>
-                <Row gutter={16}>
-                  {/* Employee Image on the left */}
-                  <Col span={8}>
-                    <img
-                      src={selectedUser.e_photo || 'https://via.placeholder.com/150'}
-                      alt={`${selectedUser.f_name} ${selectedUser.l_name}`}
-                      style={{
-                        width: '100%',
-                        borderRadius: '8px',
-                        objectFit: 'cover',
-                        maxHeight: '300px', 
-                        marginTop: '16px',
-                        marginBottom: '16px',
-                      }}
-                    />
-                    <div className="user-actions">
-                      <Button className='user-actions-btn'
-                      key="deleteUser" onClick={handleDeleteUser(selectedUser.e_id)} type="primary" danger>
-                          Delete User
+  const handleactivateUser = (id) => async () => {
+    await dispatch(activateUser(id));
+    dispatch(fetchUsers());
+    handleModalClose();
+  };
+  const handledeactivateUser = (id) => async () => {
+    await dispatch(deactivateUser(id));
+    dispatch(fetchUsers());
+    handleModalClose();
+  };
+  return (
+    <>
+      {" "}
+      {selectedUser && (
+        <Modal
+          title="Employee Details"
+          centered
+          open={userModalVisible}
+          onCancel={handleModalClose}
+          footer={[
+            <Button key="close" onClick={handleModalClose}>
+              Close
+            </Button>,
+          ]}
+          width={800} // Increased modal width
+        >
+          {selectedUser && (
+            <div>
+              <Row gutter={16}>
+                {/* Employee Image on the left */}
+                <Col span={8}>
+                  <img
+                    src={
+                      selectedUser.e_photo || "https://via.placeholder.com/150"
+                    }
+                    alt={`${selectedUser.f_name} ${selectedUser.l_name}`}
+                    style={{
+                      width: "100%",
+                      borderRadius: "8px",
+                      objectFit: "cover",
+                      maxHeight: "300px",
+                      marginTop: "16px",
+                      marginBottom: "16px",
+                    }}
+                  />
+                  <div className="user-actions">
+                    <Button
+                      className="user-actions-btn"
+                      key="deleteUser"
+                      onClick={handleDeleteUser(selectedUser.e_id)}
+                      type="primary"
+                      danger
+                    >
+                      Delete User
+                    </Button>
+                    {selectedUser.e_active === true ? (
+                      <Button
+                        className="user-actions-btn"
+                        key="deactivateUser"
+                        onClick={handledeactivateUser(selectedUser.e_id)}
+                        danger
+                      >
+                        Deactivate User
                       </Button>
-                      {selectedUser.e_active === true ? (
-                      <Button className='user-actions-btn'
-                       key="deactivateUser" onClick={handledeactivateUser(selectedUser.e_id)} danger>
-                          Deactivate User
+                    ) : (
+                      <Button
+                        className="user-actions-btn"
+                        key="activateUser"
+                        onClick={handleactivateUser(selectedUser.e_id)}
+                        type="primary"
+                      >
+                        Activate User
                       </Button>
-                      ) : (
-                      <Button className='user-actions-btn'
-                       key="activateUser" onClick={handleactivateUser(selectedUser.e_id)} type="primary" >
-                          Activate User
-                      </Button>
-                      )}
-                    </div>
-                  </Col>
-      
-                  {/* Employee Details on the right */}
-                  <Col span={16}>
-                  <div className="user-details">
-                    <p><strong>First Name:</strong> {selectedUser.f_name}</p>
-                    <p><strong>Last Name:</strong> {selectedUser.l_name}</p>
-                    <p><strong>Birth Date:</strong> {selectedUser.birth_date}</p>
-                    <p><strong>Salary:</strong> ${selectedUser.salary}</p>
-                    <p><strong>Role:</strong> {selectedUser.e_role}</p>
-                    <p><strong>Gender:</strong> {selectedUser.e_gender}</p>
-                    <p><strong>Address:</strong> {selectedUser.e_address}</p>
-                    <p><strong>City:</strong> {selectedUser.e_city}</p>
-                    <p><strong>Country:</strong> {selectedUser.e_country}</p>
-                    <p><strong>Zip Code:</strong> {selectedUser.e_zipcode}</p>
-                    <p><strong>Username:</strong> {selectedUser.e_username}</p>
-                    <p><strong>Email:</strong> {selectedUser.e_email}</p>
+                    )}
                   </div>
-                 </Col>
-                </Row>
-      
-                {/* Additional Information */}
-                <Row gutter={16} style={{ marginTop: '16px' }}>
-                  <Col span={24}>
-                   
-                  </Col>
-                </Row>
-              </div>
-            )}
-          </Modal>
-       
-        )}</>
-       
-    );
+                </Col>
+
+                {/* Employee Details on the right */}
+                <Col span={16}>
+                  <div className="user-details">
+                    <p>
+                      <strong>First Name:</strong> {selectedUser.f_name}
+                    </p>
+                    <p>
+                      <strong>Last Name:</strong> {selectedUser.l_name}
+                    </p>
+                    <p>
+                      <strong>Birth Date:</strong> {selectedUser.birth_date}
+                    </p>
+                    <p>
+                      <strong>Salary:</strong> ${selectedUser.salary}
+                    </p>
+                    <p>
+                      <strong>Role:</strong> {selectedUser.e_role}
+                    </p>
+                    <p>
+                      <strong>Gender:</strong> {selectedUser.e_gender}
+                    </p>
+                    <p>
+                      <strong>Address:</strong> {selectedUser.e_address}
+                    </p>
+                    <p>
+                      <strong>City:</strong> {selectedUser.e_city}
+                    </p>
+                    <p>
+                      <strong>Country:</strong> {selectedUser.e_country}
+                    </p>
+                    <p>
+                      <strong>Zip Code:</strong> {selectedUser.e_zipcode}
+                    </p>
+                    <p>
+                      <strong>Username:</strong> {selectedUser.e_username}
+                    </p>
+                    <p>
+                      <strong>Email:</strong> {selectedUser.e_email}
+                    </p>
+                  </div>
+                </Col>
+              </Row>
+
+              {/* Additional Information */}
+              <Row gutter={16} style={{ marginTop: "16px" }}>
+                <Col span={24}></Col>
+              </Row>
+            </div>
+          )}
+        </Modal>
+      )}
+    </>
+  );
 };
-export default UserDetails
+export default UserDetails;

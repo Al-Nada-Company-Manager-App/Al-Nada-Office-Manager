@@ -3,10 +3,10 @@ import {useState, useRef,useEffect} from 'react';
 import axios from "axios";
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined } from '@ant-design/icons';
-import './Products.css';
-import AddnewProduct from "./Productfeatures/addnewProduct";
+import '../../Styles/Products.css';
+import AddnewProduct from "./addnewProduct";
 import { Form, Popconfirm, Typography } from 'antd';
-import EditableCell from './Productfeatures/EditableCell'; // Import your EditableCell component
+import EditableCell from './EditableCell'; // Import your EditableCell component
 
 const fetchProducts = async () => {
   try {

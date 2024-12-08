@@ -1,9 +1,8 @@
 import React from 'react';
 import { Table, Button } from 'antd';
-import './Users.css';
+import '../../Styles/Users.css';
 import axios from 'axios';
-import UserDetails from './Usersfeatures/UserDetails';
-import AddnewUser from './Usersfeatures/addnewUser';
+import UserDetails from './UserDetails';
 
 const columns = [
   {
@@ -39,29 +38,18 @@ const columns = [
 const fetchUsers = async () => {
   try {
     const response = await axios.get('http://localhost:4000/allUsers');
-     return response.data;
+    const pendingUsers = response.data.filter((user) => user.e_active === false);
+    return pendingUsers;
   } catch (error) {
     console.error('Error fetching users:', error);
   }
 };
 
 
-const Users = () => {
+const ApproveUser = () => {
   const [selectedUser, setSelectedUser] = React.useState(null);
   const [isModalVisible, setIsModalVisible] = React.useState(false);
   const [usersData, setUsersData] = React.useState([]);
-  const [file, setFile] = React.useState(null);
-
-    const handleUploadChange = (info) => {
-        console.log(info.fileList);
-        if (info.fileList.length > 0) {
-            const filee = info.fileList[0].originFileObj;
-            setFile(filee);
-        } else {
-            setFile(null); 
-        }
-    };
-
     React.useEffect(() => {
     fetchUsers().then((data) => {
       setUsersData(data);
@@ -112,44 +100,18 @@ const Users = () => {
         console.error('Error deactivating user:', error);
         }
   }
-    const handleFinish = async (values) => {
-        const formData = new FormData();
-        values.birth_date = values.birth_date ? values.birth_date.format('YYYY-MM-DD') : null;
-    
-        Object.keys(values).forEach((key) => {
-        formData.append(key, values[key]);
-        }); 
-        if (file) {
-            formData.append('photo', file); 
-        }
-        try {
-            await axios.post('http://localhost:4000/addUser', formData, {
-                withCredentials: true,
-                headers: {
-                    'Content-Type': 'multipart/form-data', 
-                },
-            });
-            fetchUsers().then((data) => {
-                setUsersData(data);
-            });
-            return true;
-        } catch (error) {
-            console.error('Error adding user:', error);
-            return false;
-        }
-    };
   
 
 
 
   return (
     <>
-       <AddnewUser
-            handleFinish={handleFinish}
-            handleUploadChange={handleUploadChange}
-        />
-        
-
+        <div style = {{
+                margin: 5,
+            }}>
+            <h1>Users need to be Approved</h1>
+        </div>
+     
       <Table
         columns={columns}
         dataSource={usersData}
@@ -166,10 +128,9 @@ const Users = () => {
             handledeactivateUser={handledeactivateUser}
             handleactivateUser={handleactivateUser}
         />
-
       
     </>
   );
 };
 
-export default Users;
+export default ApproveUser;

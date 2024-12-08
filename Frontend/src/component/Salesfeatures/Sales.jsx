@@ -3,9 +3,9 @@ import { SearchOutlined } from '@ant-design/icons';
 import { Button, Input, Space, Table } from 'antd';
 import Highlighter from 'react-highlight-words';
 import axios from 'axios';
-import './Sales.css';
-import SaleDetails from './Salesfeatures/SalesDetails';
-import AddNewSale from './Salesfeatures/AddNewSale';
+import '../../Styles/Sales.css';
+import SaleDetails from './SalesDetails';
+import AddNewSale from './AddNewSale';
 const fetchSales = async () => {
   try {
     const response = await axios.get('http://localhost:4000/allSales');
