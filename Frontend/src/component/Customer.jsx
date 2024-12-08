@@ -15,9 +15,10 @@ import Highlighter from "react-highlight-words";
 import "./Customer.css";
 import userPhoto from "../assets/UserPhoto.jpg";
 import CustomerDetails from "./Customerfeatures/CustomerDetails";
-import jsPDF from "jspdf";
-import "jspdf-autotable";
-import * as XLSX from "xlsx";
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+import * as XLSX from 'xlsx';
+
 
 const Customer = () => {
   const [customersData, setCustomersData] = useState([]);
