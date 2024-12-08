@@ -33,7 +33,6 @@ const columns = [
     dataIndex: "e_email",
   },
 ];
-
 import { useSelector, useDispatch } from "react-redux";
 import {
   fetchUsers,
@@ -43,7 +42,7 @@ import {
 
 const ApproveUser = () => {
   const dispatch = useDispatch();
-  const { approvedUsers } = useSelector((state) => state.Users);
+  const { approvedUsers,userLoading } = useSelector((state) => state.Users);
   React.useEffect(() => {
     dispatch(fetchUsers());
   }, []);
@@ -66,6 +65,7 @@ const ApproveUser = () => {
       <Table
         columns={columns}
         dataSource={approvedUsers}
+        loading={userLoading}
         onRow={(record) => ({
           onClick: () => handleRowClick(record),
         })}

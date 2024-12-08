@@ -11,10 +11,11 @@ const App = () => {
   const { isLoggedIn, loading } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    dispatch(checkSession());
-    dispatch(fetchSignedUser());
-    
+    dispatch(checkSession());    
   }, [dispatch]);
+  useEffect(() => {
+    dispatch(fetchSignedUser ());
+  }, [isLoggedIn,dispatch])
 
   if (loading) {
     return <div>Loading...</div>;

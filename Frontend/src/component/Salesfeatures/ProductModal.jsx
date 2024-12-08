@@ -1,60 +1,62 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Table, Input, Button, InputNumber } from "antd";
-import axios from "axios";
+import { useDispatch,useSelector } from "react-redux";
+import { fetchProducts,setSelectedProduct,setfilteredProducts,setSelectedProductModalVisible } from "../../Store/Product";
 
-const getProducts = async () => {
-  try {
-    const response = await axios.get("http://localhost:4000/allProductsSales");
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching products:", error);
-    return [];
-  }
-};
-
-const ProductModal = ({ visible, onClose, onSelectProducts, type }) => {
+const ProductModal = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [products, setProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
-  const [selectedProducts, setSelectedProducts] = useState([]);
-
+  const dispatch = useDispatch();
+  const { productsData,selectedProductModalVisible,selectedProducts, filteredProducts,productLoading} = useSelector((state) => state.Products);
+  const {saleType} = useSelector((state) => state.Sales);
   useEffect(() => {
-    const fetchProducts = async () => {
-      const productss = await getProducts();
-      setProducts(productss);
-      setFilteredProducts(productss); 
-    };
-    fetchProducts();
+      dispatch(fetchProducts());
+      dispatch(setfilteredProducts(productsData));
   }, []);
 
   const handleSelect = (product) => {
+    console.log(product);
     if (selectedProducts.some((item) => item.p_id === product.p_id)) {
       // Deselect the product
-      setSelectedProducts((prev) =>
-        prev.filter((item) => item.p_id !== product.p_id)
+      const updatedSelectedProducts = selectedProducts.filter(
+        (item) => item.p_id !== product.p_id
       );
-      setFilteredProducts((prev) => [...prev, product]);
+      const updatedFilteredProducts = [...filteredProducts, product];
+  
+      dispatch(setSelectedProduct(updatedSelectedProducts));  
+      dispatch(setfilteredProducts(updatedFilteredProducts));
     } else {
       // Select the product
-      setFilteredProducts((prev) =>
-        prev.filter((item) => item.p_id !== product.p_id)
+      const updatedFilteredProducts = filteredProducts.filter(
+        (item) => item.p_id !== product.p_id
       );
-      setSelectedProducts((prev) => [
-        ...prev,
-        { ...product, quantity: product.p_quantity, totalCost: product.p_sellprice * product.p_quantity },
-        ]);
+      const updatedSelectedProducts = [
+        ...selectedProducts,
+        { ...product, quantity: 1, totalCost: product.p_sellprice },
+      ];
+  
+      dispatch(setSelectedProduct(updatedSelectedProducts));  // Dispatch the updated selected products
+      dispatch(setfilteredProducts(updatedFilteredProducts)); // Dispatch the updated filtered products
     }
   };
 
   const updateProductDetails = (p_id, key, value) => {
-    setSelectedProducts((prev) =>
-      prev.map((item) =>
-        item.p_id === p_id
-          ? { ...item, [key]: value, totalCost: item.p_sellprice * (value || 1) }
-          : item
+    dispatch(
+      setSelectedProduct(
+        selectedProducts.map((item) =>
+          item.p_id === p_id
+            ? {
+                ...item,
+                [key]: value,
+                totalCost: item.p_sellprice * (value || 1),
+              }
+            : item
+        )
       )
     );
   };
+
+  const closeProductModal = () => dispatch(setSelectedProductModalVisible(false));
+
 
   const mainColumns = [
     {
@@ -62,7 +64,7 @@ const ProductModal = ({ visible, onClose, onSelectProducts, type }) => {
       dataIndex: "p_name",
       key: "name",
     },
-    ...(type === "SELLITEMS"
+    ...(saleType === "SELLITEMS"
       ? [
           {
             title: "Price",
@@ -90,7 +92,7 @@ const ProductModal = ({ visible, onClose, onSelectProducts, type }) => {
       dataIndex: "p_name",
       key: "name",
     },
-    ...(type === "SELLITEMS"
+    ...(saleType === "SELLITEMS"
       ? [
           {
             title: "Quantity",
@@ -126,35 +128,24 @@ const ProductModal = ({ visible, onClose, onSelectProducts, type }) => {
   const handleSearch = (e) => {
     const searchValue = e.target.value.toLowerCase();
     setSearchTerm(searchValue);
-    setFilteredProducts(
-      products.filter((product) =>
-        product.p_name.toLowerCase().includes(searchValue)
-      )
+    const filtered = products.filter((product) =>
+      product.p_name.toLowerCase().includes(searchValue)
     );
+  
+    dispatch(setFilteredProducts(filtered)); // Dispatch filtered products
   };
 
   const handleSubmit = () => {
-    if (type === "SELLITEMS") {
-      onSelectProducts(
-        selectedProducts.map((product) => ({
-          p_id: product.p_id,
-          quantity: product.quantity,
-          totalCost: product.totalCost,
-        }))
-      );
-    } else {
-      onSelectProducts(selectedProducts.map((product) => product.p_id));
-    }
-    onClose();
+  closeProductModal();
   };
 
   return (
     <Modal
       title="Select Products"
-      open={visible}
-      onCancel={onClose}
+      open={selectedProductModalVisible}
+      onCancel={closeProductModal}
       footer={[
-        <Button key="cancel" onClick={onClose}>
+        <Button key="cancel" onClick={closeProductModal}>
           Cancel
         </Button>,
         <Button key="submit" type="primary" onClick={handleSubmit}>
@@ -174,6 +165,7 @@ const ProductModal = ({ visible, onClose, onSelectProducts, type }) => {
         dataSource={filteredProducts}
         columns={mainColumns}
         rowKey="p_id"
+        loading={productLoading}
         pagination={false}
       />
       {selectedProducts.length > 0 && (

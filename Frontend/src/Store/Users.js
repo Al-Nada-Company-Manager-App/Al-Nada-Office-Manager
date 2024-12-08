@@ -71,6 +71,7 @@ const initialState = {
   approvedUsers: [],
   usersData: [],
   file: null,
+  userLoading: false,
 };
 
 // Slice
@@ -96,15 +97,19 @@ const userSlice = createSlice({
       .addCase(fetchUsers.pending, (state, action) => {
         state.usersData = [];
         state.approvedUsers = [];
+        state.userLoading = true;
       })
       .addCase(fetchUsers.fulfilled, (state, action) => {
         state.usersData = Array.isArray(action.payload) ? action.payload : [];
         state.approvedUsers = state.usersData.filter(
           (user) => user.e_active === false
         );
+        state.userLoading = false;
       })
       .addCase(fetchUsers.rejected, (state, action) => {
         state.usersData = [];
+        state.approvedUsers = [];
+        state.userLoading = false;
       });
 
     builder.addCase(approveNotification.fulfilled, (state, action) => {

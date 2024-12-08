@@ -13,42 +13,33 @@ import { UploadOutlined, SearchOutlined } from "@ant-design/icons";
 import axios from "axios";
 import Highlighter from "react-highlight-words";
 import "../../Styles/Customer.css";
-import userPhoto from "../../assets/UserPhoto.jpg";
 import CustomerDetails from "./CustomerDetails";
+import AddnewCustomer from "./addnewCustomer";  
+import UpdateCustomerModal from "./updateCustomer";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
+import { useSelector,useDispatch } from "react-redux";
+import { handleDeleteCustomer,fetchCustomers,setCustomerModalVisible,setSelectedCustomer,setaddCustomerModalVisible,setupdateCustomerModalVisible } from "../../Store/Customer";
+
+
+
 const Customer = () => {
-  const [customersData, setCustomersData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
+  const { customersData, CustomersLoading} = useSelector((state) => state.Customers);
+  const dispatch = useDispatch();
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
-  const [selectedCustomer, setSelectedCustomer] = useState(null);
-  const [isDetailsModalVisible, setIsDetailsModalVisible] = useState(false);
-  const [file, setFile] = useState(null);
   const searchInput = useRef(null);
   const handleRowClick = (record) => {
-    setSelectedCustomer(record); // Set the clicked customer as selected
-    setIsDetailsModalVisible(true); // Open the modal
+    dispatch(setCustomerModalVisible(true)); 
+    dispatch(setSelectedCustomer(record));
   };
-  const fetchCustomers = async () => {
-    try {
-      const response = await axios.get("http://localhost:4000/allcustomers");
-      setCustomersData(response.data);
-      setFilteredData(response.data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  useEffect(() => {
+    dispatch(fetchCustomers());
+  }, [dispatch]);
   const exportToPDF = () => {
     const doc = new jsPDF();
-
-    // Add title
     doc.setFontSize(18);
     doc.text("Customer List", 14, 20);
-
-    // Format data for autoTable
     const tableColumn = [
       "Name",
       "Address",
@@ -65,18 +56,13 @@ const Customer = () => {
       customer.c_zipcode,
       customer.c_fax,
     ]);
-
-    // Add table
     doc.autoTable({
       head: [tableColumn],
       body: tableRows,
       startY: 30,
     });
-
-    // Save the PDF
     doc.save("Customer_List.pdf");
   };
-  // Search functionality
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
     setSearchText(selectedKeys[0]);
@@ -205,24 +191,6 @@ const Customer = () => {
     { title: "Zip Code", dataIndex: "c_zipcode" },
     { title: "Fax", dataIndex: "c_fax" },
     {
-      title: "Photo",
-      dataIndex: "c_name",
-      render: (text) =>
-        text ? (
-          <img
-            src={`http://localhost:4000/uploads/${text}.jpg`}
-            alt="Customer"
-            style={{ width: "50px", borderRadius: "4px" }}
-          />
-        ) : (
-          <img
-            src={userPhoto}
-            alt="Default Customer"
-            style={{ width: "50px", borderRadius: "4px" }}
-          />
-        ),
-    },
-    {
       title: "Action",
       render: (_, record) => (
         <>
@@ -230,7 +198,7 @@ const Customer = () => {
             type="link"
             className="update-btn"
             onClick={(e) => {
-              e.stopPropagation(); // Prevent triggering row click
+              e.stopPropagation(); 
               handleEdit(record);
             }}
           >
@@ -240,7 +208,7 @@ const Customer = () => {
             type="link"
             className="delete-btn"
             onClick={(e) => {
-              e.stopPropagation(); // Prevent triggering row click
+              e.stopPropagation(); 
               handleDelete(record.c_id);
             }}
           >
@@ -251,237 +219,47 @@ const Customer = () => {
     },
   ];
 
-  // Handle adding a customer
-  const handleAddCustomer = async (values) => {
-    const formData = new FormData();
-    Object.entries(values).forEach(([key, value]) =>
-      formData.append(key, value)
-    );
-    if (file) formData.append("photo", file);
 
-    try {
-      await axios.post("http://localhost:4000/addcustomer", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      message.success("Customer added successfully");
-      fetchCustomers();
-      setIsModalVisible(false);
-    } catch (err) {
-      console.error(err);
-      message.error("Failed to add customer");
-    }
-  };
-
-  // Handle deleting a customer
   const handleDelete = async (id) => {
-    try {
-      await axios.post("http://localhost:4000/deletecustomer", { id });
-      message.success("Customer deleted successfully");
-      fetchCustomers();
-    } catch (err) {
-      console.error(err);
-      message.error("Failed to delete customer");
-    }
+     await dispatch(handleDeleteCustomer(id));
+     dispatch(fetchCustomers());
   };
 
-  // Handle editing a customer
   const handleEdit = (customer) => {
-    setSelectedCustomer(customer);
-    setIsUpdateModalVisible(true);
-  };
+    dispatch(setSelectedCustomer(customer));
+    dispatch(setupdateCustomerModalVisible(true));
+   };
+  
+  const handleaddClick = () => {
+    dispatch(setaddCustomerModalVisible(true));
+  }
 
-  // Handle updating a customer
-  const handleUpdateCustomer = async (values) => {
-    const formData = new FormData();
 
-    // Correct way to append C_ID to formData
-    formData.append("C_ID", selectedCustomer.c_id); // Use .append with key as string
-
-    // Append the other values from the form
-    Object.entries(values).forEach(([key, value]) =>
-      formData.append(key, value)
-    );
-
-    // If a new photo is selected, append it as well
-    if (file) formData.append("photo", file);
-
-    try {
-      // Send the request with multipart/form-data
-      await axios.post("http://localhost:4000/updatecustomer", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-
-      // Success message and refresh the data
-      message.success("Customer updated successfully");
-      fetchCustomers();
-      setIsUpdateModalVisible(false);
-    } catch (err) {
-      console.error(err);
-      message.error("Failed to update customer");
-    }
-  };
-
-  // Modal for adding a customer
-  const addCustomerModal = (
-    <Modal
-      title="Add Customer"
-      visible={isModalVisible}
-      onCancel={() => setIsModalVisible(false)}
-      footer={null}
-    >
-      <Form layout="vertical" onFinish={handleAddCustomer}>
-        <Form.Item
-          name="C_NAME"
-          label="Customer Name"
-          rules={[{ required: true }]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          name="C_ADDRESS"
-          label="Address"
-          rules={[{ required: true }]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item name="C_CITY" label="City" rules={[{ required: true }]}>
-          <Input />
-        </Form.Item>
-        <Form.Item
-          name="C_COUNTRY"
-          label="Country"
-          rules={[{ required: true }]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          name="C_ZIPCODE"
-          label="Zip Code"
-          rules={[{ required: true }]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item name="C_FAX" label="Fax">
-          <Input />
-        </Form.Item>
-        <Form.Item label="Photo">
-          <Upload
-            beforeUpload={(file) => {
-              setFile(file);
-              return false;
-            }}
-            maxCount={1}
-          >
-            <Button icon={<UploadOutlined />}>Upload Photo</Button>
-          </Upload>
-        </Form.Item>
-        <Form.Item>
-          <Button type="primary" htmlType="submit">
-            Submit
-          </Button>
-        </Form.Item>
-      </Form>
-    </Modal>
-  );
-
-  // Modal for updating a customer
-  const updateCustomerModal = (
-    <Modal
-      title="Update Customer"
-      visible={isUpdateModalVisible}
-      onCancel={() => setIsUpdateModalVisible(false)}
-      footer={null}
-    >
-      <Form
-        layout="vertical"
-        onFinish={handleUpdateCustomer}
-        initialValues={selectedCustomer}
-      >
-        <Form.Item
-          name="C_NAME"
-          label="Customer Name"
-          rules={[{ required: true }]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          name="C_ADDRESS"
-          label="Address"
-          rules={[{ required: true }]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item name="C_CITY" label="City" rules={[{ required: true }]}>
-          <Input />
-        </Form.Item>
-        <Form.Item
-          name="C_COUNTRY"
-          label="Country"
-          rules={[{ required: true }]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          name="C_ZIPCODE"
-          label="Zip Code"
-          rules={[{ required: true }]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item name="C_FAX" label="Fax">
-          <Input />
-        </Form.Item>
-        <Form.Item label="Photo">
-          <Upload
-            beforeUpload={(file) => {
-              setFile(file);
-              return false;
-            }}
-            maxCount={1}
-          >
-            <Button icon={<UploadOutlined />}>Upload Photo</Button>
-          </Upload>
-        </Form.Item>
-        <Form.Item>
-          <Button type="primary" htmlType="submit">
-            Update
-          </Button>
-        </Form.Item>
-      </Form>
-    </Modal>
-  );
-
-  useEffect(() => {
-    fetchCustomers();
-  }, []);
 
   return (
     <div>
       <Button
         type="primary"
-        onClick={() => setIsModalVisible(true)}
-        style={{ marginRight: 16 }} // Add space to the right
+        onClick={() => handleaddClick()}
+        style={{ marginRight: 16 }}
       >
         Add Customer
       </Button>
       <Button type="primary" onClick={exportToPDF} style={{ marginBottom: 16 }}>
         Export to PDF
       </Button>
-      {addCustomerModal}
-      {updateCustomerModal}
       <Table
         columns={columns}
-        dataSource={filteredData}
+        dataSource={customersData}
+        loading={CustomersLoading}
         rowKey="c_id"
         onRow={(record) => ({
-          onClick: () => handleRowClick(record), // Handle row click
+          onClick: () => handleRowClick(record), 
         })}
       />
-      <CustomerDetails
-        selectedCustomer={selectedCustomer} // The selected customer object
-        isModalVisible={isDetailsModalVisible} // Modal visibility state
-        handleModalClose={() => setIsDetailsModalVisible(false)} // Close modal
-      />
+      <CustomerDetails/>
+      <AddnewCustomer/>
+      <UpdateCustomerModal/>
     </div>
   );
 };

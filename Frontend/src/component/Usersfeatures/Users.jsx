@@ -42,7 +42,7 @@ const columns = [
 
 const Users = () => {
   const dispatch = useDispatch();
-  const { usersData } = useSelector((state) => state.Users);
+  const { usersData,userLoading } = useSelector((state) => state.Users);
 
   React.useEffect(() => {
     dispatch(fetchUsers());
@@ -59,6 +59,7 @@ const Users = () => {
       <Table
         columns={columns}
         dataSource={usersData}
+        loading={userLoading}
         onRow={(record) => ({
           onClick: () => handleRowClick(record),
         })}

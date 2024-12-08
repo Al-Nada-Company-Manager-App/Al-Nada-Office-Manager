@@ -61,6 +61,16 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(fetchSignedUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchSignedUser.fulfilled, (state, action) => {
+        state.SignedUser = action.payload;
+        state.loading = false;
+      })
+      .addCase(fetchSignedUser.rejected, (state) => {
+        state.loading = false;
+      })
       .addCase(checkSession.pending, (state) => {
         state.loading = true;
       })
@@ -81,17 +91,6 @@ const authSlice = createSlice({
         state.loading = false;
       })
       .addCase(handleLogout.rejected, (state) => {
-        state.loading = false;
-      })
-
-      .addCase(fetchSignedUser.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(fetchSignedUser.fulfilled, (state, action) => {
-        state.SignedUser = action.payload;
-        state.loading = false;
-      })
-      .addCase(fetchSignedUser.rejected, (state) => {
         state.loading = false;
       });
   },

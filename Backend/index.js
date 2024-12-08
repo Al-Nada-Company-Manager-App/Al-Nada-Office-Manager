@@ -58,8 +58,6 @@ const storage = multer.diskStorage({
       const firstName = req.body.C_NAME.split(" ")[0]; // Take the first part before a space
       photoname = firstName;
     }
-    console.log(photoname);
-    console.log(req.body);
     const username = req.body.username;
     const ext = path.extname(file.originalname);
     cb(null, `${photoname}${ext}`);
@@ -199,12 +197,10 @@ app.post("/sendNotification", async (req, res) => {
 app.get("/getemployeebyid/", async (req, res) => {
   const { id } = req.query;
   const result = await db.query("SELECT * FROM EMPLOYEE WHERE E_ID = $1", [id]);
-  console.log(result.rows[0]);
   res.json(result.rows[0]);
 });
 app.post("/deleteNotification", async (req, res) => {
   const { n_id } = req.body;
-  console.log(n_id);
 
   await db.query(
     `
@@ -232,19 +228,6 @@ app.get("/allSales", async (req, res) => {
             CUSTOMER ON SALES.C_ID = CUSTOMER.C_ID
     `);
   const rows = result.rows;
-  console.log(rows);
-  res.json(rows);
-});
-
-app.get("/allCustomerSales", async (req, res) => {
-  const result = await db.query(`
-        SELECT
-            C_ID,
-            C_NAME
-        FROM
-            CUSTOMER
-    `);
-  const rows = result.rows;
   res.json(rows);
 });
 
@@ -259,7 +242,6 @@ app.get("/allProductsSales", async (req, res) => {
             STOCK
     `);
   const rows = result.rows;
-  console.log(rows);
 
   res.json(rows);
 });
@@ -273,13 +255,13 @@ app.post("/addSale", async (req, res) => {
       cost,
       discount,
       tax,
-      total,
       paidAmount,
       insuranceAmount,
       status,
       currency,
       saleDate,
       products, // Array of product objects: [{ p_id, quantity }]
+      total,
     } = req.body;
 
     const formatDate = new Date(saleDate);
@@ -393,7 +375,6 @@ app.post("/updatecustomer", upload.single("photo"), async (req, res) => {
     req.body;
   const C_PHOTO = req.file ? req.file.filename : null; // If a new photo is uploaded, use the new filename
   try {
-    // Correct the SQL query
     await db.query(
       "UPDATE Customer SET C_NAME = $1, C_ADDRESS = $2, C_CITY = $3, C_COUNTRY = $4, C_ZIPCODE = $5, C_FAX = $6, C_PHOTO = $7 WHERE C_ID = $8",
       [
@@ -403,15 +384,15 @@ app.post("/updatecustomer", upload.single("photo"), async (req, res) => {
         C_COUNTRY,
         C_ZIPCODE,
         C_FAX,
-        C_PHOTO, // Add the photo to the update query
-        C_ID, // Use C_ID as the identifier to update the correct customer
+        C_PHOTO, 
+        C_ID, 
       ]
     );
 
-    res.send("Customer updated successfully"); // Success message
+    res.send("Customer updated successfully"); 
   } catch (err) {
-    console.error(err); // Log the error for debugging
-    res.status(500).send("Error updating customer"); // Error response
+    console.error(err); 
+    res.status(500).send("Error updating customer"); 
   }
 });
 app.get("/customersales", async (req, res) => {
@@ -456,7 +437,6 @@ app.get("/customersales", async (req, res) => {
 // Example Node.js/Express endpoint
 app.get("/getCustomerSales/:id", async (req, res) => {
   const customerId = req.params.id;
-  console.log(customerId);
   try {
     const sales = await db.query(
       `SELECT * FROM SALES WHERE C_ID = $1 ORDER BY SL_DATE DESC`,
