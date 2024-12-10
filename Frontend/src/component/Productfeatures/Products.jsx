@@ -6,21 +6,18 @@ import { SearchOutlined } from '@ant-design/icons';
 import '../../Styles/Products.css';
 import AddnewProduct from "./addnewProduct";
 import ProductDetails from './ProductDetails';
-
-
-const fetchProducts = async () => {
-    try {
-        const response = await axios.get('http://localhost:4000/AllProducts');
-        return (response.data);
-    } catch (error) {
-        console.error('Error fetching products:', error);
-    }
-};
+import { useSelector,useDispatch } from "react-redux";
+import { setEditedSelectedProduct,setSelecteditem,fetchProducts,setdetailProductModalVisible } from "../../Store/Product";
 
 
 const Products = () => {
     
     const [Data,setproductData] = useState([]);
+    const dispatch = useDispatch();
+
+    const { productsData,productLoading,deleteProductModalVisible } = useSelector((state) => state.Products);
+
+
 
     const [file, setFile] = useState(null);
     const [selectedProduct, setSelectedProduct] = useState(null);
@@ -36,14 +33,6 @@ const Products = () => {
       model_code: "",
     });
 
-    const [isPDetailsOpen, setisPDetailsOpen] = useState(false);
-
-    //set the product details is open
-    const openPDetails = () => setisPDetailsOpen(true);
-    const closePDetails = () => {
-      setisPDetailsOpen(false);
-      setSelectedProduct(null);
-    };
 
 
 
@@ -61,9 +50,9 @@ const Products = () => {
 
 
     const handleRowClick = (record) => {
-      setSelectedProduct(record);
-      seteditedData(record);
-      openPDetails();
+      dispatch(setSelecteditem(record));
+      dispatch(setEditedSelectedProduct(record));
+      dispatch(setdetailProductModalVisible(true));
     };
 
 
@@ -179,17 +168,7 @@ const Products = () => {
     //   end search handle
 
 
-    const handleDelete = async (id) => {
-      try {
-        const response = await axios.post('http://localhost:4000/DeleteProduct', { id }, { withCredentials: true });
-        fetchProducts().then((data) => {
-            setproductData(data);
-          });
-          console.log('delete');
-    } catch (error) {
-      console.error('Error deleting user:', error);
-    }
-      };
+
 
 
     const columns = [
@@ -295,13 +274,10 @@ const Products = () => {
     
 
     useEffect(() => {
-      fetchProducts().then((data) => {
-        setproductData(data);
-      } );
-      }, []);
+        dispatch(fetchProducts());
+    }, [dispatch]);
 
 
-console.log(Data);
 
     return (
     <>
@@ -314,7 +290,7 @@ console.log(Data);
             />
         <div className = "table-container">
             <Table
-              dataSource={Data}
+              dataSource={productsData}
               showSorterTooltip={{
                 target: 'sorter-icon',
               }}
@@ -323,17 +299,10 @@ console.log(Data);
                 onClick: () => handleRowClick(record),
               })}
               columns={columns}
+              loading={productLoading}
             />
 
-            <ProductDetails
-            selectedProduct={selectedProduct}
-            isPDetailsOpen={isPDetailsOpen}
-            handleModalClose={closePDetails}
-            handleDelete={handleDelete}
-            editedData= {editedData}
-            seteditedData= {seteditedData}
-            handleSaveData = {saveEditedProductData}
-            />
+            <ProductDetails/>
         </div>
         
         </>

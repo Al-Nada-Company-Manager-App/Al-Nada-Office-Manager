@@ -12,13 +12,27 @@ export const fetchProducts = createAsyncThunk(
     }
   }
 );
+export const handleDeleteProduct = createAsyncThunk(
+  "Products/handleDeleteProduct",
+  async (id) => {
+    try {
+      await axiosInstance.post("/DeleteProduct", {id});
+      return id;
+    } catch (error) {
+      console.error("Error deleting product:", error);
+    }
+  }
+);
 
 // Initial state
 const initialState = {
   productsData: [],
   selectedProducts: [],
+  editedSelectedProduct: null,
+  selectedProduct:null,
   filteredProducts: [],
   selectedProductModalVisible: false,
+  detailProductModalVisible: false,
   productLoading: false,
 };
 
@@ -36,6 +50,15 @@ const productSlice = createSlice({
     setfilteredProducts: (state, action) => {
       state.filteredProducts = action.payload;
     },
+    setdetailProductModalVisible: (state, action) => {
+      state.detailProductModalVisible = action.payload;
+    },
+    setSelecteditem: (state, action) => {
+      state.selectedProduct = action.payload
+    },
+    setEditedSelectedProduct: (state, action) => {
+      state.editedSelectedProduct = action.payload;
+    },  
   },
   extraReducers: (builder) => {
     builder
@@ -57,5 +80,9 @@ export const {
   setfilteredProducts,
   setSelectedProduct,
   setSelectedProductModalVisible,
+  setdetailProductModalVisible,
+  setSelecteditem,
+  setEditedSelectedProduct,
+
 } = productSlice.actions;
 export default productSlice.reducer;

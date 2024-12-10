@@ -3,9 +3,13 @@ import { Modal, Row, Col, Button } from 'antd';
 import { useState, useEffect } from 'react';
 import EditexitProduct from './editexitProduct';
 import {Form} from 'antd';
+import { useSelector,useDispatch } from 'react-redux';
+import { setdetailProductModalVisible,setSelecteditem,handleDeleteProduct,fetchProducts } from '../../Store/Product';
+import { use } from 'react';
 // eslint-disable-next-line react/prop-types, no-unused-vars
-const ProductDetails = ({ selectedProduct, isPDetailsOpen, handleModalClose, handleDelete, editedData, seteditedData, handleSaveData}) => {
-
+const ProductDetails = ({ handleSaveData}) => {
+  const dispatch = useDispatch();
+  const { selectedProduct,detailProductModalVisible,editedSelectedProduct} = useSelector((state) => state.Products);
   const [isEditProductOpen, setisEditProductOpen] = useState(false);
   const closeEditProduct = () => setisEditProductOpen(false);
   const [editingform] = Form.useForm();
@@ -13,21 +17,31 @@ const ProductDetails = ({ selectedProduct, isPDetailsOpen, handleModalClose, han
 
   const openEditProduct = () => {
     setisEditProductOpen(true);
+    
   };
 
   useEffect(() => {
-    if (editedData) {
-      editingform.setFieldsValue(editedData);  // Update form fields with editedData
+    if (editedSelectedProduct) {
+      editingform.setFieldsValue(editedSelectedProduct);  // Update form fields with editedData
     }
-  }, [editedData, editingform]);
-
+  }, [editedSelectedProduct, editingform]);
+ const handleModalClose = () => {
+    dispatch(setdetailProductModalVisible(false));
+    dispatch(setSelecteditem(null));
+  }
+  const handleDelete = async (id) => {
+    await dispatch(handleDeleteProduct(id));
+    dispatch(fetchProducts());
+    dispatch(setdetailProductModalVisible(false));
+    
+    };
 
     return (
         <> {selectedProduct && (
             <Modal
             title="Product Details"
             centered
-            open={isPDetailsOpen}
+            open={detailProductModalVisible}
             onCancel={handleModalClose}
             footer={[
               <Button key="close" onClick={handleModalClose}>
@@ -84,14 +98,14 @@ const ProductDetails = ({ selectedProduct, isPDetailsOpen, handleModalClose, han
                 </Row>
               </div>
             )}
-            <EditexitProduct
+            {/* <EditexitProduct
             editedData= {editedData}
             seteditedData= {seteditedData}
             isEditProductOpen= {isEditProductOpen}
             closeEditProduct= {closeEditProduct}
             handleSaveData = {handleSaveData}
             editingform={editingform}
-            />
+            /> */}
           </Modal>
           
       )}
