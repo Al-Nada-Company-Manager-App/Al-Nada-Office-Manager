@@ -39,7 +39,6 @@ const AddNewSale = () => {
 
   const [form] = Form.useForm();
 
-  const openSaleModal = () => dispatch(setaddSaleModalVisible(true));
   const closeSaleModal = () => {
     dispatch(setaddSaleModalVisible(false));
     dispatch(setSelectedCustomer(null));
@@ -90,20 +89,7 @@ const AddNewSale = () => {
 
   return (
     <div>
-      <Button
-        type="primary"
-        onClick={openSaleModal}
-        style={{
-          marginBottom: "16px",
-          backgroundColor: "#389e0d",
-          marginLeft: "auto",
-          display: "flex",
-          alignItems: "center",
-        }}
-        icon={<PlusOutlined />}
-      >
-        Add Sale
-      </Button>
+      
       <Modal
         title="Add New Sale"
         open={addSaleModalVisible}

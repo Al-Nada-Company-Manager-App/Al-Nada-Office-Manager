@@ -323,13 +323,11 @@ app.post("/addSale", async (req, res) => {
     });
   } catch (error) {
     console.error("Error adding sale:", error);
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: "Failed to add sale",
-        error: error.message,
-      });
+    res.status(500).json({
+      success: false,
+      message: "Failed to add sale",
+      error: error.message,
+    });
   }
 });
 //customer function
@@ -377,22 +375,13 @@ app.post("/updatecustomer", upload.single("photo"), async (req, res) => {
   try {
     await db.query(
       "UPDATE Customer SET C_NAME = $1, C_ADDRESS = $2, C_CITY = $3, C_COUNTRY = $4, C_ZIPCODE = $5, C_FAX = $6, C_PHOTO = $7 WHERE C_ID = $8",
-      [
-        C_NAME,
-        C_ADDRESS,
-        C_CITY,
-        C_COUNTRY,
-        C_ZIPCODE,
-        C_FAX,
-        C_PHOTO, 
-        C_ID, 
-      ]
+      [C_NAME, C_ADDRESS, C_CITY, C_COUNTRY, C_ZIPCODE, C_FAX, C_PHOTO, C_ID]
     );
 
-    res.send("Customer updated successfully"); 
+    res.send("Customer updated successfully");
   } catch (err) {
-    console.error(err); 
-    res.status(500).send("Error updating customer"); 
+    console.error(err);
+    res.status(500).send("Error updating customer");
   }
 });
 app.get("/customersales", async (req, res) => {
@@ -496,6 +485,45 @@ app.post("/AddProduct", upload.single("photo"), async (req, res) => {
 });
 
 // Edit Product
+
+// get allDebts
+app.get("/allDebts", async (req, res) => {
+  const result = await db.query(`
+    SELECT 
+    C.C_NAME ,
+    D.SL_ID ,
+    D.D_ID ,
+    D.D_DATE ,
+    D.D_TYPE ,
+    D.D_AMOUNT ,
+    D.D_CURRENCY
+    FROM 
+        DEBTS D
+    LEFT JOIN 
+        SALES S ON D.SL_ID = S.SL_ID
+    LEFT JOIN 
+        CUSTOMER C ON S.C_ID = C.C_ID;
+`);
+  const rows = result.rows;
+  res.json(rows);
+});
+
+// Add Debt
+app.post("/addDebt", async (req, res) => {
+  try {
+    const { sale, debtType, debtDate, debtAmount, currency,sl_id } = req.body;
+    // const
+    // result = await db.query(
+    //   `INSERT INTO DEBTS (SL_ID, D_DATE, D_TYPE, D_AMOUNT,SL_ID) VALUES ($1, $2, $3, $4, $5)`,
+    //   [sale, debtDate, debtType, debtAmount, currency,sl_id]
+    // );
+    console.log(req.body);
+    res.json({ success: true, message: "Debt added successfully!" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Failed to add Debt!" });
+  }
+});
 
 // Passport Strategy
 passport.use(

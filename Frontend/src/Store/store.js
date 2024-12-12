@@ -6,6 +6,7 @@ import Notification from "./Notification";
 import Sales from "./Sales";
 import Customers from "./Customer";
 import Products from "./Product";
+import Debts from "./Debts";
 const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -15,6 +16,7 @@ const store = configureStore({
     Sales: Sales,
     Customers: Customers,
     Products: Products,
+    Debts: Debts,
   },
 });
 

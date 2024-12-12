@@ -32,6 +32,7 @@ const initialState = {
   selectedSale: null,
   SaleModalVisible: false,
   addSaleModalVisible: false,
+  selectedSalesModalVisible: false,
   salesData: [],
   saleType: "",
   Total: 0,
@@ -54,7 +55,11 @@ const saleSlice = createSlice({
     },
     setSaleType: (state, action) => {
         state.saleType = action.payload
+    },
+    setselectedSalesModalVisible: (state, action) => {
+      state.selectedSalesModalVisible = action.payload;
     }
+
   },
   extraReducers: (builder) => {
     builder
@@ -71,5 +76,5 @@ const saleSlice = createSlice({
   },
 });
 
-export const { setSaleType,setaddSaleModalVisible,setSelectedProducts,setSelectedCustomer,setSelectedSale, setSaleModalVisible } = saleSlice.actions;
+export const { setselectedSalesModalVisible,setSaleType,setaddSaleModalVisible,setSelectedProducts,setSelectedCustomer,setSelectedSale, setSaleModalVisible } = saleSlice.actions;
 export default saleSlice.reducer;
