@@ -323,13 +323,11 @@ app.post("/addSale", async (req, res) => {
     });
   } catch (error) {
     console.error("Error adding sale:", error);
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: "Failed to add sale",
-        error: error.message,
-      });
+    res.status(500).json({
+      success: false,
+      message: "Failed to add sale",
+      error: error.message,
+    });
   }
 });
 //customer function
@@ -377,22 +375,13 @@ app.post("/updatecustomer", upload.single("photo"), async (req, res) => {
   try {
     await db.query(
       "UPDATE Customer SET C_NAME = $1, C_ADDRESS = $2, C_CITY = $3, C_COUNTRY = $4, C_ZIPCODE = $5, C_FAX = $6, C_PHOTO = $7 WHERE C_ID = $8",
-      [
-        C_NAME,
-        C_ADDRESS,
-        C_CITY,
-        C_COUNTRY,
-        C_ZIPCODE,
-        C_FAX,
-        C_PHOTO, 
-        C_ID, 
-      ]
+      [C_NAME, C_ADDRESS, C_CITY, C_COUNTRY, C_ZIPCODE, C_FAX, C_PHOTO, C_ID]
     );
 
-    res.send("Customer updated successfully"); 
+    res.send("Customer updated successfully");
   } catch (err) {
-    console.error(err); 
-    res.status(500).send("Error updating customer"); 
+    console.error(err);
+    res.status(500).send("Error updating customer");
   }
 });
 app.get("/customersales", async (req, res) => {
@@ -495,6 +484,93 @@ app.post("/AddProduct", upload.single("photo"), async (req, res) => {
   }
 });
 
+app.get("/allPriceQuotation", async (req, res) => {
+  try {
+    // Fetch price quotations along with customer details
+    const result = await db.query(`
+      SELECT 
+      pq.PQ_ID, 
+      pq.PQ_DISCOUNT, 
+      pq.PQ_CURRENCY, 
+      pq.PQ_DURATION, 
+      pq.PQ_TOTAL,
+      c.C_NAME , 
+      c.C_PHOTO 
+FROM 
+    PRICE_QUOTATION pq
+JOIN 
+    OFFER o 
+ON 
+    pq.PQ_ID = o.PQ_ID
+LEFT JOIN 
+    CUSTOMER c 
+ON 
+    o.C_ID = c.C_ID;
+    `);
+
+    const rows = result.rows;
+    res.json(rows);
+  } catch (error) {
+    console.error("Database query failed:", error);
+    res.status(500).json({ error: "Failed to fetch price quotations" });
+  }
+});
+
+app.post("/deletepq", async (req, res) => {
+  const id = req.body.id;
+  await db.query("DELETE FROM PRICE_QUOTATION WHERE pq_id = $1", [id]);
+  await db.query("DELETE FROM OFFER WHERE pq_id = $1", [id]);
+  res.json({ success: true });
+});
+
+app.post("/addpq", async (req, res) => {
+  try {
+    const {
+      customer,
+      products, // Array of product objects: [{ p_id, quantity }]
+      discount,
+      currency,
+      duration,
+      total,
+    } = req.body;
+    // Insert the pq into the SALES table
+    const pqresult = await db.query(
+      `INSERT INTO PRICE_QUOTATION (PQ_DISCOUNT,PQ_CURRENCY,PQ_DURATION,PQ_TOTAL) values ($1,$2,$3,$4) RETURNING PQ_ID`,
+      [
+        req.body.pq_discount,
+        req.body.pq_currency,
+        req.body.pq_duration,
+        req.body.total,
+      ]
+    );
+
+    const pqid = pqresult.rows[0].pq_id;
+
+    // Insert products into the SELL_ITEMS table
+    const productValues = products
+      .map(
+        (product) =>
+          `(${product.p_id}, ${pqid}, ${customer.c_id})`
+      )
+      .join(", ");
+
+    await db.query(
+      `INSERT INTO offer (P_ID, PQ_ID,  C_ID) 
+         VALUES ${productValues}`
+    );
+    res.json({
+      success: true,
+      message: "Prica quotation and products added successfully!",
+    });
+  } catch (error) {
+    console.error("Error adding price quotation:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to add price quotation",
+      error: error.message,
+    });
+  }
+});
 // Edit Product
 
 // Passport Strategy

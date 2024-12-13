@@ -10,6 +10,7 @@ import Products from "./Productfeatures/Products";
 import axios from "axios";
 import "../Styles/HomePage.css";
 import Customer from "./Customerfeatures/Customer";
+import PriceQuotation from "./PriceQoutationfeatures/PriceQuotation";
 import { useSelector, useDispatch } from "react-redux";
 import { handleLogout } from "../Store/authSlice";
 const { Sider, Content } = Layout;
@@ -22,8 +23,9 @@ const contents = {
   7: <Products />,
   8: <Customer />,
   10: <Sales />,
-  11: <Sales />,
+  11: <PriceQuotation />,
   12: <Sales />,
+  13: <Sales />,
 };
 
 const HomePage = () => {
