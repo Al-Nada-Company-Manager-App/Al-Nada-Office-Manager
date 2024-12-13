@@ -6,10 +6,13 @@ import {
   UserOutlined,
   VideoCameraOutlined,
   DashboardOutlined,
+  UserAddOutlined,
+  UsergroupAddOutlined,
 } from "@ant-design/icons";
 import { Menu } from "antd";
 import { CashCoin } from "react-bootstrap-icons";
 import "./Menulist.css";
+import Users from "./Users";
 
 const MenuList = ({ setCurrentContent }) => {
   return (
@@ -66,6 +69,12 @@ const MenuList = ({ setCurrentContent }) => {
               onClick: () => setCurrentContent("11"),
             },
           ],
+        },
+        {
+          key: "16",
+          icon: <UserOutlined/>,
+          label: "Supplier",
+          onClick: () => setCurrentContent("16"),
         },
         {
           key: "12",

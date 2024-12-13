@@ -10,6 +10,7 @@ import ApproveUser from './component/ApproveUser';
 import axios from 'axios';
 import './App.css';
 import Customer from './component/Customer';
+import Supplier from './component/Supplier'
 
 const {Sider, Content } = Layout;
 const getSignedUser = async () => {
@@ -62,9 +63,9 @@ const App = ({ onLogout }) => {
                 {currentContent === '3' && <Users />}
                 {currentContent === '4' && <ApproveUser />}
                 {currentContent === '9' && <Sales />}
-                {currentContent === '22' && <Customer />}
-
                 {currentContent === '12' && <Purchase />}
+                {currentContent === '16' && <Supplier />}
+                {currentContent === '22' && <Customer />}
 
             </Content>
         </Layout>

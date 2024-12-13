@@ -606,6 +606,17 @@ app.post('/addPch', async (req, res) => {
   });
   
   
+////Supplier
+app.get('/allsuppliers', async (req, res) => {
+    try {
+        const result = await db.query('SELECT * FROM SUPPLIER');
+        res.json(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error fetching Suppliers');
+    }
+});
+
 
 
 
