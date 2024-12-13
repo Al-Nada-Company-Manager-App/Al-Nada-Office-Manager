@@ -1,14 +1,25 @@
 import React from "react";
 import { Modal, Button, Row, Col } from 'antd';
+import { useSelector, useDispatch } from 'react-redux';
+import { deleteSale, setSaleModalVisible,setSelectedSale } from '../../Store/Sales';
 
-
-const SaleDetails = ({ selectedSale, isModalVisible, handleModalClose, handleDeleteSale, handleActivateSale, handleDeactivateSale }) => {
-  console.log(selectedSale);
+const SaleDetails = () => {
+    const dispatch = useDispatch();
+    const { selectedSale, SaleModalVisible } = useSelector((state) => state.Sales);
+    const handleModalClose = () => {
+        dispatch(setSaleModalVisible(false));
+        dispatch(setSelectedSale(null));
+      };
+    
+      const handleDeleteSale = (id) => async () => {
+        dispatch(deleteSale(id));
+      };
+    
   return (
       <Modal
           title="Sale Details"
           centered
-          open={isModalVisible}
+          open={SaleModalVisible}
           onCancel={handleModalClose}
           footer={[
               <Button key="close" onClick={handleModalClose}>

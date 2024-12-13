@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import "./Sign.css";
+import "../../Styles/Sign.css";
 import SignInForm from "./SignIn";
 import SignUpForm from "./SignUp";
-import bg from '../assets/bg.mp4';
-import logo from '../assets/logo.png';
+import bg from '../../assets/bg.mp4';
+import logo from '../../assets/logo.png';
 
 
 const SignForm = ({ onLoginSuccess }) => {

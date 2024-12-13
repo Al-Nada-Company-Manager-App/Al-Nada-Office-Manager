@@ -6,15 +6,20 @@ import {
   UserOutlined,
   VideoCameraOutlined,
   DashboardOutlined,
-  UserAddOutlined,
-  UsergroupAddOutlined,
 } from "@ant-design/icons";
 import { Menu } from "antd";
 import { CashCoin } from "react-bootstrap-icons";
-import "./Menulist.css";
-import Users from "./Users";
+import "../Styles/Menulist.css";
+import { useDispatch } from "react-redux";
+import { setCurrentContent } from "../Store/homeMenu";
 
-const MenuList = ({ setCurrentContent }) => {
+const MenuList = () => {
+  const dispatch = useDispatch();
+
+  const handleMenuClick = (contentId) => {
+    dispatch(setCurrentContent(contentId));
+  };
+
   return (
     <Menu
       theme="dark"
@@ -26,64 +31,82 @@ const MenuList = ({ setCurrentContent }) => {
           key: "1",
           icon: <DashboardOutlined />,
           label: "Dashboard",
-          onClick: () => setCurrentContent("1"),
+          onClick: () => handleMenuClick("1"),
         },
         {
           key: "2",
           icon: <UserOutlined />,
           label: "Users Management",
           children: [
-            { key: "3", label: "Users", onClick: () => setCurrentContent("3") },
+            {
+              key: "3",
+              label: "Users",
+              onClick: () => handleMenuClick("3"),
+            },
             {
               key: "4",
               label: "Approve User",
-              onClick: () => setCurrentContent("4"),
+              onClick: () => handleMenuClick("4"),
             },
           ],
         },
         {
-          key: "7",
+          key: "5",
           icon: <UploadOutlined />,
           label: "Stock",
-        },
-        {
-          key: "22",
-          icon: <UserOutlined />,
-          label: "Customer",
-          onClick: () => setCurrentContent("22"),
+          children: [
+            {
+              key: "6",
+              label: "Products",
+              onClick: () => handleMenuClick("6"),
+            },
+            {
+              key: "7",
+              label: "Products are repairing",
+              onClick: () => handleMenuClick("7"),
+            },
+          ],
         },
         {
           key: "8",
+          icon: <UserOutlined />,
+          label: "Customer",
+          onClick: () => handleMenuClick("8"),
+        },
+        {
+          key: "9",
           icon: <CashCoin />,
           label: "Sales Management",
           children: [
-            { key: "9", label: "Sales", onClick: () => setCurrentContent("9") },
             {
               key: "10",
-              label: "Price Quatation",
-              onClick: () => setCurrentContent("10"),
+              label: "Sales",
+              onClick: () => handleMenuClick("10"),
             },
             {
               key: "11",
+              label: "Price Quatation",
+              onClick: () => handleMenuClick("11"),
+            },
+            {
+              key: "12",
               label: "Debts",
-              onClick: () => setCurrentContent("11"),
+              onClick: () => handleMenuClick("12"),
             },
           ],
         },
         {
-          key: "16",
+          key: "13",
           icon: <UserOutlined/>,
           label: "Supplier",
-          onClick: () => setCurrentContent("16"),
-        },
+          onClick: () => handleMenuClick("13"),        },
         {
-          key: "12",
+          key: "14",
           icon: <PayCircleOutlined />,
           label: "Purchase Items",
-          onClick: () => setCurrentContent("12"),
-        },
+          onClick: () => handleMenuClick("14"),        },
         {
-          key: "13",
+          key: "15",
           icon: <SettingOutlined />,
           label: "Setting",
         },
@@ -91,4 +114,5 @@ const MenuList = ({ setCurrentContent }) => {
     />
   );
 };
+
 export default MenuList;

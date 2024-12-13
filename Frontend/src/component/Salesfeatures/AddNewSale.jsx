@@ -1,107 +1,124 @@
-import React, { useState, useEffect } from 'react';
-import { Modal, Form, Input, Button, Row, Col, DatePicker, InputNumber, Select } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
-import CustomerModal from './CustomerModal';
-import ProductModal from './ProductModal';
-import axios from 'axios';
-
+import React, { useState, useEffect } from "react";
+import {
+  Modal,
+  Form,
+  Input,
+  Button,
+  Row,
+  Col,
+  DatePicker,
+  InputNumber,
+  Select,
+} from "antd";
+import { PlusOutlined } from "@ant-design/icons";
+import CustomerModal from "./CustomerModal";
+import ProductModal from "./ProductModal";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  setSaleType,
+  addSale,
+  setaddSaleModalVisible,
+  fetchSales,
+} from "../../Store/Sales";
+import { setSelectedCustomerModalVisible,setSelectedCustomer } from "../../Store/Customer";
+import { setSelectedProductModalVisible,setSelectedProduct,fetchProducts } from "../../Store/Product";
 
 const statuses = ["Pending", "Completed", "Canceled"];
 const currencies = ["USD", "EUR", "EGP"];
 
-const AddNewSale = ({handleFinish}) => {
-  const [isSaleModalVisible, setIsSaleModalVisible] = useState(false);
-  const [saleType, setSaleType] = useState('');
-  const [selectedCustomer, setSelectedCustomer] = useState(null);
-  const [selectedProducts, setSelectedProducts] = useState([]);
+const AddNewSale = () => {
+  const dispatch = useDispatch();
+  const { saleType, addSaleModalVisible } =
+    useSelector((state) => state.Sales);
+  const { selectedCustomer } = useSelector((state) => state.Customers);
+  const { selectedProducts } = useSelector((state) => state.Products);
   const [cost, setCost] = useState(0);
   const [discount, setDiscount] = useState(0);
   const [tax, setTax] = useState(0);
-  const [paidAmount, setPaidAmount] = useState(0);
-  const [insuranceAmount, setInsuranceAmount] = useState(0);
-  const [Total, setTotal] = useState(0);
-  const [currency, setCurrency] = useState("USD");
-  const [status, setStatus] = useState("Pending");
+  const [total, setTotal] = useState(0);
 
+  const [form] = Form.useForm();
 
-  // Modal visibility states
-  const [isCustomerModalVisible, setIsCustomerModalVisible] = useState(false);
-  const [isProductModalVisible, setIsProductModalVisible] = useState(false);
-
-  const openSaleModal = () => setIsSaleModalVisible(true);
-  const closeSaleModal = () => setIsSaleModalVisible(false);
-
-  const onSaleTypeChange = (value) => setSaleType(value);
-
-  const openCustomerModal = () => setIsCustomerModalVisible(true);
-  const closeCustomerModal = () => setIsCustomerModalVisible(false);
-
-  const openProductModal = () => setIsProductModalVisible(true);
-  const closeProductModal = () => setIsProductModalVisible(false);
-
-  const handleSelectCustomer = (customer) => {
-    setSelectedCustomer(customer);
-    closeCustomerModal();
+  const openSaleModal = () => dispatch(setaddSaleModalVisible(true));
+  const closeSaleModal = () => {
+    dispatch(setaddSaleModalVisible(false));
+    dispatch(setSelectedCustomer(null));
+    dispatch(setSelectedProduct([]));
+    dispatch(setSaleType(""));
+    setCost(0);
+    setDiscount(0);
+    setTax(0);
+    setTotal(0);
+    form.resetFields();
   };
 
-  const handleSelectProducts = (products) => {
-    setSelectedProducts(products);
-    closeProductModal();
+  const onSaleTypeChange = (value) => {
+    dispatch(setSaleType(value));
   };
 
-  const calculateTotal = () => {
-    const calculatedTotal = cost - (cost * (discount / 100)) + (cost * (tax / 100));
-    setTotal(calculatedTotal);
-  };
-  useEffect(() => {
-    calculateTotal();
-    console.log('Total:', Total);
-}, [cost, discount, tax]);
+  const openCustomerModal = () =>
+    dispatch(setSelectedCustomerModalVisible(true));
 
-const handleSaleFinish = async (values) => {
-    const saleData = {
-        ...values,
-        customer: selectedCustomer,
-        products: selectedProducts,
-        total: Total,
+  const openProductModal = () => {
+    dispatch(fetchProducts());
+    dispatch(setSelectedProduct([]));
+    dispatch(setSelectedProductModalVisible(true));
+
+  };
+
+  React.useEffect(() => {
+    const calculateTotal = () => {
+      const totalCost = cost - (cost * discount) / 100;
+      const totalTax = (totalCost * tax) / 100;
+      const totalAmount = totalCost + totalTax;
+      setTotal(totalAmount);
     };
-    console.log('Sale Data:', saleData);
-    try {
-        handleFinish(saleData);
-        console.log('Sale added successfully:', response.data);
-    }
-    catch (error) {
-        console.error('Error adding sale:', error);
-    }
-}
+    calculateTotal();
+  }, [cost, discount, tax]);
 
-
-
-  
+  const handleSaleFinish = async (values) => {
+    const saleData = {
+      ...values,
+      customer: selectedCustomer,
+      products: selectedProducts,
+      total: total,
+    };
+    await dispatch(addSale(saleData));
+    dispatch(fetchSales());
+    closeSaleModal();
+  };
 
   return (
     <div>
       <Button
         type="primary"
         onClick={openSaleModal}
-        style={{ marginBottom: '16px', backgroundColor: '#389e0d', marginLeft: 'auto', display: 'flex', alignItems: 'center' }}
+        style={{
+          marginBottom: "16px",
+          backgroundColor: "#389e0d",
+          marginLeft: "auto",
+          display: "flex",
+          alignItems: "center",
+        }}
         icon={<PlusOutlined />}
       >
         Add Sale
       </Button>
       <Modal
         title="Add New Sale"
-        open={isSaleModalVisible}
+        open={addSaleModalVisible}
         onCancel={closeSaleModal}
         footer={[
-          <Button key="close" onClick={closeSaleModal}>Close</Button>,
+          <Button key="close" onClick={closeSaleModal}>
+            Close
+          </Button>,
         ]}
         width={800}
       >
         <Form
+          form={form}
           onFinish={(values) => {
             handleSaleFinish(values);
-            closeSaleModal();
           }}
           layout="horizontal"
         >
@@ -109,7 +126,10 @@ const handleSaleFinish = async (values) => {
             {/* Sale Type */}
             <Col span={24}>
               <Form.Item label="Sale Type" name="saleType" required>
-                <Select onChange={onSaleTypeChange}>
+                <Select
+                  onChange={onSaleTypeChange}
+                  placeholder="Select Sale Type"
+                >
                   <Select.Option value="SELLITEMS">Sell Items</Select.Option>
                   <Select.Option value="REPAIR">Repair</Select.Option>
                   <Select.Option value="SERVICE">Service</Select.Option>
@@ -121,7 +141,9 @@ const handleSaleFinish = async (values) => {
             <Col span={24}>
               <Form.Item label="Select Customer" name="customer" required>
                 <Button onClick={openCustomerModal}>
-                  {selectedCustomer ? selectedCustomer.c_name : 'Select Customer'}
+                  {selectedCustomer
+                    ? selectedCustomer.c_name
+                    : "Select Customer"}
                 </Button>
               </Form.Item>
             </Col>
@@ -131,7 +153,10 @@ const handleSaleFinish = async (values) => {
               <Col span={24}>
                 <Form.Item label="Select Product" name="product" required>
                   <Button onClick={openProductModal}>
-                    {selectedProducts.length > 0 ? `${selectedProducts.length} Products Selected` : 'Select Products'}
+                    {Array.isArray(selectedProducts) &&
+                    selectedProducts.length > 0
+                      ? `${selectedProducts.length} Products Selected`
+                      : "Select Products"}
                   </Button>
                 </Form.Item>
               </Col>
@@ -140,7 +165,7 @@ const handleSaleFinish = async (values) => {
             {/* Bill Number */}
             <Col span={24}>
               <Form.Item label="Bill Number" name="billNumber" required>
-                <Input />
+                <Input defaultValue={0} />
               </Form.Item>
             </Col>
 
@@ -148,11 +173,10 @@ const handleSaleFinish = async (values) => {
             <Col span={12}>
               <Form.Item label="Cost" name="cost" required>
                 <InputNumber
-                  value={cost || 0}
-                  onChange={(value) => setCost(value)}
+                  defaultValue={0}
                   min={0}
                   style={{ width: "100%" }}
-                  onBlur={calculateTotal}
+                  onChange={(value) => setCost(value)}
                 />
               </Form.Item>
             </Col>
@@ -161,12 +185,11 @@ const handleSaleFinish = async (values) => {
             <Col span={12}>
               <Form.Item label="Discount (%)" name="discount" required>
                 <InputNumber
-                  value={discount || 0}
-                  onChange={(value) => setDiscount(value)}
+                  defaultValue={0}
                   min={0}
                   max={100}
                   style={{ width: "100%" }}
-                  onBlur={calculateTotal}
+                  onChange={(value) => setDiscount(value)}
                 />
               </Form.Item>
             </Col>
@@ -175,22 +198,21 @@ const handleSaleFinish = async (values) => {
             <Col span={12}>
               <Form.Item label="Tax (%)" name="tax" required>
                 <InputNumber
-                  value={tax || 0}
-                  onChange={(value) => setTax(value)}
+                  defaultValue={0}
                   min={0}
                   max={100}
                   style={{ width: "100%" }}
-                  onBlur={calculateTotal}
+                  onChange={(value) => setTax(value)}
                 />
               </Form.Item>
             </Col>
 
             {/* Total (Calculated) */}
             <Col span={12}>
-              <Form.Item label="Total" name="total" required>
+              <Form.Item label="Total" required>
                 <InputNumber
-                  value={Total}
-                  placeholder= {Total}
+                  value={total}
+                  placeholder="Enter total"
                   readOnly
                   style={{ width: "100%" }}
                 />
@@ -201,8 +223,7 @@ const handleSaleFinish = async (values) => {
             <Col span={12}>
               <Form.Item label="Paid Amount" name="paidAmount" required>
                 <InputNumber
-                  value={paidAmount}
-                  onChange={(value) => setPaidAmount(value)}
+                  defaultValue={0}
                   min={0}
                   style={{ width: "100%" }}
                 />
@@ -211,10 +232,13 @@ const handleSaleFinish = async (values) => {
 
             {/* Insurance Amount */}
             <Col span={12}>
-              <Form.Item label="Insurance Amount" name="insuranceAmount" required>
+              <Form.Item
+                label="Insurance Amount"
+                name="insuranceAmount"
+                required
+              >
                 <InputNumber
-                  value={insuranceAmount}
-                  onChange={(value) => setInsuranceAmount(value)}
+                  defaultValue={0}
                   min={0}
                   style={{ width: "100%" }}
                 />
@@ -224,12 +248,11 @@ const handleSaleFinish = async (values) => {
             {/* Status */}
             <Col span={12}>
               <Form.Item label="Status" name="status" required>
-                <Select
-                  value={status}
-                  onChange={(value) => setStatus(value)}
-                >
+                <Select placeholder="Select Status">
                   {statuses.map((status) => (
-                    <Select.Option key={status} value={status}>{status}</Select.Option>
+                    <Select.Option key={status} value={status}>
+                      {status}
+                    </Select.Option>
                   ))}
                 </Select>
               </Form.Item>
@@ -238,12 +261,11 @@ const handleSaleFinish = async (values) => {
             {/* Currency */}
             <Col span={12}>
               <Form.Item label="Currency" name="currency" required>
-                <Select
-                  value={currency}
-                  onChange={(value) => setCurrency(value)}
-                >
+                <Select placeholder="Select Currency">
                   {currencies.map((currency) => (
-                    <Select.Option key={currency} value={currency}>{currency}</Select.Option>
+                    <Select.Option key={currency} value={currency}>
+                      {currency}
+                    </Select.Option>
                   ))}
                 </Select>
               </Form.Item>
@@ -259,7 +281,11 @@ const handleSaleFinish = async (values) => {
             {/* Submit Button */}
             <Col span={24}>
               <Form.Item>
-                <Button type="primary" htmlType="submit" style={{ width: "100%" }}>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  style={{ width: "100%" }}
+                >
                   Add Sale
                 </Button>
               </Form.Item>
@@ -269,19 +295,10 @@ const handleSaleFinish = async (values) => {
       </Modal>
 
       {/* Customer Modal */}
-      <CustomerModal
-        visible={isCustomerModalVisible}
-        onClose={closeCustomerModal}
-        onSelectCustomer={handleSelectCustomer}
-      />
+      <CustomerModal />
 
       {/* Product Modal */}
-      <ProductModal
-        visible={isProductModalVisible}
-        onClose={closeProductModal}
-        onSelectProducts={handleSelectProducts}
-        type={saleType}
-      />
+      <ProductModal />
     </div>
   );
 };

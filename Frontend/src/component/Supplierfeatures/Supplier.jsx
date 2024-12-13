@@ -1,27 +1,24 @@
 // eslint-disable-next-line no-unused-vars
-
 import React, { useState, useRef } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import { Button, Input, Space, Table } from "antd";
 import Highlighter from "react-highlight-words";
 import axios from "axios";
-import "./Purchase.css";
-import PurchaseDetails from "./Purchasefeachers/PurchaseDetails";
-import AddNewPurchase from "./Purchasefeachers/AddNewPurchase";
-
-const fetchPurchase = async () => {
+import "../../Styles/Supplier.css";
+import AddNewSupplier from "./AddNewSupplier"
+import SupplierDetails from"./SupplierDetails"
+const fetchSupplier = async () => {
   try {
-    const response = await axios.get("http://localhost:4000/allPurchase");
+    const response = await axios.get("http://localhost:4000/allsuppliers");
     return response.data;
   } catch (error) {
-    console.error("Error fetching purchase:", error);
+    console.error("Error fetching Supplier:", error);
   }
 };
-
-const purchase = () => {
-  const [selectedpurchase, setselectedpurchase] = React.useState(null);
+const Supplier = () => {
+  const [selectedsupplier, setselectedsupplier] = React.useState(null);
   const [isModalVisible, setIsModalVisible] = React.useState(false);
-  const [purchaseData, setPurchaseData] = React.useState([]);
+  const [supplierData, setsupplierData] = React.useState([]);
   const [searchText, setSearchText] = React.useState("");
   const [searchedColumn, setSearchedColumn] = React.useState("");
   const searchInput = useRef(null);
@@ -138,176 +135,117 @@ const purchase = () => {
         text
       ),
   });
-
   React.useEffect(() => {
-    fetchPurchase().then((data) => setPurchaseData(data)); ////////
+    fetchSupplier().then((data) => setsupplierData(data)); 
   }, []);
-
   const handleRowClick = (record) => {
-    setselectedpurchase(record);
+    setselectedsupplier(record);
     setIsModalVisible(true);
   };
-
   const handleModalClose = () => {
     setIsModalVisible(false);
-    setselectedpurchase(null);
+    setselectedsupplier(null);
   };
-
-  const handleDeletePurchase =async  (id)=>  {
+  const handleDeleteSupplier =async  (id)=>  {
     try {
       const response = await axios.post(
-        "http://localhost:4000/deletePurchase",
+        "http://localhost:4000/deleteSupplier",
         { id },
         { withCredentials: true }
       ); 
-      fetchPurchase().then((data) => setPurchaseData(data));
+      fetchSupplier().then((data) => setsupplierData(data));
       handleModalClose();
     } catch (error) {
-      console.error("Error deleting purchase:", error);
+      console.error("Error deleting Supplier:", error);
     }
   };
-
-  const handleUpdatePurchase =async  (id)=>  {
+  const handleUpdateSupplier =async  (id)=>  {
     try {
       const response = await axios.post(
-        "http://localhost:4000/updatePurchase",
+        "http://localhost:4000/updateSupplier",
         { id },
         { withCredentials: true }
       ); 
-      fetchPurchase().then((data) => setPurchaseData(data));
+      fetchSupplier().then((data) => setsupplierData(data));
       handleModalClose();
     } catch (error) {
-      console.error("Error update purchase:", error);
+      console.error("Error update supplier:", error);
     }
   };
   const handleFinish = async (values) => {
     try {
-      const response = await axios.post("http://localhost:4000/addPch", values, {
+      const response = await axios.post("http://localhost:4000/addSupplier", values, {
         withCredentials: true,
       });
       console.log( response.success);
       console.log("1");
-      fetchPurchase().then((data) => setPurchaseData(data));
+      fetchSupplier().then((data) => setsupplierData(data));
       console.log("3");
       return true;
     } catch (error) {
-      console.error("Error adding purchase:", error);
+      console.error("Error adding Supplier:", error);
       return false;
     }
   };
-
   const columns = [
-    {
-      title: "Purchase ID",
-      dataIndex: "pch_id",
-      sorter: (a, b) => a.pch_id - b.pch_id,
-      sortDirections: ["descend", "ascend"],
-      defaultSortOrder: "descend",
-    },
+   
     {
       title: "Supplier Name",
       dataIndex: "s_name",
       ...getColumnSearchProps("s_name"),
     },
     {
-      title: "Bill Number",
-      dataIndex: "pch_billnum",
-      ...getColumnSearchProps("pch_billnum"),
+      title: "Supplier Address",
+      dataIndex: "s_address",
+      ...getColumnSearchProps("s_address"),
     },
     {
-      title: "Purchase Date",
-      dataIndex: "pch_date",
-      sorter: (a, b) => new Date(a.pch_date) - new Date(b.pch_date),
-      sortDirections: ["descend", "ascend"],
-      render: (date) => {
-        const formattedDate = new Date(date)
-          .toLocaleDateString("en-GB")
-          .replace(/\//g, "-");
-        return <span>{formattedDate}</span>;
-      },
+      title: "Supplier City",
+      dataIndex: "s_city",
+      ...getColumnSearchProps("s_city"),
     },
     {
-      title: "Cost",
-      dataIndex: "pch_cost",
-      sorter: (a, b) => new Date(a.pch_cost) - new Date(b.pch_cost),
-      sortDirections: ["descend", "ascend"],
-    },
-
-    {
-      title: "Tax",
-      dataIndex: "pch_tax",
+      title: "Supplier Country",
+      dataIndex: "s_country",
+      ...getColumnSearchProps("s_country"),
     },
     {
-      title: "Total",
-      dataIndex: "pch_total",
-      sorter: (a, b) => a.pch_total - b.pch_total,
+      title: "Supplier ZIP_Code",
+      dataIndex: "s_zipcode",
+      ...getColumnSearchProps("s_zipcode"),
     },
     {
-      title: "Expense",
-      dataIndex: "pch_expense",
-      sorter: (a, b) => a.pch_expense - b.pch_expense,
-      sortDirections: ["descend", "ascend"],
-    },
-    {
-      title: "Customs Cost",
-      dataIndex: "pch_customscost",
-      sorter: (a, b) => a.pch_customscost - b.pch_customscost,
-      sortDirections: ["descend", "ascend"],
-    },
-    {
-      title: "Customs Num",
-      dataIndex: "pch_customsnum",
-      sorter: (a, b) => a.pch_customsnum - b.pch_customsnum,
-      sortDirections: ["descend", "ascend"],
-    },
-    {
-      title: "Currency",
-      dataIndex: "pch_currency",
-      filters: [
-        {
-          text: "USD",
-          value: "USD",
-        },
-        {
-          text: "EUR",
-          value: "EUR",
-        },
-        {
-          text: "EGP",
-          value: "EGP",
-        },
-      ],
-      onFilter: (value, record) => record.sl_currency.indexOf(value) === 0,
+      title: "Supplier Fax",
+      dataIndex: "s_fax",
+      ...getColumnSearchProps("s_fax"),
     },
   ];
-
   return (
     <>
-      <AddNewPurchase handleFinish={handleFinish} />
+      < AddNewSupplier handleFinish={handleFinish} />
       <div
         style={{
           margin: "24px 16px",
         }}
       >
-        <h1>Purchase</h1>
+        <h1>Suppliers</h1>
       </div>
       <Table
         columns={columns}
-        dataSource={purchaseData}
+        dataSource={supplierData}
         onRow={(record) => ({
           onClick: () => handleRowClick(record),
         })}
-        rowKey={(record) => record.sl_id} // Ensure rows have unique keys
+        rowKey={(record) => record.sl_id} 
       />
-      <PurchaseDetails
-        selectedPurchase={selectedpurchase}
+      { <SupplierDetails
+        selectedsupplier={selectedsupplier}
         isModalVisible={isModalVisible}
         handleModalClose={handleModalClose}
-        handleDeletePurchase={handleDeletePurchase}
-        handleUpdatePurchase={handleUpdatePurchase}
-      />
+        handleDeleteSupplier={handleDeleteSupplier}
+        handleUpdateSupplier={handleUpdateSupplier}
+      /> }
     </>
   );
 };
-
-export default purchase;
+export default Supplier;

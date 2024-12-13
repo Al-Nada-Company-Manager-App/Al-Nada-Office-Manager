@@ -3,22 +3,16 @@ import { SearchOutlined } from '@ant-design/icons';
 import { Button, Input, Space, Table } from 'antd';
 import Highlighter from 'react-highlight-words';
 import axios from 'axios';
-import './Sales.css';
-import SaleDetails from './Salesfeatures/SalesDetails';
-import AddNewSale from './Salesfeatures/AddNewSale';
-const fetchSales = async () => {
-  try {
-    const response = await axios.get('http://localhost:4000/allSales');
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching sales:', error);
-  }
-};
+import '../../Styles/Sales.css';
+import SaleDetails from './SalesDetails';
+import AddNewSale from './AddNewSale';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchSales,deleteSale, addSale,setSelectedSale, setSaleModalVisible } from '../../Store/Sales';
+
 
 const Sales = () => {
-  const [selectedSale, setSelectedSale] = React.useState(null);
-  const [isModalVisible, setIsModalVisible] = React.useState(false);
-  const [salesData, setSalesData] = React.useState([]);
+  const dispatch = useDispatch();
+  const { salesData,salesLoading } = useSelector((state) => state.Sales);
   const [searchText, setSearchText] = useState('');
   const [searchedColumn, setSearchedColumn] = useState('');
   const searchInput = useRef(null);
@@ -129,38 +123,12 @@ const Sales = () => {
   });
 
   React.useEffect(() => {
-    fetchSales().then((data) => setSalesData(data));
+    dispatch(fetchSales());
   }, []);
 
   const handleRowClick = (record) => {
-    setSelectedSale(record);
-    setIsModalVisible(true);
-  };
-
-  const handleModalClose = () => {
-    setIsModalVisible(false);
-    setSelectedSale(null);
-  };
-
-  const handleDeleteSale = (id) => async () => {
-    try {
-      await axios.post('http://localhost:4000/deleteSale', { id }, { withCredentials: true });
-      fetchSales().then((data) => setSalesData(data));
-      handleModalClose();
-    } catch (error) {
-      console.error('Error deleting sale:', error);
-    }
-  };
-
-  const handleFinish = async (values) => {
-    try {
-      await axios.post('http://localhost:4000/addSale', values, { withCredentials: true });
-      fetchSales().then((data) => setSalesData(data));
-      return true;
-    } catch (error) {
-      console.error('Error adding sale:', error);
-      return false;
-    }
+    dispatch(setSelectedSale(record));
+    dispatch(setSaleModalVisible(true));
   };
 
 
@@ -246,8 +214,6 @@ const columns = [
     render: (status) => {
         let statusColor = '';
         let statusText = status;
-
-        // Check the status and apply appropriate color
         if (status === 'Completed') {
             statusColor = 'green';
         } else if (status === 'Pending') {
@@ -263,7 +229,7 @@ const columns = [
 
   return (
     <>
-      <AddNewSale handleFinish={handleFinish} />
+      <AddNewSale/>
       <div 
        style={{
         margin: '24px 16px',
@@ -275,17 +241,13 @@ const columns = [
       <Table
         columns={columns}
         dataSource={salesData}
+        loading={salesLoading}
         onRow={(record) => ({
           onClick: () => handleRowClick(record),
         })}
-        rowKey={(record) => record.sl_id} // Ensure rows have unique keys
+        rowKey={(record) => record.sl_id} 
       />
-      <SaleDetails
-        selectedSale={selectedSale}
-        isModalVisible={isModalVisible}
-        handleModalClose={handleModalClose}
-        handleDeleteSale={handleDeleteSale}
-      /> 
+      <SaleDetails/> 
     </>
   );
 };
