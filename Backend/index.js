@@ -549,6 +549,85 @@ app.post('/addPch', async (req, res) => {
     }
    });
   
+  
+
+   app.post('/updatePch', async (req, res) => {
+    try {
+        let {
+            pch_id,
+            cost,
+            tax,
+            customscost,
+            expense,
+            total,
+            products,
+        } = req.body;
+        console.log(req.body);
+
+        await db.query(
+            `UPDATE PURCHASE 
+             SET  PCH_TOTAL = $1, PCH_TAX = $2, 
+                 PCH_COST = $3,
+                 PCH_EXPENSE = $4, PCH_CUSTOMSCOST = $5
+             WHERE PCH_ID = $6`,
+            [
+                total,
+                tax,
+                cost,
+                expense,
+                customscost,
+                pch_id
+              ]
+          );
+  
+          const currentProducts = await db.query(
+              `SELECT P_ID, PI_QUANTITY FROM PURCHASE_ITEMS WHERE PCH_ID = $1`,
+              [pch_id]
+          );
+  
+          for (const item of currentProducts.rows) {
+              await db.query(
+                  `UPDATE STOCK 
+                   SET P_QUANTITY = P_QUANTITY - $1 
+                   WHERE P_ID = $2`,
+                  [item.pi_quantity, item.p_id]
+              );
+          }
+  
+          await db.query(
+              `DELETE FROM PURCHASE_ITEMS WHERE PCH_ID = $1`,
+              [pch_id]
+          );
+  
+          const productValues = products.map(
+              (product) => `(${product.p_id}, ${pch_id}, ${product.quantity}, ${product.quantity * product.costprice})`
+          ).join(", ");
+  
+          await db.query(
+              `INSERT INTO PURCHASE_ITEMS (P_ID, PCH_ID, PI_QUANTITY, PI_TOTAL) 
+               VALUES ${productValues}`
+          );
+  
+          for (const product of products) {
+              await db.query(`UPDATE STOCK 
+                 SET P_QUANTITY = P_QUANTITY + $1 
+                 WHERE P_ID = $2`,
+                [product.quantity, product.p_id]
+            );
+        }
+
+        res.json({ success: true, message: "Purchase updated successfully!" });
+    } catch (error) {
+        console.error("Error updating Purchase:", error);
+        res.status(500).json({ success: false, message: "Failed to update Purchase", error: error.message });
+    }
+});
+
+
+
+
+
+
 
    app.post('/deletePurchase', async (req, res) => {
     const { id } = req.body; 
@@ -563,51 +642,7 @@ app.post('/addPch', async (req, res) => {
   });
 
 
-  app.post('/updatePurchase', async (req, res) => {
-    const {
-      id,
-      date,
-      total,
-      tax,
-      cost,
-      billnum,
-      currency,
-      expense,
-      customscost,
-      customsnum,
-      s_id
-    } = req.body; 
-  
-    console.log('Received ID:', id);
-  
-    if (!id) {
-      return res.status(400).json({ success: false, message: 'ID is required to update a purchase' });
-    }
-  
-    try {
-      await db.query(
-        `UPDATE PURCHASE
-         SET PCH_DATE = $1,
-             PCH_TOTAL = $2,
-             PCH_TAX = $3,
-             PCH_COST = $4,
-             PCH_BILLNUM = $5,
-             PCH_CURRENCY = $6,
-             PCH_EXPENSE = $7,
-             PCH_CUSTOMSCOST = $8,
-             PCH_CUSTOMSNUM = $9,
-             S_ID = $10
-         WHERE PCH_ID = $11`,
-        [date, total, tax, cost, billnum, currency, expense, customscost, customsnum, s_id, id]
-      );
-  
-      res.json({ success: true });
-    } catch (error) {
-      console.error('Error updating purchase:', error);
-      res.status(500).json({ success: false, message: 'Failed to update purchase', error: error.message });
-    }
-  });
-  
+ 
   
 ////Supplier
 app.get('/allsuppliers', async (req, res) => {
@@ -622,7 +657,16 @@ app.get('/allsuppliers', async (req, res) => {
 
 
 
-
+app.post("/deletesupplier", async (req, res) => {
+  const { id } = req.body;
+  try {
+    await db.query("DELETE FROM Supplier WHERE S_ID = $1", [id]);
+    res.send("Supplier deleted successfully");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error deleting supplier");
+  }
+});
 
 
 

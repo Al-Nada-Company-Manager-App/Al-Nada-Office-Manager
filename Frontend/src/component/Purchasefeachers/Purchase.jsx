@@ -8,20 +8,13 @@ import axios from "axios";
 import "../../Styles/Purchase.css";
 import PurchaseDetails from "./PurchaseDetails";
 import AddNewPurchase from "./AddNewPurchase";
+import {useDispatch,useSelector} from "react-redux";
+import {fetchPurchases ,setSelectedPurchase ,setPurchaseModalVisible } from "../../Store/Purchase";
 
-const fetchPurchase = async () => {
-  try {
-    const response = await axios.get("http://localhost:4000/allPurchase");
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching purchase:", error);
-  }
-};
 
 const purchase = () => {
-  const [selectedpurchase, setselectedpurchase] = React.useState(null);
-  const [isModalVisible, setIsModalVisible] = React.useState(false);
-  const [purchaseData, setPurchaseData] = React.useState([]);
+  const dispatch = useDispatch();
+  const {purchasesData} = useSelector((state) => state.Purchases);
   const [searchText, setSearchText] = React.useState("");
   const [searchedColumn, setSearchedColumn] = React.useState("");
   const searchInput = useRef(null);
@@ -140,37 +133,19 @@ const purchase = () => {
   });
 
   React.useEffect(() => {
-    fetchPurchase().then((data) => setPurchaseData(data)); ////////
-  }, []);
+    dispatch(fetchPurchases());
+  }, [dispatch]);
 
   const handleRowClick = (record) => {
-    setselectedpurchase(record);
-    setIsModalVisible(true);
+    dispatch(setSelectedPurchase(record));
+    dispatch(setPurchaseModalVisible(true));
   };
 
-  const handleModalClose = () => {
-    setIsModalVisible(false);
-    setselectedpurchase(null);
-  };
-
-  const handleDeletePurchase =async  (id)=>  {
-    try {
-      const response = await axios.post(
-        "http://localhost:4000/deletePurchase",
-        { id },
-        { withCredentials: true }
-      ); 
-      fetchPurchase().then((data) => setPurchaseData(data));
-      handleModalClose();
-    } catch (error) {
-      console.error("Error deleting purchase:", error);
-    }
-  };
-
+  
   const handleUpdatePurchase =async  (id)=>  {
     try {
       const response = await axios.post(
-        "http://localhost:4000/updatePurchase",
+        "http://localhost:4000/updatePch",
         { id },
         { withCredentials: true }
       ); 
@@ -180,21 +155,7 @@ const purchase = () => {
       console.error("Error update purchase:", error);
     }
   };
-  const handleFinish = async (values) => {
-    try {
-      const response = await axios.post("http://localhost:4000/addPch", values, {
-        withCredentials: true,
-      });
-      console.log( response.success);
-      console.log("1");
-      fetchPurchase().then((data) => setPurchaseData(data));
-      console.log("3");
-      return true;
-    } catch (error) {
-      console.error("Error adding purchase:", error);
-      return false;
-    }
-  };
+  
 
   const columns = [
     {
@@ -283,7 +244,7 @@ const purchase = () => {
 
   return (
     <>
-      <AddNewPurchase handleFinish={handleFinish} />
+      <AddNewPurchase />
       <div
         style={{
           margin: "24px 16px",
@@ -293,19 +254,13 @@ const purchase = () => {
       </div>
       <Table
         columns={columns}
-        dataSource={purchaseData}
+        dataSource={purchasesData}
         onRow={(record) => ({
           onClick: () => handleRowClick(record),
         })}
-        rowKey={(record) => record.sl_id} // Ensure rows have unique keys
+        rowKey={(record) => record.sl_id} 
       />
-      <PurchaseDetails
-        selectedPurchase={selectedpurchase}
-        isModalVisible={isModalVisible}
-        handleModalClose={handleModalClose}
-        handleDeletePurchase={handleDeletePurchase}
-        handleUpdatePurchase={handleUpdatePurchase}
-      />
+      <PurchaseDetails/>
     </>
   );
 };
