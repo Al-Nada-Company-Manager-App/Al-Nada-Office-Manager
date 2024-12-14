@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Modal, Button, Row, Col, Table } from "antd";
 import {useSelector,useDispatch} from "react-redux";
 import { fetchSalesHistory,setCustomerModalVisible } from "../../Store/Customer";
+import {convertTimestampToDate} from '../../utils/ConvertDate';
 
 const salesColumns = [
   {
@@ -21,7 +22,7 @@ const salesColumns = [
       sorter: (a, b) => new Date(a.sl_date) - new Date(b.sl_date),
       sortDirections: ['descend', 'ascend'],
       render: (date) => {
-          const formattedDate = new Date(date).toLocaleDateString('en-GB').replace(/\//g, '-');
+          const formattedDate = convertTimestampToDate(date);
           return <span>{formattedDate}</span>;
       },
   },
@@ -36,6 +37,7 @@ const salesColumns = [
 {
   title: 'Total',
   dataIndex: 'sl_total',
+  render: (total) => total.toFixed(2),
   sorter: (a, b) => a.sl_total - b.sl_total,
 },
 {

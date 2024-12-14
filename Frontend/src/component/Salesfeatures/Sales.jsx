@@ -16,6 +16,8 @@ import {
   setaddSaleModalVisible,
 } from "../../Store/Sales";
 import { PlusOutlined } from "@ant-design/icons";
+import {convertTimestampToDate} from '../../utils/ConvertDate';
+
 
 
 
@@ -172,9 +174,7 @@ const Sales = () => {
       sorter: (a, b) => new Date(a.sl_date) - new Date(b.sl_date),
       sortDirections: ["descend", "ascend"],
       render: (date) => {
-        const formattedDate = new Date(date)
-          .toLocaleDateString("en-GB")
-          .replace(/\//g, "-");
+        const formattedDate = convertTimestampToDate(date);
         return <span>{formattedDate}</span>;
       },
     },
@@ -189,6 +189,7 @@ const Sales = () => {
     {
       title: "Total",
       dataIndex: "sl_total",
+      render: (total) => total.toFixed(2),
       sorter: (a, b) => a.sl_total - b.sl_total,
     },
     {

@@ -10,6 +10,7 @@ import {
   setSelectedUser,
   setUserModalVisible,
 } from "../../Store/Users";
+
 const columns = [
   {
     title: "fName",

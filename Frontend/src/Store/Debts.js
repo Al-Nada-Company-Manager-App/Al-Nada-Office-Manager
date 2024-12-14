@@ -17,12 +17,21 @@ export const addDebt = createAsyncThunk("Debts/addDebt", async (debt) => {
     console.error("Error adding debt:", error);
   }
 });
+export const updateDebt = createAsyncThunk("Debts/updateDebt", async (debt) => {
+  try {
+    const response = await axiosInstance.post("/updateDebt", debt);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating debt:", error);
+  }
+});
 
 // Initial state
 const initialState = {
   selectedDebt: null,
   DebtModalVisible: false,
   addDebtModalVisible: false,
+  updateDebtModalVisible: false,
   debtData: [],
   debtsLoading: false,
 };
@@ -41,6 +50,9 @@ const debtSlice = createSlice({
     setaddDebtModalVisible: (state, action) => {
       state.addDebtModalVisible = action.payload;
     },
+    setupdateDebtModalVisible: (state, action) => {
+      state.updateDebtModalVisible = action.payload;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -67,6 +79,6 @@ const debtSlice = createSlice({
   },
 });
 
-export const { setaddDebtModalVisible, setselectedDebt, setDebtModalVisible } =
+export const {setupdateDebtModalVisible, setaddDebtModalVisible, setselectedDebt, setDebtModalVisible } =
   debtSlice.actions;
 export default debtSlice.reducer;

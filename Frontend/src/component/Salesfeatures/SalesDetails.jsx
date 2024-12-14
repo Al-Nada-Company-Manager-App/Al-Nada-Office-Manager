@@ -3,6 +3,8 @@ import { Modal, Button, Row, Col } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 import {fetchSales, deleteSale,setupdateSaleModalVisible ,setSaleModalVisible,setSelectedSale } from '../../Store/Sales';
 import UpdateSaleModal from './updateSales';
+import {convertTimestampToDate} from '../../utils/ConvertDate';
+
 const SaleDetails = () => {
     const dispatch = useDispatch();
     const { selectedSale, SaleModalVisible } = useSelector((state) => state.Sales);
@@ -36,7 +38,7 @@ const SaleDetails = () => {
                   Delete Sale
               </Button>,
               <Button key='Update Status' onClick={() => handleActivateSale()} type="primary">
-                 Update Status
+                 Update Sale
               </Button>,
               
               
@@ -60,13 +62,13 @@ const SaleDetails = () => {
                           <div>
                               <p><strong>Sale ID:</strong> {selectedSale.sl_id}</p>
                               <p><strong>Bill Number:</strong> {selectedSale.sl_billnum}</p>
-                              <p><strong>Sale Date:</strong> {new Date(selectedSale.sl_date).toLocaleDateString()}</p>
-                              <p><strong>Cost:</strong> {selectedSale.sl_cost}</p>
+                              <p><strong>Sale Date:</strong> {convertTimestampToDate(selectedSale.sl_date)}</p>
+                              <p><strong>Cost:</strong> {selectedSale.sl_cost.toFixed(2)}</p>
                               <p><strong>Discount:</strong> {selectedSale.sl_discount}</p>
                               <p><strong>Tax:</strong> {selectedSale.sl_tax}</p>
-                              <p><strong>Total:</strong> {selectedSale.sl_total}</p>
-                              <p><strong>Payed: </strong>{selectedSale.sl_payed}</p>
-                              <p><strong>Insurance Amount: </strong>{selectedSale.sl_inamount}</p>
+                              <p><strong>Total:</strong> {selectedSale.sl_total.toFixed(2)}</p>
+                              <p><strong>Payed: </strong>{selectedSale.sl_payed.toFixed(2)}</p>
+                              <p><strong>Insurance Amount: </strong>{selectedSale.sl_inamount.toFixed(2)}</p>
                               <p><strong>Type: </strong>{selectedSale.sl_type}</p>
                               <p><strong>Status:</strong> {selectedSale.sl_status}</p>
                               <p><strong>Currency:</strong> {selectedSale.sl_currency}</p>

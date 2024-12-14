@@ -8,6 +8,7 @@ import AddnewDebt from './addnewDebt';
 import DebtDetails from './DebtsDetails';
 import { useSelector, useDispatch } from 'react-redux';
 import  {fetchDebts,setselectedDebt,setDebtModalVisible} from "../../Store/Debts";
+import {convertTimestampToDate} from '../../utils/ConvertDate';
 
 
 const Debts = () => {
@@ -158,7 +159,7 @@ const columns = [
         sorter: (a, b) => new Date(a.d_date) - new Date(b.d_date),
         sortDirections: ['descend', 'ascend'],
         render: (date) => {
-            const formattedDate = new Date(date).toLocaleDateString('en-GB').replace(/\//g, '-');
+            const formattedDate = convertTimestampToDate(date);
             return <span>{formattedDate}</span>;
         },
     },
@@ -170,6 +171,7 @@ const columns = [
   {
     title: 'Debt Amount',
     dataIndex: 'd_amount',
+    render: (value) => value.toFixed(2),
   },
   {
     title: 'Currency',

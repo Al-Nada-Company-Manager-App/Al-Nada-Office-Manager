@@ -9,8 +9,6 @@ import pg from "pg";
 import multer from "multer";
 import path from "path";
 
-
-
 const db = new pg.Client({
   user: "postgres",
   host: "localhost",
@@ -411,16 +409,19 @@ app.post("/updateSale", async (req, res) => {
 
     // Insert new debts with preserved D_DATE or current date
     if (remainingAmount > 0) {
-      // If there is unpaid debt
-      const debtDate = existingDebts.rows.find(debt => debt.D_TYPE === 'DEBT_IN')?.D_DATE || new Date();
+      const debtDate =
+        existingDebts.rows.find((debt) => debt.D_TYPE === "DEBT_IN")?.D_DATE ||
+        new Date();
       await db.query(
         `INSERT INTO DEBTS (D_DATE, D_TYPE, D_AMOUNT, D_CURRENCY, SL_ID) 
          VALUES ($1, 'DEBT_IN', $2, $3, $4)`,
-        [debtDate,-remainingAmount, sl_currency, SL_ID]
+        [debtDate, -remainingAmount, sl_currency, SL_ID]
       );
     } else if (remainingAmount < 0) {
       // If there is overpayment
-      const debtDate = existingDebts.rows.find(debt => debt.D_TYPE === 'DEBT_OUT')?.D_DATE || new Date();
+      const debtDate =
+        existingDebts.rows.find((debt) => debt.D_TYPE === "DEBT_OUT")?.D_DATE ||
+        new Date();
       await db.query(
         `INSERT INTO DEBTS (D_DATE, D_TYPE, D_AMOUNT, D_CURRENCY, SL_ID) 
          VALUES ($1, 'DEBT_OUT', $2, $3, $4)`,
@@ -430,14 +431,15 @@ app.post("/updateSale", async (req, res) => {
 
     if (sl_inamount > 0) {
       // Handle insurance debts
-      const insuranceDebtDate = existingDebts.rows.find(debt => debt.D_TYPE === 'INSURANCE')?.D_DATE || new Date();
+      const insuranceDebtDate =
+        existingDebts.rows.find((debt) => debt.D_TYPE === "INSURANCE")
+          ?.D_DATE || new Date();
       await db.query(
         `INSERT INTO DEBTS (D_DATE, D_TYPE, D_AMOUNT, D_CURRENCY, SL_ID) 
          VALUES ($1, 'INSURANCE', $2, $3, $4)`,
         [insuranceDebtDate, -sl_inamount, sl_currency, SL_ID]
       );
     }
-
 
     res.json({
       success: true,
@@ -456,7 +458,6 @@ app.post("/updateSale", async (req, res) => {
     });
   }
 });
-
 
 //delete sale
 app.post("/deleteSale", async (req, res) => {
@@ -656,8 +657,6 @@ app.get("/allDebts", async (req, res) => {
   res.json(rows);
 });
 
-
-
 // Add Debt
 app.post("/addDebt", async (req, res) => {
   try {
@@ -670,6 +669,78 @@ app.post("/addDebt", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: "Failed to add Debt!" });
+  }
+});
+//update Debt
+app.post("/updateDebt", async (req, res) => {
+  try {
+    const SL_ID = req.body.SL_ID;
+    const D_ID = req.body.D_ID;
+    const D_TYPE = req.body.D_TYPE;
+    const D_AMOUNT = req.body.d_amount;
+    const D_DATE = req.body.d_date;
+    const saleResult = await db.query(
+      `SELECT SL_TOTAL 
+       FROM SALES 
+       WHERE SL_ID = $1`,
+      [SL_ID]
+    );
+
+    const { sl_total } = saleResult.rows[0];
+
+    // Update the SALES table based on D_TYPE
+    if (D_TYPE === "INSURANCE") {
+      await db.query(
+        `UPDATE SALES 
+         SET SL_INAMOUNT = $1 
+         WHERE SL_ID = $2`,
+        [-D_AMOUNT, SL_ID]
+      );
+      // Update the DEBTS table
+      await db.query(
+        `UPDATE DEBTS 
+       SET D_AMOUNT = $1, D_DATE = $2 
+       WHERE D_ID = $3 and D_TYPE = 'INSURANCE'`,
+        [D_AMOUNT, D_DATE, D_ID]
+      );
+    } else {
+      if (D_AMOUNT < 0) {
+        await db.query(
+          `UPDATE DEBTS 
+         SET D_AMOUNT = $1, D_DATE = $2, D_TYPE = 'DEBT_IN' 
+         WHERE D_ID = $3 and D_TYPE = 'DEBT_IN' or D_TYPE = 'DEBT_OUT'`,
+          [D_AMOUNT, D_DATE, D_ID]
+        );
+      } else if (D_AMOUNT > 0) {
+        await db.query(
+          `UPDATE DEBTS 
+         SET D_AMOUNT = $1, D_DATE = $2, D_TYPE = 'DEBT_OUT' 
+         WHERE D_ID = $3 and D_TYPE = 'DEBT_IN' or D_TYPE = 'DEBT_OUT'`,
+          [D_AMOUNT, D_DATE, D_ID]
+        );
+      }
+
+      await db.query(
+        `UPDATE SALES 
+         SET SL_PAYED = $1 
+         WHERE SL_ID = $2`,
+        [sl_total+D_AMOUNT, SL_ID]
+      );
+    }
+
+    // Commit transaction
+
+    res.json({
+      success: true,
+      message: "Debt and sale updated successfully!",
+    });
+  } catch (error) {
+    console.error("Error updating debt:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to update debt",
+      error: error.message,
+    });
   }
 });
 
