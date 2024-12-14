@@ -1,0 +1,144 @@
+/* UserProfile.css */
+
+/* General Styles */
+body {
+    background-color: #e8f5fe; /* Light sky-blue background */
+    font-family: 'Roboto', sans-serif;
+    color: #33475b; /* Deep gray-blue for text */
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Form Container */
+  .ant-form {
+    background-color: #ffffff; /* White background */
+    padding: 32px;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); /* Softer, larger shadow */
+    max-width: 1100px;
+    margin: 50px auto;
+  }
+  
+  /* Cards */
+  .ant-card {
+    background-color: #ffffff; /* White background */
+    border: 1px solid #d0e3f0; /* Pale blue-gray border */
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+  }
+  
+  .ant-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* Avatar Section */
+  .ant-avatar {
+    border: 3px solid #1890ff; /* Bright blue border */
+    background-color: #e6f7ff; /* Light blue background */
+    transition: transform 0.3s ease;
+  }
+  
+  .ant-avatar:hover {
+    transform: scale(1.1);
+  }
+  
+  /* Upload Button */
+  .ant-btn {
+    background-color: #1890ff; /* Primary blue */
+    color: #ffffff; /* White text */
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    padding: 6px 12px;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .ant-btn:hover {
+    background-color: #40a9ff; /* Lighter blue */
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .ant-btn:active {
+    background-color: #096dd9; /* Darker blue */
+  }
+  
+  /* Input Fields */
+  .ant-input {
+    border: 1px solid #d9d9d9; /* Light gray border */
+    border-radius: 6px;
+    padding: 8px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .ant-input:focus {
+    border-color: #1890ff; /* Blue border on focus */
+    box-shadow: 0 0 10px rgba(24, 144, 255, 0.3); /* Bright blue glow */
+  }
+  
+  /* Form Item Labels */
+  .ant-form-item-label > label {
+    color: #3b5b7e; /* Soft blue-gray */
+    font-weight: 600;
+    font-size: 14px;
+  }
+  
+  /* Buttons Row */
+  .ant-row {
+    margin-top: 24px;
+  }
+  
+  .ant-row-end {
+    justify-content: flex-end;
+  }
+  
+  /* Cancel Button */
+  .ant-btn-default {
+    background-color: #f5f7fa; /* Pale gray background */
+    color: #5b6b82; /* Muted blue-gray text */
+    border: 1px solid #d9e3f0; /* Light blue-gray border */
+  }
+  
+  .ant-btn-default:hover {
+    background-color: #ebf5ff; /* Softer blue background */
+    border-color: #1890ff; /* Blue border */
+  }
+  
+  /* Media Queries */
+  @media (max-width: 768px) {
+    .ant-row {
+      flex-direction: column;
+    }
+  
+    .ant-col {
+      margin-bottom: 20px;
+    }
+  }
+  
+  /* Additional Styling for Responsiveness */
+  .ant-col {
+    padding: 12px;
+  }
+  
+  /* Enhanced Card Header */
+  .ant-card-head {
+    background-color: #1890ff; /* Bright blue */
+    color: #ffffff; /* White text */
+    font-weight: bold;
+    font-size: 16px;
+    text-align: center;
+    padding: 16px;
+  }
+  
+  /* Form Spacing */
+  .ant-form-item {
+    margin-bottom: 20px;
+  }
+  
+  /* Improved Input Borders */
+  .ant-input {
+    background-color: #f5faff; /* Light blue tint */
+  }
+  

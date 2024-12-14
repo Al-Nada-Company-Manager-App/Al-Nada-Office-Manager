@@ -12,14 +12,17 @@ import {
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useSelector } from "react-redux";
-
-
+import { updateUserProfile } from "../../Store/UserProfile";
+import "../../Styles/UserProfile.css"; // Import the CSS file
+import { useDispatch } from 'react-redux';
+import { handleLogout } from "../../Store/authSlice";
 
 const UserProfile = () => {
+    const dispatch = useDispatch();
+  
   const { SignedUser } = useSelector((state) => state.auth);
   const [formData, setFormData] = useState(SignedUser);
   const [isEditing, setIsEditing] = useState(false);
-
   const handleFormChange = (changedValues) => {
     setFormData({ ...formData, ...changedValues });
     setIsEditing(true);
@@ -29,18 +32,26 @@ const UserProfile = () => {
     setFormData(SignedUser);
     setIsEditing(false);
   };
-
-  const handleUpdate = () => {
-    message.success("User information updated successfully!");
+  const handleUpdate = async () => {
+    await dispatch(updateUserProfile(formData))
+      .then(() => {
+        message.success("User information updated successfully!");
+        // Update the signed-in user information
+        setFormData(formData);
+        dispatch(handleLogout());
+      })
+      .catch(() => {
+        message.error("Failed to update user information.");
+      });
     setIsEditing(false);
   };
 
   const handlePhotoChange = (info) => {
-    if (info.file.status === "done") {
+   // if (info.file.status === "done") {
       const newPhotoURL = URL.createObjectURL(info.file.originFileObj);
       setFormData({ ...formData, Photo: newPhotoURL });
       setIsEditing(true);
-    }
+    //}
   };
 
   return (

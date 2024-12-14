@@ -583,26 +583,11 @@ app.post("/addpq", async (req, res) => {
   }
 });
 
-app.post("/updateUserProfile", async (req, res) => {
-  const {
-    E_ID,
-    F_NAME,
-    L_NAME,
-    Birth_Date,
-    SALARY,
-    E_PHOTO,
-    E_ADDRESS,
-    E_EMAIL,
-    E_PHONE,
-    E_CITY,
-    E_COUNTRY,
-    E_ZIPCODE,
-    E_USERNAME,
-  } = req.body;
-
+app.post("/updateUserProfile", upload.single("photo"),async (req, res) => {
+  
   try {
     const result = await db.query(
-      `UPDATE employees SET 
+      `UPDATE EMPLOYEE SET 
         F_NAME = $1,
         L_NAME = $2,
         Birth_Date = $3,
@@ -614,22 +599,24 @@ app.post("/updateUserProfile", async (req, res) => {
         E_CITY = $9,
         E_COUNTRY = $10,
         E_ZIPCODE = $11,
-        E_USERNAME = $12
-      WHERE E_ID = $13 RETURNING *`,
+        E_USERNAME = $12,
+        E_PASSWORD = $13
+      WHERE E_ID = $14`,
       [
-        F_NAME,
-        L_NAME,
-        Birth_Date,
-        SALARY,
-        E_PHOTO,
-        E_ADDRESS,
-        E_EMAIL,
-        E_PHONE,
-        E_CITY,
-        E_COUNTRY,
-        E_ZIPCODE,
-        E_USERNAME,
-        E_ID,
+        req.body.fName,
+        req.body.lName,
+        req.body.BirthDate,
+        req.body.salary,
+        req.body.Photo,
+        req.body.Address,
+        req.body.email,
+        req.body.phone,
+        req.body.city,
+        req.body.country,
+        req.body.zipcode,
+        req.body.username,
+        req.body.password,
+        req.body.id,
       ]
     );
 

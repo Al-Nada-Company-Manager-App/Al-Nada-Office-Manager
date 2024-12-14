@@ -3,15 +3,15 @@ import axiosInstance from "../Utils/axiosInstance";
 
 // Async thunk for updating user profile
 export const updateUserProfile = createAsyncThunk(
-  "userProfile/updateUserProfile",
-  async (profileData, { rejectWithValue }) => {
-    try {
-      const response = await axiosInstance.post("/updateUserProfile", profileData);
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response.data);
+    "UserProfile/updateUserProfile",
+    async (profileData, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.post("/updateUserProfile", profileData);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || "An error occurred");
+        }
     }
-  }
 );
 
 const userProfileSlice = createSlice({
