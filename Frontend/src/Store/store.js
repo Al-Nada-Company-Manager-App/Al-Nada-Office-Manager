@@ -7,6 +7,7 @@ import Sales from "./Sales";
 import Customers from "./Customer";
 import Products from "./Product";
 import Purchases from "./Purchase"
+import Suppliers from "./Supplier";
 const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -17,6 +18,7 @@ const store = configureStore({
     Customers: Customers,
     Products: Products,
     Purchases: Purchases,
+    Suppliers: Suppliers,
   },
 });
 

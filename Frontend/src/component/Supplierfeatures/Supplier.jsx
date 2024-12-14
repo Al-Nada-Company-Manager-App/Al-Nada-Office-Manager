@@ -3,22 +3,14 @@ import React, { useState, useRef } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import { Button, Input, Space, Table } from "antd";
 import Highlighter from "react-highlight-words";
-import axios from "axios";
 import "../../Styles/Supplier.css";
 import AddNewSupplier from "./AddNewSupplier"
 import SupplierDetails from"./SupplierDetails"
-const fetchSupplier = async () => {
-  try {
-    const response = await axios.get("http://localhost:4000/allsuppliers");
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching Supplier:", error);
-  }
-};
+import { useSelector,useDispatch } from "react-redux";
+import { fetchSuppliers,setSupplierModalVisible,setSelectedSupplier } from "../../Store/Supplier";
 const Supplier = () => {
-  const [selectedsupplier, setselectedsupplier] = React.useState(null);
-  const [isModalVisible, setIsModalVisible] = React.useState(false);
-  const [supplierData, setsupplierData] = React.useState([]);
+  const dispatch = useDispatch();
+  const {suppliersData} = useSelector((state) => state.Suppliers);
   const [searchText, setSearchText] = React.useState("");
   const [searchedColumn, setSearchedColumn] = React.useState("");
   const searchInput = useRef(null);
@@ -136,57 +128,15 @@ const Supplier = () => {
       ),
   });
   React.useEffect(() => {
-    fetchSupplier().then((data) => setsupplierData(data)); 
-  }, []);
+    dispatch(fetchSuppliers());
+
+  }, [dispatch]);
   const handleRowClick = (record) => {
-    setselectedsupplier(record);
-    setIsModalVisible(true);
+    dispatch(setSelectedSupplier(record));
+    dispatch(setSupplierModalVisible(true));
   };
-  const handleModalClose = () => {
-    setIsModalVisible(false);
-    setselectedsupplier(null);
-  };
-  const handleDeleteSupplier =async  (id)=>  {
-    try {
-      const response = await axios.post(
-        "http://localhost:4000/deleteSupplier",
-        { id },
-        { withCredentials: true }
-      ); 
-      fetchSupplier().then((data) => setsupplierData(data));
-      handleModalClose();
-    } catch (error) {
-      console.error("Error deleting Supplier:", error);
-    }
-  };
-  const handleUpdateSupplier =async  (id)=>  {
-    try {
-      const response = await axios.post(
-        "http://localhost:4000/updateSupplier",
-        { id },
-        { withCredentials: true }
-      ); 
-      fetchSupplier().then((data) => setsupplierData(data));
-      handleModalClose();
-    } catch (error) {
-      console.error("Error update supplier:", error);
-    }
-  };
-  const handleFinish = async (values) => {
-    try {
-      const response = await axios.post("http://localhost:4000/addSupplier", values, {
-        withCredentials: true,
-      });
-      console.log( response.success);
-      console.log("1");
-      fetchSupplier().then((data) => setsupplierData(data));
-      console.log("3");
-      return true;
-    } catch (error) {
-      console.error("Error adding Supplier:", error);
-      return false;
-    }
-  };
+  
+
   const columns = [
    
     {
@@ -222,7 +172,7 @@ const Supplier = () => {
   ];
   return (
     <>
-      < AddNewSupplier handleFinish={handleFinish} />
+      < AddNewSupplier />
       <div
         style={{
           margin: "24px 16px",
@@ -232,19 +182,13 @@ const Supplier = () => {
       </div>
       <Table
         columns={columns}
-        dataSource={supplierData}
+        dataSource={suppliersData}
         onRow={(record) => ({
           onClick: () => handleRowClick(record),
         })}
         rowKey={(record) => record.sl_id} 
       />
-      { <SupplierDetails
-        selectedsupplier={selectedsupplier}
-        isModalVisible={isModalVisible}
-        handleModalClose={handleModalClose}
-        handleDeleteSupplier={handleDeleteSupplier}
-        handleUpdateSupplier={handleUpdateSupplier}
-      /> }
+      <SupplierDetails/> 
     </>
   );
 };

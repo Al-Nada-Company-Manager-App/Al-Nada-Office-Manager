@@ -1,29 +1,22 @@
 import React, { useState } from 'react';
 import { Modal, Table, Input, Button } from 'antd';
-import axios from 'axios';
+import { useSelector,useDispatch } from 'react-redux';
+import { fetchSuppliers,setSelectedSupplier,setSelectSupplierModalVisible } from '../../Store/Supplier';
 
 
-const getSuppliers = async () => {
-    try {
-        const response = await axios.get('http://localhost:4000/allSupplierPch');
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching suppliers:', error);
-    }
-};
-
-
-const SupplierModal = ({ visible, onClose, onSelectSupplier }) => {
+const SupplierModal = () => {
+  const dispatch = useDispatch(); 
+  const { suppliersData,selectSupplierModalVisible } = useSelector((state) => state.Suppliers);
   const [searchTerm, setSearchTerm] = useState('');
-  const [suppliers, setSuppliers] = useState([]);
 
     React.useEffect(() => {
-        const fetchSuppliers = async () => {
-            const suppliers = await getSuppliers();
-            setSuppliers(suppliers);
-        };
-        fetchSuppliers();
-    }, []);
+       dispatch(fetchSuppliers());
+    }, [dispatch]);
+    const onSelectSupplier = (supplier) => {
+      dispatch(setSelectedSupplier(supplier));
+      dispatch(setSelectSupplierModalVisible(false));
+    }
+
 
 
   const columns = [
@@ -39,11 +32,14 @@ const SupplierModal = ({ visible, onClose, onSelectSupplier }) => {
       ),
     },
   ];
+  const onClose = () => {
+    dispatch(setSelectSupplierModalVisible(false));
+  }
 
   return (
     <Modal
       title="Select Supplier"
-      open={visible}
+      open={selectSupplierModalVisible}
       onCancel={onClose}
       footer={null}
       width={600}
@@ -54,7 +50,7 @@ const SupplierModal = ({ visible, onClose, onSelectSupplier }) => {
         style={{ marginBottom: '10px' }}
       />
       <Table
-        dataSource={suppliers}
+        dataSource={suppliersData}
         columns={columns}
         rowKey="S_ID"
         pagination={false}

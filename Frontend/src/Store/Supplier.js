@@ -14,7 +14,7 @@ export const fetchSuppliers = createAsyncThunk(
 );
 export const fetchPurchaseHistory = createAsyncThunk(
   "Suppliers/fetchPurchaseHistory",
-  async (customerId) => {
+  async (supplierId) => {
     try {
       const response = await axiosInstance.get(
         `/getSupplierPurchase/${supplierId}`
@@ -41,7 +41,7 @@ export const handleDeleteSupplier = createAsyncThunk(
   "Suppliers/handleDeleteSupplier",
   async (id) => {
     try {
-      const response = await axiosInstance.post ("/deletesupplier", {id});
+      const response = await axiosInstance.post ("/deleteSupplier", {id});
       return response.data;
     } catch (error) {
       console.error("Error deleting supplier:", error);
@@ -85,87 +85,51 @@ const supplierSlice = createSlice({
     setSelectSupplierModalVisible: (state, action) => {
       state.selectSupplierModalVisible = action.payload;
     },
-    setCustomerModalVisible: (state, action) => {
-      state.customerModalVisible = action.payload;
+    setSupplierModalVisible: (state, action) => {
+      state.supplierModalVisible = action.payload;
     },
-    setaddCustomerModalVisible: (state, action) => {
-      state.addcustomerModalVisible = action.payload;
+    setaddSupplierModalVisible: (state, action) => {
+      state.addsupplierModalVisible = action.payload;
     },
     setFile: (state, action) => {
       state.file = action.payload;
     },
-    setupdateCustomerModalVisible: (state, action) => {
-      state.updatecustomerModalVisible = action.payload;
+    setupdateSupplierModalVisible: (state, action) => {
+      state.updatesupplierModalVisible = action.payload;
     }
   },
   extraReducers: (builder) => {
     builder
       .addCase(fetchSuppliers.pending, (state) => {
-        state.CustomersLoading = true;
+        state.SuppliersLoading = true;
       })
-      .addCase(fetchCustomers.fulfilled, (state, action) => {
-        state.customersData = action.payload;
-        state.CustomersLoading = false;
+      .addCase(fetchSuppliers.fulfilled, (state, action) => {
+        state.suppliersData = action.payload;
+        state.SuppliersLoading = false;
       })
-      .addCase(fetchCustomers.rejected, (state) => {
-        state.CustomersLoading = false;
+      .addCase(fetchSuppliers.rejected, (state) => {
+        state.SuppliersLoading = false;
       });
     builder
-      .addCase(fetchSalesHistory.pending, (state) => {
-        state.SalesLoading = true;
+      .addCase(fetchPurchaseHistory.pending, (state) => {
+        state.PurchaseLoading = true;
       })
-      .addCase(fetchSalesHistory.fulfilled, (state, action) => {
-        state.customerSalesData = action.payload;
-        state.SalesLoading = false;
+      .addCase(fetchPurchaseHistory.fulfilled, (state, action) => {
+        state.supplierPurchasesData = action.payload;
+        state.PurchaseLoading = false;
       })
-      .addCase(fetchSalesHistory.rejected, (state) => {
-        state.SalesLoading = false;
-      });
-    builder
-      .addCase(addCustomer.pending, (state) => {
-        state.CustomersLoading = true;
-      })
-      .addCase(addCustomer.fulfilled, (state, action) => {
-        state.customersData.push(action.payload);
-        state.CustomersLoading = false;
-      })
-      .addCase(addCustomer.rejected, (state) => {
-        state.CustomersLoading = false;
-      });
-    builder
-      .addCase(handleDeleteCustomer.pending, (state) => {
-        state.CustomersLoading = true;
-      })
-      .addCase(handleDeleteCustomer.fulfilled, (state, action) => {
-        state.customersData = state.customersData.filter(
-          (customer) => customer.c_id !== action.payload
-        );
-        state.CustomersLoading = false;
-      })
-      .addCase(handleDeleteCustomer.rejected, (state) => {
-        state.CustomersLoading = false;
-      });
-    builder
-      .addCase(updateCustomer.pending, (state) => {
-        state.CustomersLoading = true;
-      })
-      .addCase(updateCustomer.fulfilled, (state, action) => {
-        state.customersData = state.customersData.map((customer) =>
-          customer.c_id === action.payload.c_id ? action.payload : customer
-        );
-        state.CustomersLoading = false;
-      })
-      .addCase(updateCustomer.rejected, (state) => {
-        state.CustomersLoading = false;
+      .addCase(fetchPurchaseHistory.rejected, (state) => {
+        state.PurchaseLoading = false;
       });
   },
 });
 
 export const {
-  setCustomerModalVisible,
-  setSelectedCustomer,
-  setSelectedCustomerModalVisible,
-  setaddCustomerModalVisible,
-  setupdateCustomerModalVisible,
+  setSupplierModalVisible,
+  setSelectedSupplier,
+  setSelectSupplierModalVisible,
+  setaddSupplierModalVisible,
+  setupdateSupplierModalVisible,
+  setFile,
 } = supplierSlice.actions;
 export default supplierSlice.reducer;

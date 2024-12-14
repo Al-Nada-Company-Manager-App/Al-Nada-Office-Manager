@@ -2,20 +2,20 @@ import React from "react";
 import { Form, Input, Button, Modal, Upload } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  fetchCustomers,
-  setupdateCustomerModalVisible,
-  updateCustomer,
-} from "../../Store/Customer";
+  fetchSuppliers,
+  setupdateSupplierModalVisible,
+  updateSupplier,
+} from "../../Store/Supplier";
 import { UploadOutlined } from "@ant-design/icons";
 
-const UpdateCustomerModal = () => {
-  const { selectedCustomer,updatecustomerModalVisible,file } = useSelector((state) => state.Customers);
+const UpdateSupplierModal = () => {
   const dispatch = useDispatch();
+  const {selectedSupplier,file,updatesupplierModalVisible} = useSelector((state) => state.Suppliers);
 
-  const handleUpdateCustomer = async (values) => {
+  const handleUpdateSupplier = async (values) => {
     const formData = new FormData();
 
-    formData.append("C_ID", selectedCustomer.c_id); 
+    formData.append("S_ID", selectedSupplier.s_id); 
 
     Object.entries(values).forEach(([key, value]) =>
       formData.append(key, value)
@@ -23,60 +23,60 @@ const UpdateCustomerModal = () => {
 
     if (file) formData.append("photo", file);
 
-    await dispatch(updateCustomer(formData));
-    dispatch(fetchCustomers());
-    dispatch(setupdateCustomerModalVisible(false));
+    await dispatch(updateSupplier(formData));
+    dispatch(fetchSuppliers());
+    dispatch(setupdateSupplierModalVisible(false));
   };
 
   const handleupdateClose = () => {
-    dispatch(setupdateCustomerModalVisible(false));
+    dispatch(setupdateSupplierModalVisible(false));
   };
 
   return (
     <div>
       <Modal
-        title="Update Customer"
-        open={updatecustomerModalVisible}
+        title="Update Supplier"
+        open={updatesupplierModalVisible}
         onCancel={() => handleupdateClose()}
         footer={null}
       >
         <Form
           layout="vertical"
-          onFinish={handleUpdateCustomer}
-          initialValues={selectedCustomer}
+          onFinish={handleUpdateSupplier}
+          initialValues={selectedSupplier}
         >
           <Form.Item
-            name="C_NAME"
-            label="Customer Name"
+            name="s_name"
+            label="Supplier Name"
             rules={[{ required: true }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
-            name="C_ADDRESS"
+            name="s_address"
             label="Address"
             rules={[{ required: true }]}
           >
             <Input />
           </Form.Item>
-          <Form.Item name="C_CITY" label="City" rules={[{ required: true }]}>
+          <Form.Item name="s_city" label="City" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
           <Form.Item
-            name="C_COUNTRY"
+            name="s_country"
             label="Country"
             rules={[{ required: true }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
-            name="C_ZIPCODE"
+            name="s_zipcode"
             label="Zip Code"
             rules={[{ required: true }]}
           >
             <Input />
           </Form.Item>
-          <Form.Item name="C_FAX" label="Fax">
+          <Form.Item name="s_fax" label="Fax">
             <Input />
           </Form.Item>
           <Form.Item label="Photo">
@@ -101,4 +101,4 @@ const UpdateCustomerModal = () => {
   );
 };
 
-export default UpdateCustomerModal;
+export default UpdateSupplierModal;

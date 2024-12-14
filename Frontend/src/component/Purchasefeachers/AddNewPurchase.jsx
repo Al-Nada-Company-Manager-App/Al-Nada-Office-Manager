@@ -17,52 +17,43 @@ import axios from "axios";
 import {useDispatch,useSelector} from "react-redux";
 import {fetchPurchases ,deletePurchase,setSelectedPurchase ,addPurchase,setPurchaseModalVisible,setaddPurchaseModalVisible } from "../../Store/Purchase";
 import { setSelectedProductModalVisible,setSelectedProduct,fetchProducts } from "../../Store/Product";
-
+import { setSelectedSupplier,setSelectSupplierModalVisible } from "../../Store/Supplier";
 const currencies = ["USD", "EUR", "EGP"];
 
-const AddNewPurchase = ({ handleFinish }) => {
+const AddNewPurchase = () => {
   const dispatch = useDispatch();
   const {addPurchaseModalVisible} = useSelector((state) => state.Purchases);
-  const [isPurchaseModalVisible, setIsParchaseModalVisible] = useState(false);
-  const [selectedSupplier, setSelectedSupplier] = useState(null); ////
+  const { selectedSupplier } = useSelector((state) => state.Suppliers);
   const { selectedProducts } = useSelector((state) => state.Products);
   const [cost, setCost] = useState(0);
-  const [billnum, setbillnum] = useState(0);
-  const [purshasedate, setpurshasedate] = useState(0);
+
 
   const [tax, setTax] = useState(0);
   const [Total, setTotal] = useState(0);
   const [currency, setCurrency] = useState("USD");
   const [expense, setexpense] = useState(0);
   const [customscost, setcustomscost] = useState(0);
-  const [customsnum, setcustomsnum] = useState(0);
 
   // Modal visibility states
   const [isSupplierModalVisible, setIsSupplierModalVisible] = useState(false); ////
-  const [isProductModalVisible, setIsProductModalVisible] = useState(false);
 
   const openParchaseModal = () => dispatch(setaddPurchaseModalVisible(true));
   const closeSParchaseModal = () => dispatch(setaddPurchaseModalVisible(false));
 
   //const onSaleTypeChange = (value) => setPurchaseType(value);/// what mean
 
-  const openSupplierModal = () => setIsSupplierModalVisible(true); 
-  const closeSupplierModal = () => setIsSupplierModalVisible(false); 
+  const openSupplierModal = () => dispatch(setSelectSupplierModalVisible(true)); //// 
+  const closeSupplierModal = () => dispatch(setSelectSupplierModalVisible(false));////
 
   const openProductModal = () => dispatch(setSelectedProductModalVisible(true));
 
-  const handleSelectSupplier = (supplier) => {
-    setSelectedSupplier(supplier);
-    closeSupplierModal();
-  };
   const calculateTotal = () => {
-    const calculatedTotal = cost + cost * (tax / 100);
+    const calculatedTotal = cost + cost * (tax / 100)+expense+customscost;
     setTotal(calculatedTotal);
   };
   useEffect(() => {
     calculateTotal();
-    console.log("Total:", Total);
-  }, [cost, tax]);
+  }, [cost, tax,expense,customscost]);
 
   const handlePurchaseFinish = async (values) => {
     const purchasedata = {
@@ -120,6 +111,8 @@ const AddNewPurchase = ({ handleFinish }) => {
           {
             required: true,
             message: "Please select a supplier.",
+            validator: (_, value) =>
+              selectedSupplier ? Promise.resolve() : Promise.reject("Please select a supplier."),
           },
         ]}
       >
@@ -222,7 +215,6 @@ const AddNewPurchase = ({ handleFinish }) => {
         ]}
       >
         <InputNumber
-          onChange={(value) => setcustomsnum(value)}
           min={0}
           style={{ width: "100%" }}
         />
@@ -279,14 +271,12 @@ const AddNewPurchase = ({ handleFinish }) => {
     <Col span={12}>
       <Form.Item
         label="Total"
-        name="total"
         rules={[
           { required: true, message: "Total is required." },
         ]}
       >
         <InputNumber
           value={Total}
-          placeholder={Total}
           readOnly
           style={{ width: "100%" }}
         />
@@ -346,11 +336,7 @@ const AddNewPurchase = ({ handleFinish }) => {
       </Modal>
 
       {/* Customer Modal */}
-      <SupplierModal
-        visible={isSupplierModalVisible}
-        onClose={closeSupplierModal}
-        onSelectSupplier={handleSelectSupplier}
-      />
+      <SupplierModal/>
 
       {/* Product Modal */}
       <ProductModal/>

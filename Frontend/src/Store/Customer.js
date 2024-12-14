@@ -37,11 +37,11 @@ export const addCustomer = createAsyncThunk(
     }
   }
 );
-export const handleDeleteCustomer = createAsyncThunk( 
+export const handleDeleteCustomer = createAsyncThunk(
   "Customers/handleDeleteCustomer",
   async (id) => {
     try {
-      const response = await axiosInstance.post ("/deletecustomer", {id});
+      const response = await axiosInstance.post("/deletecustomer", { id });
       return response.data;
     } catch (error) {
       console.error("Error deleting customer:", error);
@@ -96,7 +96,7 @@ const customerSlice = createSlice({
     },
     setupdateCustomerModalVisible: (state, action) => {
       state.updatecustomerModalVisible = action.payload;
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -167,5 +167,6 @@ export const {
   setSelectedCustomerModalVisible,
   setaddCustomerModalVisible,
   setupdateCustomerModalVisible,
+  setFile,
 } = customerSlice.actions;
 export default customerSlice.reducer;
