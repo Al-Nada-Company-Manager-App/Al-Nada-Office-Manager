@@ -7,6 +7,7 @@ import Users from "./Usersfeatures/Users";
 import Sales from "./Salesfeatures/Sales";
 import ApproveUser from "./Usersfeatures/ApproveUser";
 import Products from "./Productfeatures/Products";
+import Debts from "./Debtsfeatures/Debts";
 import axios from "axios";
 import "../Styles/HomePage.css";
 import Customer from "./Customerfeatures/Customer";
@@ -24,8 +25,7 @@ const contents = {
   8: <Customer />,
   10: <Sales />,
   11: <PriceQuotation />,
-  12: <Sales />,
-  13: <Sales />,
+  12: <Debts />,
 };
 
 const HomePage = () => {

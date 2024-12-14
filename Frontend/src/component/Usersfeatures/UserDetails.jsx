@@ -9,6 +9,8 @@ import {
   setSelectedUser,
   setUserModalVisible,
 } from "../../Store/Users";
+import {convertTimestampToDate} from '../../utils/ConvertDate';
+
 const UserDetails = () => {
   const dispatch = useDispatch();
   const { selectedUser, userModalVisible } = useSelector(
@@ -112,7 +114,7 @@ const UserDetails = () => {
                       <strong>Last Name:</strong> {selectedUser.l_name}
                     </p>
                     <p>
-                      <strong>Birth Date:</strong> {selectedUser.birth_date}
+                      <strong>Birth Date:</strong> {convertTimestampToDate(selectedUser.birth_date)}
                     </p>
                     <p>
                       <strong>Salary:</strong> ${selectedUser.salary}

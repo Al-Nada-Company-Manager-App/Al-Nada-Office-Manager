@@ -26,6 +26,18 @@ export const handleLogout = createAsyncThunk(
     }
   }
 );
+export const addUser = createAsyncThunk(
+  "auth/addUser",
+  async (data, thunkAPI) => {
+    try {
+      const response = await axiosInstance.post("/addUser", data);
+      return response.data;
+    } catch (error) {
+      console.error("Add user failed:", error);
+      return thunkAPI.rejectWithValue(null);
+    }
+  }
+);
 
 export const fetchSignedUser = createAsyncThunk(
   "auth/fetchSignedUser",

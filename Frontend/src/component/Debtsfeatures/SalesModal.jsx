@@ -1,33 +1,33 @@
 import React, { useState } from "react";
 import { Modal, Table, Input, Button } from "antd";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  fetchCustomers,
-  setSelectedCustomerModalVisible,
-  setSelectedCustomer,
-} from "../../Store/Customer";
-import { setaddCustomerModalVisible } from "../../Store/Customer";
-import { PlusOutlined } from "@ant-design/icons";
-import AddnewCustomer from "../Customerfeatures/addnewCustomer";
 
-const CustomerModal = () => {
-  const { selectCustomerModalVisible,CustomersLoading } = useSelector(
-    (state) => state.Customers
-  );
+import {fetchSales,setaddSaleModalVisible,setSelectedSale,setselectedSalesModalVisible} from "../../Store/Sales";
+import { PlusOutlined } from "@ant-design/icons";
+import AddNewwSale from "../Salesfeatures/AddNewSale";
+
+const SaleModal = () => {
+
+  const { selectedSalesModalVisible,salesLoading } = useSelector((state) => state.Sales);
   const [searchTerm, setSearchTerm] = useState("");
-  const { customersData } = useSelector((state) => state.Customers);
+  const { salesData } = useSelector((state) => state.Sales);
   const dispatch = useDispatch();
 
   React.useEffect(() => {
-    dispatch(fetchCustomers());
+    dispatch(fetchSales());
   }, []);
-  const closeCustomerModal = () =>
-    dispatch(setSelectedCustomerModalVisible(false));
-  const handleSelectCustomer = (customer) => {
-    dispatch(setSelectedCustomer(customer));
-    closeCustomerModal();
+  const closeSalesModal = () =>
+    dispatch(setselectedSalesModalVisible(false));
+  const handleSelectSales = (sale) => {
+    dispatch(setSelectedSale(sale));
+    closeSalesModal();
   };
   const columns = [
+    {
+      title: "Sales_ID",
+      dataIndex: "sl_id",
+      key: "name",
+    },
     {
       title: "Customer Name",
       dataIndex: "c_name",
@@ -36,25 +36,25 @@ const CustomerModal = () => {
     {
       title: "Action",
       render: (_, record) => (
-        <Button onClick={() => handleSelectCustomer(record)}>Select</Button>
+        <Button onClick={() => handleSelectSales(record)}>Select</Button>
       ),
     },
   ];
   const handleaddClick = () => {
-    dispatch(setaddCustomerModalVisible(true));
+    dispatch(setaddSaleModalVisible(true));
   }
 
   return (
     <>
     <Modal
-      title="Select Customer"
-      open={selectCustomerModalVisible}
-      onCancel={closeCustomerModal}
+      title="Select Sales"
+      open={selectedSalesModalVisible}
+      onCancel={closeSalesModal}
       footer={null}
       width={600}
     >
       <Input
-        placeholder="Search Customer"
+        placeholder="Search By Customer"
         onChange={(e) => setSearchTerm(e.target.value)}
         style={{ marginBottom: "10px" }}
       />
@@ -70,20 +70,20 @@ const CustomerModal = () => {
         }}
         icon={<PlusOutlined />}
       >
-        Add New Customer
+        Add New Sale
       </Button>
       <Table
-        dataSource={customersData}
+        dataSource={salesData}
         columns={columns}
         rowKey="C_ID"
-        loading={CustomersLoading}
+        loading={salesLoading}
         pagination={false}
       />
     </Modal>
-    <AddnewCustomer/>
+    <AddNewwSale/>
     </>
 
   );
 };
 
-export default CustomerModal;
+export default SaleModal;

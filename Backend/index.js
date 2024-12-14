@@ -10,12 +10,21 @@ import multer from "multer";
 import path from "path";
 
 const db = new pg.Client({
-  connectionString:
-    "postgresql://neondb_owner:Z50JaCBQWOMr@ep-nameless-darkness-a5mhhisx.us-east-2.aws.neon.tech/neondb?sslmode=require",
-  ssl: {
-    rejectUnauthorized: false,
-  },
+  user: "postgres",
+  host: "localhost",
+  database: "Al Nada",
+  password: "NEW@22wntg",
+  port: 5432,
 });
+db.connect();
+
+// const db = new pg.Client({
+//   connectionString:
+//     "postgresql://neondb_owner:Z50JaCBQWOMr@ep-nameless-darkness-a5mhhisx.us-east-2.aws.neon.tech/neondb?sslmode=require",
+//   ssl: {
+//     rejectUnauthorized: false,
+//   },
+// });
 
 db.connect((err) => {
   if (err) {
@@ -162,7 +171,7 @@ app.post("/addUser", upload.single("photo"), async (req, res) => {
 
 app.get("/notificaions", async (req, res) => {
   const result = await db.query(
-    "SELECT N.N_ID, N.N_DATE, N.N_TYPE, N.N_MESSAGE, N.N_STATUS, N.E_ID FROM NOTIFICATION N, NOTIFICATION_EMPLOYEE NE WHERE N.N_ID = NE.N_ID AND NE.E_ID = $1",
+    "SELECT N.N_ID, N.N_DATE, N.N_TYPE, N.N_MESSAGE, N.N_STATUS, N.E_ID,N.P_ID,N.D_ID FROM NOTIFICATION N, NOTIFICATION_EMPLOYEE NE WHERE N.N_ID = NE.N_ID AND NE.E_ID = $1",
     [SignedUser.id]
   );
   const rows = result.rows;
@@ -199,16 +208,30 @@ app.get("/getemployeebyid/", async (req, res) => {
   const result = await db.query("SELECT * FROM EMPLOYEE WHERE E_ID = $1", [id]);
   res.json(result.rows[0]);
 });
+app.get("/getproductbyid/", async (req, res) => {
+  const { id } = req.query;
+  const
+  result = await db.query("SELECT * FROM STOCK WHERE P_ID = $1", [id]);
+  res.json(result.rows[0]);
+});
+app.get("/getdebtbyid/", async (req, res) => {
+  const { id } = req.query;
+  const
+  result = await db.query("SELECT * FROM DEBTS WHERE D_ID = $1", [id]);
+  res.json(result.rows[0]);
+});
+
 app.post("/deleteNotification", async (req, res) => {
-  const { n_id } = req.body;
+
+  
 
   await db.query(
     `
         DELETE FROM 
-        NOTIFICATION
-        WHERE N_ID = $1
+        NOTIFICATION_EMPLOYEE
+        WHERE N_ID = $1 and E_ID = $2
         `,
-    [n_id]
+    [req.body.id.n_id , req.body.id.e_id]
   );
 
   res.json({ success: true });
@@ -248,21 +271,21 @@ app.get("/allProductsSales", async (req, res) => {
 
 app.post("/addSale", async (req, res) => {
   try {
-    const {
-      saleType,
-      customer,
-      billNumber,
-      cost,
-      discount,
-      tax,
-      paidAmount,
-      insuranceAmount,
-      status,
-      currency,
-      saleDate,
-      products, // Array of product objects: [{ p_id, quantity }]
-      total,
-    } = req.body;
+    const saleType = req.body.saleType;
+    const customer = req.body.customer;
+    const billNumber = req.body.billNumber;
+    const cost = req.body.cost;
+    const discount = req.body.discount;
+    const tax = req.body.tax;
+    const paidAmount = req.body.paidAmount;
+    const insuranceAmount = req.body.insuranceAmount;
+    const status = req.body.status;
+    const currency = req.body.currency;
+    const saleDate = req.body.saleDate;
+    const products = req.body.products;
+    const total = req.body.total;
+    const DueDate = req.body.dueDate;
+    const InsuranceDueDate = req.body.insuranceDueDate;
 
     const formatDate = new Date(saleDate);
     const year = formatDate.getFullYear();
@@ -295,17 +318,19 @@ app.post("/addSale", async (req, res) => {
     const saleId = saleResult.rows[0].sl_id;
 
     // Insert products into the SELL_ITEMS table
-    const productValues = products
-      .map(
-        (product) =>
-          `(${product.p_id}, ${saleId}, ${product.quantity}, ${product.totalCost})`
-      )
-      .join(", ");
+    if (products.length > 0) {
+      const productValues = products
+        .map(
+          (product) =>
+            `(${product.p_id}, ${saleId}, ${product.quantity}, ${product.totalCost})`
+        )
+        .join(", ");
 
-    await db.query(
-      `INSERT INTO SELL_ITEMS (P_ID, SL_ID, SI_QUANTITY, SI_TOTAL) 
+      await db.query(
+        `INSERT INTO SELL_ITEMS (P_ID, SL_ID, SI_QUANTITY, SI_TOTAL) 
          VALUES ${productValues}`
-    );
+      );
+    }
 
     // Update product quantities in the STOCK table
     for (const product of products) {
@@ -314,6 +339,32 @@ app.post("/addSale", async (req, res) => {
            SET P_QUANTITY = P_QUANTITY - $1 
            WHERE P_ID = $2 AND P_QUANTITY >= $1`,
         [product.quantity, product.p_id]
+      );
+    }
+
+    // Insert records into the DEBTS table based on paidAmount and insuranceAmount
+    if (paidAmount < total) {
+      const debtInAmount = -1 * (total - paidAmount);
+      await db.query(
+        `INSERT INTO DEBTS (D_DATE, D_TYPE, D_AMOUNT, D_CURRENCY, SL_ID) 
+           VALUES ($1, $2, $3, $4, $5)`,
+        [DueDate, "DEBT_IN", debtInAmount, currency, saleId]
+      );
+    } else if (paidAmount > total) {
+      const debtOutAmount = paidAmount - total;
+      await db.query(
+        `INSERT INTO DEBTS (D_DATE, D_TYPE, D_AMOUNT, D_CURRENCY, SL_ID) 
+           VALUES ($1, $2, $3, $4, $5)`,
+        [DueDate, "DEBT_OUT", debtOutAmount, currency, saleId]
+      );
+    }
+
+    if (insuranceAmount > 0) {
+      const insuranceDebtAmount = -1 * insuranceAmount;
+      await db.query(
+        `INSERT INTO DEBTS (D_DATE, D_TYPE, D_AMOUNT, D_CURRENCY, SL_ID) 
+           VALUES ($1, $2, $3, $4, $5)`,
+        [InsuranceDueDate, "INSURANCE", insuranceDebtAmount, currency, saleId]
       );
     }
 
@@ -330,6 +381,117 @@ app.post("/addSale", async (req, res) => {
     });
   }
 });
+//update sale
+app.post("/updateSale", async (req, res) => {
+  try {
+    const { SL_ID, sl_payed, sl_inamount, sl_status } = req.body;
+
+    // Fetch the current sale details
+    const saleResult = await db.query(
+      `SELECT SL_TOTAL, SL_PAYED, SL_INAMOUNT, SL_CURRENCY 
+       FROM SALES 
+       WHERE SL_ID = $1`,
+      [SL_ID]
+    );
+
+    if (saleResult.rows.length === 0) {
+      throw new Error(`Sale with ID ${SL_ID} not found`);
+    }
+
+    const { sl_total, sl_currency } = saleResult.rows[0];
+
+    // Update the SALES table
+    await db.query(
+      `UPDATE SALES 
+       SET SL_PAYED = $1, SL_INAMOUNT = $2, SL_STATUS = $3 
+       WHERE SL_ID = $4`,
+      [sl_payed, sl_inamount, sl_status, SL_ID]
+    );
+
+    // Handle debts updates
+    // Retrieve existing debts for the sale
+    const existingDebts = await db.query(
+      `SELECT D_DATE, D_TYPE, D_AMOUNT, D_CURRENCY FROM DEBTS WHERE SL_ID = $1`,
+      [SL_ID]
+    );
+
+    // Clear existing debts for the sale
+    await db.query(`DELETE FROM DEBTS WHERE SL_ID = $1`, [SL_ID]);
+
+    // Recalculate debts based on the new payment amounts
+    const remainingAmount = sl_total - sl_payed;
+
+    // Insert new debts with preserved D_DATE or current date
+    if (remainingAmount > 0) {
+      const debtDate =
+        existingDebts.rows.find((debt) => debt.D_TYPE === "DEBT_IN")?.D_DATE ||
+        new Date();
+      await db.query(
+        `INSERT INTO DEBTS (D_DATE, D_TYPE, D_AMOUNT, D_CURRENCY, SL_ID) 
+         VALUES ($1, 'DEBT_IN', $2, $3, $4)`,
+        [debtDate, -remainingAmount, sl_currency, SL_ID]
+      );
+    } else if (remainingAmount < 0) {
+      // If there is overpayment
+      const debtDate =
+        existingDebts.rows.find((debt) => debt.D_TYPE === "DEBT_OUT")?.D_DATE ||
+        new Date();
+      await db.query(
+        `INSERT INTO DEBTS (D_DATE, D_TYPE, D_AMOUNT, D_CURRENCY, SL_ID) 
+         VALUES ($1, 'DEBT_OUT', $2, $3, $4)`,
+        [debtDate, Math.abs(remainingAmount), sl_currency, SL_ID]
+      );
+    }
+
+    if (sl_inamount > 0) {
+      // Handle insurance debts
+      const insuranceDebtDate =
+        existingDebts.rows.find((debt) => debt.D_TYPE === "INSURANCE")
+          ?.D_DATE || new Date();
+      await db.query(
+        `INSERT INTO DEBTS (D_DATE, D_TYPE, D_AMOUNT, D_CURRENCY, SL_ID) 
+         VALUES ($1, 'INSURANCE', $2, $3, $4)`,
+        [insuranceDebtDate, -sl_inamount, sl_currency, SL_ID]
+      );
+    }
+
+    res.json({
+      success: true,
+      message: "Sale and debts updated successfully!",
+    });
+  } catch (error) {
+    console.error("Error updating sale:", error);
+
+    // Rollback the transaction in case of error
+    await db.query("ROLLBACK");
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to update sale",
+      error: error.message,
+    });
+  }
+});
+
+//delete sale
+app.post("/deleteSale", async (req, res) => {
+  const sl_id = req.body.id;
+  try {
+    await db.query(
+      `
+        DELETE FROM 
+        SALES
+        WHERE SL_ID = $1
+        `,
+      [sl_id]
+    );
+    res.send("Debt deleted successfully");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error deleting debt");
+  }
+});
+
 //customer function
 app.get("/allcustomers", async (req, res) => {
   try {
@@ -572,6 +734,116 @@ app.post("/addpq", async (req, res) => {
   }
 });
 // Edit Product
+
+// get allDebts
+app.get("/allDebts", async (req, res) => {
+  const result = await db.query(`
+    SELECT 
+    C.C_NAME ,
+    C.C_PHOTO ,
+    D.SL_ID ,
+    D.D_ID ,
+    D.D_DATE ,
+    D.D_TYPE ,
+    D.D_AMOUNT ,
+    D.D_CURRENCY
+    FROM 
+        DEBTS D
+    LEFT JOIN 
+        SALES S ON D.SL_ID = S.SL_ID
+    LEFT JOIN 
+        CUSTOMER C ON S.C_ID = C.C_ID;
+`);
+  const rows = result.rows;
+  res.json(rows);
+});
+
+// Add Debt
+app.post("/addDebt", async (req, res) => {
+  try {
+    const { debtDate, debtType, debtAmount, currency, sl_id } = req.body;
+    const result = await db.query(
+      `INSERT INTO DEBTS (D_DATE, D_TYPE, D_AMOUNT,D_CURRENCY,SL_ID) VALUES ($1, $2, $3, $4, $5)`,
+      [debtDate, debtType, debtAmount, currency, sl_id]
+    );
+    res.json({ success: true, message: "Debt added successfully!" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Failed to add Debt!" });
+  }
+});
+//update Debt
+app.post("/updateDebt", async (req, res) => {
+  try {
+    const SL_ID = req.body.SL_ID;
+    const D_ID = req.body.D_ID;
+    const D_TYPE = req.body.D_TYPE;
+    const D_AMOUNT = req.body.d_amount;
+    const D_DATE = req.body.d_date;
+    const saleResult = await db.query(
+      `SELECT SL_TOTAL 
+       FROM SALES 
+       WHERE SL_ID = $1`,
+      [SL_ID]
+    );
+
+    const { sl_total } = saleResult.rows[0];
+
+    // Update the SALES table based on D_TYPE
+    if (D_TYPE === "INSURANCE") {
+      await db.query(
+        `UPDATE SALES 
+         SET SL_INAMOUNT = $1 
+         WHERE SL_ID = $2`,
+        [-D_AMOUNT, SL_ID]
+      );
+      // Update the DEBTS table
+      await db.query(
+        `UPDATE DEBTS 
+       SET D_AMOUNT = $1, D_DATE = $2 
+       WHERE D_ID = $3 and D_TYPE = 'INSURANCE'`,
+        [D_AMOUNT, D_DATE, D_ID]
+      );
+    } else {
+      if (D_AMOUNT < 0) {
+        await db.query(
+          `UPDATE DEBTS 
+         SET D_AMOUNT = $1, D_DATE = $2, D_TYPE = 'DEBT_IN' 
+         WHERE D_ID = $3 and D_TYPE = 'DEBT_IN' or D_TYPE = 'DEBT_OUT'`,
+          [D_AMOUNT, D_DATE, D_ID]
+        );
+      } else if (D_AMOUNT > 0) {
+        await db.query(
+          `UPDATE DEBTS 
+         SET D_AMOUNT = $1, D_DATE = $2, D_TYPE = 'DEBT_OUT' 
+         WHERE D_ID = $3 and D_TYPE = 'DEBT_IN' or D_TYPE = 'DEBT_OUT'`,
+          [D_AMOUNT, D_DATE, D_ID]
+        );
+      }
+
+      await db.query(
+        `UPDATE SALES 
+         SET SL_PAYED = $1 
+         WHERE SL_ID = $2`,
+        [sl_total+D_AMOUNT, SL_ID]
+      );
+    }
+
+    // Commit transaction
+
+    res.json({
+      success: true,
+      message: "Debt and sale updated successfully!",
+    });
+  } catch (error) {
+    console.error("Error updating debt:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to update debt",
+      error: error.message,
+    });
+  }
+});
 
 // Passport Strategy
 passport.use(
