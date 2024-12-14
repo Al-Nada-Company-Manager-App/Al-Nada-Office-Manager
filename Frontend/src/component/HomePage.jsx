@@ -13,7 +13,7 @@ import Customer from "./Customerfeatures/Customer";
 import PriceQuotation from "./PriceQoutationfeatures/PriceQuotation";
 import { useSelector, useDispatch } from "react-redux";
 import { handleLogout } from "../Store/authSlice";
-import UserProfile from "./UserProfile";
+import UserProfile from "./UserProfilefeatures/UserProfile";
 const { Sider, Content } = Layout;
 
 const contents = {

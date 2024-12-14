@@ -71,8 +71,19 @@ const SignedUser = {
   id: 1,
   fName: "",
   lName: "",
-  Photo: "",
+  BirthDate: "",
+  salary: "",
   Role: "",
+  Photo: "",
+  Address: "",
+  email: "",
+  phone: "",
+  city: "",
+  country: "",
+  zipcode: "",
+  username: "",
+  password: "",
+  Gender: "",
 };
 
 app.get("/SignedUser", (req, res) => {
@@ -650,8 +661,19 @@ passport.use(
         SignedUser.id = user.e_id;
         SignedUser.fName = user.f_name;
         SignedUser.lName = user.l_name;
+        SignedUser.BirthDate = user.birth_date;
+        SignedUser.salary = user.salary;
         SignedUser.Photo = user.e_photo;
         SignedUser.Role = user.e_role;
+        SignedUser.Address = user.e_address;
+        SignedUser.email = user.e_email;
+        SignedUser.phone = user.e_phone;
+        SignedUser.city = user.e_city;
+        SignedUser.country = user.e_country;
+        SignedUser.zipcode = user.e_zipcode;
+        SignedUser.username = user.e_username;
+        SignedUser.password = user.e_password;
+        SignedUser.Gender =user.e_gender;
 
         const isMatch = await bcrypt.compare(password, user.e_password);
         if (isMatch) {
