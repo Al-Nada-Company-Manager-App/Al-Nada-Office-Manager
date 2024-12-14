@@ -171,7 +171,7 @@ app.post("/addUser", upload.single("photo"), async (req, res) => {
 
 app.get("/notificaions", async (req, res) => {
   const result = await db.query(
-    "SELECT N.N_ID, N.N_DATE, N.N_TYPE, N.N_MESSAGE, N.N_STATUS, N.E_ID FROM NOTIFICATION N, NOTIFICATION_EMPLOYEE NE WHERE N.N_ID = NE.N_ID AND NE.E_ID = $1",
+    "SELECT N.N_ID, N.N_DATE, N.N_TYPE, N.N_MESSAGE, N.N_STATUS, N.E_ID,N.P_ID,N.D_ID FROM NOTIFICATION N, NOTIFICATION_EMPLOYEE NE WHERE N.N_ID = NE.N_ID AND NE.E_ID = $1",
     [SignedUser.id]
   );
   const rows = result.rows;
@@ -208,16 +208,30 @@ app.get("/getemployeebyid/", async (req, res) => {
   const result = await db.query("SELECT * FROM EMPLOYEE WHERE E_ID = $1", [id]);
   res.json(result.rows[0]);
 });
+app.get("/getproductbyid/", async (req, res) => {
+  const { id } = req.query;
+  const
+  result = await db.query("SELECT * FROM STOCK WHERE P_ID = $1", [id]);
+  res.json(result.rows[0]);
+});
+app.get("/getdebtbyid/", async (req, res) => {
+  const { id } = req.query;
+  const
+  result = await db.query("SELECT * FROM DEBTS WHERE D_ID = $1", [id]);
+  res.json(result.rows[0]);
+});
+
 app.post("/deleteNotification", async (req, res) => {
-  const { n_id } = req.body;
+
+  
 
   await db.query(
     `
         DELETE FROM 
-        NOTIFICATION
-        WHERE N_ID = $1
+        NOTIFICATION_EMPLOYEE
+        WHERE N_ID = $1 and E_ID = $2
         `,
-    [n_id]
+    [req.body.id.n_id , req.body.id.e_id]
   );
 
   res.json({ success: true });

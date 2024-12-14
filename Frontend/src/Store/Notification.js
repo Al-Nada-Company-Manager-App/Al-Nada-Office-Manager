@@ -1,5 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../Utils/axiosInstance";
+import { setSelectedUser } from "./Users";
+import { setselectedDebt } from "./Debts";
+import { setSelecteditem } from "./Product";
 export const fetchNotification = createAsyncThunk(
   "Notification/fetchNotification",
   async (_, thunkAPI) => {
@@ -19,6 +22,37 @@ export const approveNotification = createAsyncThunk(
       const response = await axiosInstance.get("/getemployeebyid", {
         params: { id },
       });
+      thunkAPI.dispatch(setSelectedUser(response.data));
+      return response.data;
+    } catch (error) {
+      console.error("Approve notification failed:", error);
+      return thunkAPI.rejectWithValue(null);
+    }
+  }
+);
+export const expireNotification = createAsyncThunk(
+  "Notification/expireNotification",
+  async (id, thunkAPI) => {
+    try {
+      const response = await axiosInstance.get("/getproductbyid", {
+        params: { id },
+      });
+      thunkAPI.dispatch(setSelecteditem(response.data));
+      return response.data;
+    } catch (error) {
+      console.error("Approve notification failed:", error);
+      return thunkAPI.rejectWithValue(null);
+    }
+  }
+);
+export const debtNotification = createAsyncThunk(
+  "Notification/debtNotification",
+  async (id, thunkAPI) => {
+    try {
+      const response = await axiosInstance.get("/getdebtbyid", {
+        params: { id },
+      });
+      thunkAPI.dispatch(setselectedDebt(response.data));
       return response.data;
     } catch (error) {
       console.error("Approve notification failed:", error);
@@ -27,15 +61,27 @@ export const approveNotification = createAsyncThunk(
   }
 );
 export const deleteNotification = createAsyncThunk(
-  "Notification/approveNotification",
+  "Notification/deleteNotification",
   async (id, thunkAPI) => {
     try {
       const response = await axiosInstance.post("/deleteNotification", {
-        n_id: id,
+        id,
       });
       return response.data;
     } catch (error) {
       console.error("Approve notification failed:", error);
+      return thunkAPI.rejectWithValue(null);
+    }
+  }
+);
+export const addNotification = createAsyncThunk(
+  "Notification/addNotification",
+  async (data, thunkAPI) => {
+    try {
+      const response = await axiosInstance.post("/sendNotification", data);
+      return response.data;
+    } catch (error) {
+      console.error("Add notification failed:", error);
       return thunkAPI.rejectWithValue(null);
     }
   }
@@ -59,7 +105,6 @@ const authSlice = createSlice({
     builder.addCase(fetchNotification.fulfilled, (state, action) => {
       state.NotificationData = action.payload;
     });
-    builder.addCase(approveNotification.fulfilled, (state, action) => {});
   },
 });
 

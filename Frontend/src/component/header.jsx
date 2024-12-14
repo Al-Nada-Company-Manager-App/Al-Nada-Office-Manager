@@ -6,21 +6,29 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faBell } from "@fortawesome/free-solid-svg-icons";
 import { Button, Layout, theme } from "antd";
 import UserDetails from "./Usersfeatures/UserDetails";
+import ProductDetails from "./Productfeatures/ProductDetails";
+import DebtDetails from "./Debtsfeatures/DebtsDetails";
 import { handleLogout } from "../Store/authSlice";
 import { toggleCollapsed } from "../Store/homeMenu";
 import { useSelector, useDispatch } from "react-redux";
 import {
   fetchNotification,
   approveNotification,
+  expireNotification,
+  debtNotification,
   deleteNotification,
 } from "../Store/Notification";
 import { setUserModalVisible } from "../Store/Users";
+import { setdetailProductModalVisible } from "../Store/Product";
+import { setDebtModalVisible } from "../Store/Debts";
 const { Header } = Layout;
 
 function THeader() {
   const { collapsed } = useSelector((state) => state.homeMenu);
   const { SignedUser } = useSelector((state) => state.auth);
   const { selectedUser } = useSelector((state) => state.Users);
+  const { selectedProduct } = useSelector((state) => state.Products);
+  const { selectedDebt } = useSelector((state) => state.Debts);
   const { NotificationData } = useSelector((state) => state.Notification);
   const [showNotificationDropdown, setShowNotificationDropdown] =
     useState(false);
@@ -52,10 +60,23 @@ function THeader() {
   }, []);
 
   const handleNotification = async (Notification) => {
-    dispatch(approveNotification(Notification.e_id));
+    if(Notification.n_type === "APPROVEUSER"){
+   await  dispatch(approveNotification(Notification.e_id));
     dispatch(setUserModalVisible(true));
+    }else if(Notification.n_type === "Product Expiry"){
+     await dispatch(expireNotification(Notification.p_id));
+      dispatch(setdetailProductModalVisible(true));
+    }
+    else if(Notification.n_type === "Debt Due Date"){
+      await dispatch(debtNotification(Notification.d_id));
+      dispatch(setDebtModalVisible(true));
+    }
 
-    dispatch(deleteNotification(Notification.n_id));
+    const ids ={n_id:Notification.n_id,
+      e_id: SignedUser.id
+    }
+
+    await dispatch(deleteNotification(ids));
     dispatch(fetchNotification());
   };
 
@@ -155,6 +176,9 @@ function THeader() {
           )}
         </div>
         {selectedUser && <UserDetails />}
+        {selectedProduct && <ProductDetails />}
+        {selectedDebt && <DebtDetails />}
+
       </div>
     </Header>
   );
