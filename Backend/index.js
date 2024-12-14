@@ -571,6 +571,63 @@ app.post("/addpq", async (req, res) => {
     });
   }
 });
+
+app.post("/updateUserProfile", async (req, res) => {
+  const {
+    E_ID,
+    F_NAME,
+    L_NAME,
+    Birth_Date,
+    SALARY,
+    E_PHOTO,
+    E_ADDRESS,
+    E_EMAIL,
+    E_PHONE,
+    E_CITY,
+    E_COUNTRY,
+    E_ZIPCODE,
+    E_USERNAME,
+  } = req.body;
+
+  try {
+    const result = await db.query(
+      `UPDATE employees SET 
+        F_NAME = $1,
+        L_NAME = $2,
+        Birth_Date = $3,
+        SALARY = $4,
+        E_PHOTO = $5,
+        E_ADDRESS = $6,
+        E_EMAIL = $7,
+        E_PHONE = $8,
+        E_CITY = $9,
+        E_COUNTRY = $10,
+        E_ZIPCODE = $11,
+        E_USERNAME = $12
+      WHERE E_ID = $13 RETURNING *`,
+      [
+        F_NAME,
+        L_NAME,
+        Birth_Date,
+        SALARY,
+        E_PHOTO,
+        E_ADDRESS,
+        E_EMAIL,
+        E_PHONE,
+        E_CITY,
+        E_COUNTRY,
+        E_ZIPCODE,
+        E_USERNAME,
+        E_ID,
+      ]
+    );
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Error updating user profile:", error);
+    res.status(500).json({ error: "Failed to update user profile" });
+  }
+});
 // Edit Product
 
 // Passport Strategy
