@@ -5,6 +5,7 @@ import Highlighter from 'react-highlight-words';
 import axios from 'axios';
 import '../../Styles/Debts.css';
 import AddnewDebt from './addnewDebt';
+import DebtDetails from './DebtsDetails';
 import { useSelector, useDispatch } from 'react-redux';
 import  {fetchDebts,setselectedDebt,setDebtModalVisible} from "../../Store/Debts";
 
@@ -213,7 +214,7 @@ const columns = [
         })}
         rowKey={(record) => record.d_id} 
       />
-      {/* <SaleDetails/>  */}
+      <DebtDetails/>
     </>
   );
 };

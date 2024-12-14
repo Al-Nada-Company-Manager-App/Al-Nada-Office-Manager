@@ -41,7 +41,7 @@ export const handleDeleteCustomer = createAsyncThunk(
   "Customers/handleDeleteCustomer",
   async (id) => {
     try {
-      const response = await axiosInstance.post ("/deletecustomer", {id});
+      const response = await axiosInstance.post("/deletecustomer",{id});
       return response.data;
     } catch (error) {
       console.error("Error deleting customer:", error);

@@ -46,37 +46,37 @@ const UpdateCustomerModal = () => {
           initialValues={selectedCustomer}
         >
           <Form.Item
-            name="C_NAME"
+            name="c_name"
             label="Customer Name"
             rules={[{ required: true }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
-            name="C_ADDRESS"
+            name="c_address"
             label="Address"
             rules={[{ required: true }]}
           >
             <Input />
           </Form.Item>
-          <Form.Item name="C_CITY" label="City" rules={[{ required: true }]}>
+          <Form.Item name="c_city" label="City" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
           <Form.Item
-            name="C_COUNTRY"
+            name="c_country"
             label="Country"
             rules={[{ required: true }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
-            name="C_ZIPCODE"
+            name="c_zipcode"
             label="Zip Code"
             rules={[{ required: true }]}
           >
             <Input />
           </Form.Item>
-          <Form.Item name="C_FAX" label="Fax">
+          <Form.Item name="c_fax" label="Fax">
             <Input />
           </Form.Item>
           <Form.Item label="Photo">

@@ -1,8 +1,8 @@
 import React from "react";
 import { Modal, Button, Row, Col } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
-import { deleteSale, setSaleModalVisible,setSelectedSale } from '../../Store/Sales';
-
+import {fetchSales, deleteSale,setupdateSaleModalVisible ,setSaleModalVisible,setSelectedSale } from '../../Store/Sales';
+import UpdateSaleModal from './updateSales';
 const SaleDetails = () => {
     const dispatch = useDispatch();
     const { selectedSale, SaleModalVisible } = useSelector((state) => state.Sales);
@@ -11,11 +11,18 @@ const SaleDetails = () => {
         dispatch(setSelectedSale(null));
       };
     
-      const handleDeleteSale = (id) => async () => {
-        dispatch(deleteSale(id));
+      const handleDeleteSale = async (id) => {
+        console.log(id);
+        await dispatch(deleteSale(id));
+        dispatch(fetchSales());
+        dispatch(setSaleModalVisible(false));
       };
+      const handleActivateSale = async () => {
+        dispatch(setupdateSaleModalVisible(true));
+      }
     
   return (
+    <>
       <Modal
           title="Sale Details"
           centered
@@ -28,8 +35,8 @@ const SaleDetails = () => {
               <Button key="delete" onClick={() => handleDeleteSale(selectedSale.sl_id)} type="primary" danger>
                   Delete Sale
               </Button>,
-              <Button key='set status' onClick={() => handleActivateSale(selectedSale.sl_id)} type="primary">
-                  Set Status
+              <Button key='Update Status' onClick={() => handleActivateSale()} type="primary">
+                 Update Status
               </Button>,
               
               
@@ -69,6 +76,8 @@ const SaleDetails = () => {
               </div>
           )}
       </Modal>
+      <UpdateSaleModal/>
+      </>
   );
 };
 

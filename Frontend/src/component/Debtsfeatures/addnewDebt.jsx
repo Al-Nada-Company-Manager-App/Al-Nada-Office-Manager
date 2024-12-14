@@ -1,7 +1,10 @@
 import React from "react";
-import { Form, Input, Button, Modal, Upload } from "antd";
+import { Form, Input, Row, Col, Button, Modal, Upload } from "antd";
 import { useSelector, useDispatch } from "react-redux";
-import { setselectedSalesModalVisible,setSelectedSale } from "../../Store/Sales";
+import {
+  setselectedSalesModalVisible,
+  setSelectedSale,
+} from "../../Store/Sales";
 import { fetchDebts, setaddDebtModalVisible, addDebt } from "../../Store/Debts";
 import { DatePicker, InputNumber, Select } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
@@ -13,11 +16,12 @@ const AddnewDebt = () => {
   const dispatch = useDispatch();
 
   const handleAddDebt = async (values) => {
-    const formData = new FormData();
-    Object.entries(values).forEach(([key, value]) =>
-      formData.append(key, value)
-    );
-    await dispatch(addDebt(formData));
+    const debtData = {};
+
+    Object.entries(values).forEach(([key, value]) => (debtData[key] = value));
+    debtData["sl_id"] = selectedSale.sl_id;
+
+    await dispatch(addDebt(debtData));
     dispatch(fetchDebts());
     handleaddClose();
   };
@@ -60,84 +64,108 @@ const AddnewDebt = () => {
       >
         {
           <Form form={form} layout="vertical" onFinish={handleAddDebt}>
-            {/* Select Sale */}
-            <Form.Item label="Select Sale" name="sale" required>
-              <Button  onClick={openSalesModal}>
-                {selectedSale ? `Sale: ${selectedSale.sl_id}` : "Select Sale"}
-              </Button>
-            </Form.Item>
+            <Row gutter={[16, 16]}>
+              {/* Select Sale */}
+              <Col span={24}>
+                <Form.Item label="Select Sale" required>
+                  <Button onClick={openSalesModal} style={{ width: "100%" }}>
+                    {selectedSale
+                      ? `Sale: ${selectedSale.sl_id}`
+                      : "Select Sale"}
+                  </Button>
+                </Form.Item>
+              </Col>
 
-            {/* Select Customer */}
-            <Form.Item
-              label="Select Customer"
-              name="customer"
-            >
-              {selectedSale && (
-                <Input defaultValue={selectedSale.c_name} readOnly />
-              )}
-            </Form.Item>
+              {/* Debt Date */}
+              <Col span={12}>
+                <Form.Item
+                  label="Debt Date"
+                  name="d_date"
+                  rules={[
+                    { required: true, message: "Please select a debt date!" },
+                  ]}
+                >
+                  <DatePicker style={{ width: "100%" }} />
+                </Form.Item>
+              </Col>
 
-            {/* Debt Date */}
-            <Form.Item
-              label="Debt Date"
-              name="d_date"
-              rules={[
-                { required: true, message: "Please select a debt date!" },
-              ]}
-            >
-              <DatePicker style={{ width: "100%" }} />
-            </Form.Item>
+              {/* Debt Type */}
+              <Col span={12}>
+                <Form.Item
+                  label="Debt Type"
+                  name="d_type"
+                  rules={[
+                    { required: true, message: "Please enter a debt type!" },
+                  ]}
+                >
+                  <Select
+                    placeholder="Select a Debt Type"
+                    options={[
+                      { label: "Debt In", value: "Debt_In" },
+                      { label: "Debt Out", value: "Debt_Out" },
+                      { label: "Insurance", value: "Insurance" },
+                    ]}
+                  />
+                </Form.Item>
+              </Col>
 
-            {/* Debt Type */}
-            <Form.Item
-              label="Debt Type"
-              name="d_type"
-              rules={[{ required: true, message: "Please enter a debt type!" }]}
-            >
-              <Input placeholder="Enter debt type (e.g., Sales, Insurance)" />
-            </Form.Item>
+              {/* Debt Amount */}
+              <Col span={12}>
+                <Form.Item
+                  label="Debt Amount"
+                  name="d_amount"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please enter the debt amount!",
+                    },
+                    {
+                      type: "number",
+                      message: "Amount must be a number!",
+                      transform: (value) => Number(value),
+                    },
+                  ]}
+                >
+                  <InputNumber
+                    style={{ width: "100%" }}
+                    placeholder="Enter debt amount"
+                  />
+                </Form.Item>
+              </Col>
 
-            {/* Debt Amount */}
-            <Form.Item
-              label="Debt Amount"
-              name="d_amount"
-              rules={[
-                { required: true, message: "Please enter the debt amount!" },
-                {
-                  type: "number",
-                  message: "Amount must be a number!",
-                  transform: (value) => Number(value),
-                },
-              ]}
-            >
-              <InputNumber
-                style={{ width: "100%" }}
-                placeholder="Enter debt amount"
-              />
-            </Form.Item>
+              {/* Debt Currency */}
+              <Col span={12}>
+                <Form.Item
+                  label="Debt Currency"
+                  name="d_currency"
+                  rules={[
+                    { required: true, message: "Please select a currency!" },
+                  ]}
+                >
+                  <Select
+                    placeholder="Select a Currency"
+                    options={[
+                      { label: "USD", value: "USD" },
+                      { label: "EUR", value: "EUR" },
+                      { label: "EGP", value: "EGP" },
+                    ]}
+                  />
+                </Form.Item>
+              </Col>
 
-            {/* Debt Currency */}
-            <Form.Item
-              label="Debt Currency"
-              name="d_currency"
-              rules={[{ required: true, message: "Please select a currency!" }]}
-            >
-              <Select
-                placeholder="Select a Currency"
-                options={[
-                  { label: "USD", value: "USD" },
-                  { label: "EUR", value: "EUR" },
-                  { label: "EGP", value: "EGP" },
-                ]}
-              />
-            </Form.Item>
-
-            {/* Submit Button */}
-            <Form.Item>
-              <Button type="primary" htmlType="submit">
-                Submit
-              </Button>
-            </Form.Item>
+              {/* Submit Button */}
+              <Col span={24}>
+                <Form.Item>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    style={{ width: "100%" }}
+                  >
+                    Submit
+                  </Button>
+                </Form.Item>
+              </Col>
+            </Row>
           </Form>
         }
       </Modal>

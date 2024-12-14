@@ -20,24 +20,44 @@ import {
   setaddSaleModalVisible,
   fetchSales,
 } from "../../Store/Sales";
-import { setSelectedCustomerModalVisible,setSelectedCustomer } from "../../Store/Customer";
-import { setSelectedProductModalVisible,setSelectedProduct,fetchProducts } from "../../Store/Product";
+import {
+  setSelectedCustomerModalVisible,
+  setSelectedCustomer,
+} from "../../Store/Customer";
+import {
+  setSelectedProductModalVisible,
+  setSelectedProduct,
+  fetchProducts,
+} from "../../Store/Product";
 
 const statuses = ["Pending", "Completed", "Canceled"];
 const currencies = ["USD", "EUR", "EGP"];
 
 const AddNewSale = () => {
   const dispatch = useDispatch();
-  const { saleType, addSaleModalVisible } =
-    useSelector((state) => state.Sales);
+  const { saleType, addSaleModalVisible } = useSelector((state) => state.Sales);
   const { selectedCustomer } = useSelector((state) => state.Customers);
   const { selectedProducts } = useSelector((state) => state.Products);
   const [cost, setCost] = useState(0);
   const [discount, setDiscount] = useState(0);
   const [tax, setTax] = useState(0);
   const [total, setTotal] = useState(0);
+  const [showDueDate, setShowDueDate] = useState(false);
+  const [showInsuranceDueDate, setShowInsuranceDueDate] = useState(false);
 
   const [form] = Form.useForm();
+
+  const handleValuesChange = (changedValues, allValues) => {
+    const { paidAmount, insuranceAmount } = allValues;
+
+    if (paidAmount !== undefined) {
+      setShowDueDate(paidAmount !== total);
+    }
+
+    if (insuranceAmount !== undefined) {
+      setShowInsuranceDueDate(insuranceAmount > 0);
+    }
+  };
 
   const closeSaleModal = () => {
     dispatch(setaddSaleModalVisible(false));
@@ -62,7 +82,6 @@ const AddNewSale = () => {
     dispatch(fetchProducts());
     dispatch(setSelectedProduct([]));
     dispatch(setSelectedProductModalVisible(true));
-
   };
 
   React.useEffect(() => {
@@ -74,6 +93,16 @@ const AddNewSale = () => {
     };
     calculateTotal();
   }, [cost, discount, tax]);
+  React.useEffect(() => {
+    const calculatecost = () => {
+      let cost = 0;
+      selectedProducts.forEach((product) => {
+        cost += product.totalCost;
+      });
+      setCost(cost);
+    };
+    calculatecost();
+  }, [selectedProducts]);
 
   const handleSaleFinish = async (values) => {
     const saleData = {
@@ -89,7 +118,6 @@ const AddNewSale = () => {
 
   return (
     <div>
-      
       <Modal
         title="Add New Sale"
         open={addSaleModalVisible}
@@ -107,11 +135,18 @@ const AddNewSale = () => {
             handleSaleFinish(values);
           }}
           layout="horizontal"
+          onValuesChange={handleValuesChange}
         >
           <Row gutter={16}>
             {/* Sale Type */}
             <Col span={24}>
-              <Form.Item label="Sale Type" name="saleType" required>
+              <Form.Item
+                label="Sale Type"
+                name="saleType"
+                rules={[
+                  { required: true, message: "Please select a sale type!" },
+                ]}
+              >
                 <Select
                   onChange={onSaleTypeChange}
                   placeholder="Select Sale Type"
@@ -125,7 +160,20 @@ const AddNewSale = () => {
 
             {/* Customer Selection */}
             <Col span={24}>
-              <Form.Item label="Select Customer" name="customer" required>
+              <Form.Item
+                label="Select Customer"
+                name="customer"
+                rules={[
+                  {
+                    validator: (_, value) => {
+                      if (!selectedCustomer) {
+                        return Promise.reject(new Error("Please select a customer!"));
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+              >
                 <Button onClick={openCustomerModal}>
                   {selectedCustomer
                     ? selectedCustomer.c_name
@@ -137,7 +185,20 @@ const AddNewSale = () => {
             {/* Product Selection */}
             {saleType === "SELLITEMS" && (
               <Col span={24}>
-                <Form.Item label="Select Product" name="product" required>
+                <Form.Item
+                  label="Select Product"
+                  name="product"
+                  rules={[
+                    {
+                      validator: (_, value) => {
+                        if (!selectedCustomer) {
+                          return Promise.reject(new Error("Please select a customer!"));
+                        }
+                        return Promise.resolve();
+                      },
+                    },
+                  ]}
+                >
                   <Button onClick={openProductModal}>
                     {Array.isArray(selectedProducts) &&
                     selectedProducts.length > 0
@@ -150,16 +211,26 @@ const AddNewSale = () => {
 
             {/* Bill Number */}
             <Col span={24}>
-              <Form.Item label="Bill Number" name="billNumber" required>
+              <Form.Item
+                label="Bill Number"
+                name="billNumber"
+                rules={[
+                  { required: true, message: "Please enter a bill number!" },
+                ]}
+              >
                 <Input defaultValue={0} />
               </Form.Item>
             </Col>
 
             {/* Cost */}
             <Col span={12}>
-              <Form.Item label="Cost" name="cost" required>
+              <Form.Item
+                label="Cost"
+                name="cost"
+                rules={[{ required: true, message: "Please enter the cost!" }]}
+              >
                 <InputNumber
-                  defaultValue={0}
+                  placeholder={cost}
                   min={0}
                   style={{ width: "100%" }}
                   onChange={(value) => setCost(value)}
@@ -169,9 +240,14 @@ const AddNewSale = () => {
 
             {/* Discount */}
             <Col span={12}>
-              <Form.Item label="Discount (%)" name="discount" required>
+              <Form.Item
+                label="Discount (%)"
+                name="discount"
+                rules={[
+                  { required: true, message: "Please enter the discount!" },
+                ]}
+              >
                 <InputNumber
-                  defaultValue={0}
                   min={0}
                   max={100}
                   style={{ width: "100%" }}
@@ -182,9 +258,17 @@ const AddNewSale = () => {
 
             {/* Tax */}
             <Col span={12}>
-              <Form.Item label="Tax (%)" name="tax" required>
+              <Form.Item
+                label="Tax (%)"
+                name="tax"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please enter the tax percentage!",
+                  },
+                ]}
+              >
                 <InputNumber
-                  defaultValue={0}
                   min={0}
                   max={100}
                   style={{ width: "100%" }}
@@ -193,9 +277,14 @@ const AddNewSale = () => {
               </Form.Item>
             </Col>
 
-            {/* Total (Calculated) */}
+            {/* Total */}
             <Col span={12}>
-              <Form.Item label="Total" required>
+              <Form.Item
+                label="Total"
+                rules={[
+                  { required: true, message: "Total amount is required!" },
+                ]}
+              >
                 <InputNumber
                   value={total}
                   placeholder="Enter total"
@@ -207,12 +296,14 @@ const AddNewSale = () => {
 
             {/* Paid Amount */}
             <Col span={12}>
-              <Form.Item label="Paid Amount" name="paidAmount" required>
-                <InputNumber
-                  defaultValue={0}
-                  min={0}
-                  style={{ width: "100%" }}
-                />
+              <Form.Item
+                label="Paid Amount"
+                name="paidAmount"
+                rules={[
+                  { required: true, message: "Please enter the paid amount!" },
+                ]}
+              >
+                <InputNumber min={0} style={{ width: "100%" }} />
               </Form.Item>
             </Col>
 
@@ -221,19 +312,24 @@ const AddNewSale = () => {
               <Form.Item
                 label="Insurance Amount"
                 name="insuranceAmount"
-                required
+                rules={[
+                  {
+                    required: true,
+                    message: "Please enter the insurance amount!",
+                  },
+                ]}
               >
-                <InputNumber
-                  defaultValue={0}
-                  min={0}
-                  style={{ width: "100%" }}
-                />
+                <InputNumber min={0} style={{ width: "100%" }} />
               </Form.Item>
             </Col>
 
             {/* Status */}
             <Col span={12}>
-              <Form.Item label="Status" name="status" required>
+              <Form.Item
+                label="Status"
+                name="status"
+                rules={[{ required: true, message: "Please select a status!" }]}
+              >
                 <Select placeholder="Select Status">
                   {statuses.map((status) => (
                     <Select.Option key={status} value={status}>
@@ -246,7 +342,13 @@ const AddNewSale = () => {
 
             {/* Currency */}
             <Col span={12}>
-              <Form.Item label="Currency" name="currency" required>
+              <Form.Item
+                label="Currency"
+                name="currency"
+                rules={[
+                  { required: true, message: "Please select a currency!" },
+                ]}
+              >
                 <Select placeholder="Select Currency">
                   {currencies.map((currency) => (
                     <Select.Option key={currency} value={currency}>
@@ -259,10 +361,49 @@ const AddNewSale = () => {
 
             {/* Sale Date */}
             <Col span={12}>
-              <Form.Item label="Sale Date" name="saleDate" required>
+              <Form.Item
+                label="Sale Date"
+                name="saleDate"
+                rules={[
+                  { required: true, message: "Please select a sale date!" },
+                ]}
+              >
                 <DatePicker style={{ width: "100%" }} />
               </Form.Item>
             </Col>
+
+            {/* Due Date */}
+            {showDueDate && (
+              <Col span={12}>
+                <Form.Item
+                  label="Remain Due Date"
+                  name="dueDate"
+                  rules={[
+                    { required: true, message: "Please select a due date!" },
+                  ]}
+                >
+                  <DatePicker style={{ width: "100%" }} />
+                </Form.Item>
+              </Col>
+            )}
+
+            {/* Insurance Due Date */}
+            {showInsuranceDueDate && (
+              <Col span={12}>
+                <Form.Item
+                  label="Insurance Due Date"
+                  name="insuranceDueDate"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please select an insurance due date!",
+                    },
+                  ]}
+                >
+                  <DatePicker style={{ width: "100%" }} />
+                </Form.Item>
+              </Col>
+            )}
 
             {/* Submit Button */}
             <Col span={24}>
