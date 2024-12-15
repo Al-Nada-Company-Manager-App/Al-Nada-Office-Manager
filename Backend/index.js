@@ -559,10 +559,7 @@ app.post("/addpq", async (req, res) => {
 
     // Insert products into the SELL_ITEMS table
     const productValues = products
-      .map(
-        (product) =>
-          `(${product.p_id}, ${pqid}, ${customer.c_id})`
-      )
+      .map((product) => `(${product.p_id}, ${pqid}, ${customer.c_id})`)
       .join(", ");
 
     await db.query(
@@ -583,8 +580,7 @@ app.post("/addpq", async (req, res) => {
   }
 });
 
-app.post("/updateUserProfile", upload.single("photo"),async (req, res) => {
-  
+app.post("/updateUserProfile", upload.single("photo"), async (req, res) => {
   try {
     const result = await db.query(
       `UPDATE EMPLOYEE SET 
@@ -628,6 +624,60 @@ app.post("/updateUserProfile", upload.single("photo"),async (req, res) => {
 });
 // Edit Product
 
+//changepassword
+app.post("/changepassword", async (req, res) => {
+  const { username, newPassword } = req.body;
+
+  if (!username || !newPassword) {
+    return res
+      .status(400)
+      .json({ message: "Username and new password are required." });
+  }
+
+  try {
+    // Check if the user exists
+    const userResult = await db.query(
+      "SELECT E_ID, F_NAME, L_NAME, E_ROLE FROM EMPLOYEE WHERE E_USERNAME = $1",
+      [username]
+    );
+
+    if (userResult.rowCount === 0) {
+      return res.status(404).json({ message: "Username does not exist." });
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    if (userResult.rows[0].e_role === "Manager") {
+      // Update the password and deactivate the user
+      await db.query(
+        "UPDATE EMPLOYEE SET E_PASSWORD = $1 WHERE E_USERNAME = $2",
+        [hashedPassword, username]
+      );
+    } else {
+      // Update the password and deactivate the user
+      await db.query(
+        "UPDATE EMPLOYEE SET E_PASSWORD = $1, E_ACTIVE = FALSE WHERE E_USERNAME = $2",
+        [hashedPassword, username]
+      );
+    }
+
+    // Return the user details along with success message
+    return res.status(200).json({
+      message:
+        "Password updated successfully. Wait for reactivation from the manager.",
+      E_ID: userResult.rows[0].e_id,
+      F_NAME: userResult.rows[0].f_name,
+      L_NAME: userResult.rows[0].l_name,
+      E_ROLE: userResult.rows[0].e_role,
+    });
+  } catch (err) {
+    console.error("Error updating password:", err);
+    return res
+      .status(500)
+      .json({ message: "Server error. Please try again later." });
+  }
+});
+
 // Passport Strategy
 passport.use(
   new Strategy(
@@ -660,7 +710,7 @@ passport.use(
         SignedUser.zipcode = user.e_zipcode;
         SignedUser.username = user.e_username;
         SignedUser.password = user.e_password;
-        SignedUser.Gender =user.e_gender;
+        SignedUser.Gender = user.e_gender;
 
         const isMatch = await bcrypt.compare(password, user.e_password);
         if (isMatch) {
