@@ -16,6 +16,7 @@ import Supplier from "./Supplierfeatures/Supplier";
 import Purchase from "./Purchasefeachers/Purchase";
 import { useSelector, useDispatch } from "react-redux";
 import { handleLogout } from "../Store/authSlice";
+import UserProfile from "./UserProfilefeatures/UserProfile";
 const { Sider, Content } = Layout;
 
 const contents = {

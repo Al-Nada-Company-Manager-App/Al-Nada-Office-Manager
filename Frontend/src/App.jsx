@@ -5,6 +5,7 @@ import "./Styles/index.css";
 import HomePage from "./component/HomePage.jsx";
 import Sign from "./component/Signfeatures/SignForm.jsx";
 import { checkSession,fetchSignedUser } from "./Store/authSlice.js";
+import Loader from "./component/Loader.jsx";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -18,7 +19,7 @@ const App = () => {
   }, [isLoggedIn,dispatch])
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loader />;
   }
 
   return (

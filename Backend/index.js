@@ -79,8 +79,19 @@ const SignedUser = {
   id: 1,
   fName: "",
   lName: "",
-  Photo: "",
+  BirthDate: "",
+  salary: "",
   Role: "",
+  Photo: "",
+  Address: "",
+  email: "",
+  phone: "",
+  city: "",
+  country: "",
+  zipcode: "",
+  username: "",
+  password: "",
+  Gender: "",
 };
 
 app.get("/SignedUser", (req, res) => {
@@ -944,10 +955,7 @@ app.post("/addpq", async (req, res) => {
 
     // Insert products into the SELL_ITEMS table
     const productValues = products
-      .map(
-        (product) =>
-          `(${product.p_id}, ${pqid}, ${customer.c_id})`
-      )
+      .map((product) => `(${product.p_id}, ${pqid}, ${customer.c_id})`)
       .join(", ");
 
     await db.query(
@@ -965,6 +973,49 @@ app.post("/addpq", async (req, res) => {
       message: "Failed to add price quotation",
       error: error.message,
     });
+  }
+});
+
+app.post("/updateUserProfile", upload.single("photo"), async (req, res) => {
+  try {
+    const result = await db.query(
+      `UPDATE EMPLOYEE SET 
+        F_NAME = $1,
+        L_NAME = $2,
+        Birth_Date = $3,
+        SALARY = $4,
+        E_PHOTO = $5,
+        E_ADDRESS = $6,
+        E_EMAIL = $7,
+        E_PHONE = $8,
+        E_CITY = $9,
+        E_COUNTRY = $10,
+        E_ZIPCODE = $11,
+        E_USERNAME = $12,
+        E_PASSWORD = $13
+      WHERE E_ID = $14`,
+      [
+        req.body.fName,
+        req.body.lName,
+        req.body.BirthDate,
+        req.body.salary,
+        req.body.Photo,
+        req.body.Address,
+        req.body.email,
+        req.body.phone,
+        req.body.city,
+        req.body.country,
+        req.body.zipcode,
+        req.body.username,
+        req.body.password,
+        req.body.id,
+      ]
+    );
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Error updating user profile:", error);
+    res.status(500).json({ error: "Failed to update user profile" });
   }
 });
 // Edit Product
@@ -1075,7 +1126,61 @@ app.post("/updateDebt", async (req, res) => {
       success: false,
       message: "Failed to update debt",
       error: error.message,
+
     });
+  }
+});
+//changepassword
+app.post("/changepassword", async (req, res) => {
+  const { username, newPassword } = req.body;
+
+  if (!username || !newPassword) {
+    return res
+      .status(400)
+      .json({ message: "Username and new password are required." });
+  }
+
+  try {
+    // Check if the user exists
+    const userResult = await db.query(
+      "SELECT E_ID, F_NAME, L_NAME, E_ROLE FROM EMPLOYEE WHERE E_USERNAME = $1",
+      [username]
+    );
+
+    if (userResult.rowCount === 0) {
+      return res.status(404).json({ message: "Username does not exist." });
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    if (userResult.rows[0].e_role === "Manager") {
+      // Update the password and deactivate the user
+      await db.query(
+        "UPDATE EMPLOYEE SET E_PASSWORD = $1 WHERE E_USERNAME = $2",
+        [hashedPassword, username]
+      );
+    } else {
+      // Update the password and deactivate the user
+      await db.query(
+        "UPDATE EMPLOYEE SET E_PASSWORD = $1, E_ACTIVE = FALSE WHERE E_USERNAME = $2",
+        [hashedPassword, username]
+      );
+    }
+
+    // Return the user details along with success message
+    return res.status(200).json({
+      message:
+        "Password updated successfully. Wait for reactivation from the manager.",
+      E_ID: userResult.rows[0].e_id,
+      F_NAME: userResult.rows[0].f_name,
+      L_NAME: userResult.rows[0].l_name,
+      E_ROLE: userResult.rows[0].e_role,
+    });
+  } catch (err) {
+    console.error("Error updating password:", err);
+    return res
+      .status(500)
+      .json({ message: "Server error. Please try again later." });
   }
 });
 
@@ -1099,8 +1204,19 @@ passport.use(
         SignedUser.id = user.e_id;
         SignedUser.fName = user.f_name;
         SignedUser.lName = user.l_name;
+        SignedUser.BirthDate = user.birth_date;
+        SignedUser.salary = user.salary;
         SignedUser.Photo = user.e_photo;
         SignedUser.Role = user.e_role;
+        SignedUser.Address = user.e_address;
+        SignedUser.email = user.e_email;
+        SignedUser.phone = user.e_phone;
+        SignedUser.city = user.e_city;
+        SignedUser.country = user.e_country;
+        SignedUser.zipcode = user.e_zipcode;
+        SignedUser.username = user.e_username;
+        SignedUser.password = user.e_password;
+        SignedUser.Gender = user.e_gender;
 
         const isMatch = await bcrypt.compare(password, user.e_password);
         if (isMatch) {

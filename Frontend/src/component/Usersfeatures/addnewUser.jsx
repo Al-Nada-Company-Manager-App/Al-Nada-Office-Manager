@@ -211,7 +211,13 @@ const AddnewUser = () => {
                 labelCol={{ span: 8 }}
                 wrapperCol={{ span: 16 }}
                 name="password"
-                rules={[{ required: true, message: "Password is required!" }]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Password must be at least 8 characters",
+                    min: 8,
+                  },
+                ]}
               >
                 <Input.Password />
               </Form.Item>

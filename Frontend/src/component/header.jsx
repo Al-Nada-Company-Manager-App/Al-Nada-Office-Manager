@@ -22,6 +22,7 @@ import { setUserModalVisible } from "../Store/Users";
 import { setdetailProductModalVisible } from "../Store/Product";
 import { setDebtModalVisible } from "../Store/Debts";
 const { Header } = Layout;
+import { setCurrentContent } from "../Store/homeMenu";
 
 function THeader() {
   const { collapsed } = useSelector((state) => state.homeMenu);
@@ -54,7 +55,9 @@ function THeader() {
     e.target.value = "";
     e.target.blur();
   };
-
+  const showProfile = () => {
+    dispatch(setCurrentContent("20"));
+   };
   React.useEffect(() => {
     dispatch(fetchNotification());
   }, []);
@@ -162,7 +165,7 @@ function THeader() {
               className="dropdown-menu user-dropdown show"
               style={{ position: "absolute", top: "100%" }}
             >
-              <a href="" className="dropdown-item">
+              <a href="#" className="dropdown-item" onClick={showProfile}>
                 Profile
               </a>
               <a href="" className="dropdown-item">

@@ -52,11 +52,13 @@ export const fetchSignedUser = createAsyncThunk(
   }
 );
 
+
 // Initial state
 const initialState = {
   isLoggedIn: false,
   loading: true,
   SignedUser: null,
+  passwordChangedModalVisible: false,
 };
 
 // Slice
@@ -70,6 +72,9 @@ const authSlice = createSlice({
     setLoading: (state, action) => {
       state.loading = action.payload;
     },
+    setpasswordChangedModalVisible: (state, action) => {
+      state.passwordChangedModalVisible = action.payload;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -108,5 +113,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { setLoggedIn, setLoading } = authSlice.actions;
+export const { setpasswordChangedModalVisible, setLoggedIn, setLoading } = authSlice.actions;
 export default authSlice.reducer;
