@@ -7,7 +7,7 @@ import {
   Upload,
 } from "antd";
 import  {useSelector,useDispatch} from "react-redux";
-import { fetchCustomers,addCustomer, setaddCustomerModalVisible} from "../../Store/Customer";
+import { setFile,fetchCustomers,addCustomer, setaddCustomerModalVisible} from "../../Store/Customer";
 import { UploadOutlined } from "@ant-design/icons";
 
 
@@ -15,6 +15,11 @@ import { UploadOutlined } from "@ant-design/icons";
 const AddnewCustomer = () => {
 const { addcustomerModalVisible,file } = useSelector((state) => state.Customers);
 const dispatch = useDispatch();
+
+const handlefileChange = (file) => {
+    dispatch(setFile(file));
+  };
+
 
 
 const handleAddCustomer = async (values) => {
@@ -79,7 +84,7 @@ return (
         <Form.Item label="Photo">
           <Upload
             beforeUpload={(file) => {
-              setFile(file);
+              handlefileChange(file);
               return false;
             }}
             maxCount={1}

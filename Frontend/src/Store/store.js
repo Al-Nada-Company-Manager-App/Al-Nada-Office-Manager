@@ -8,6 +8,8 @@ import Customers from "./Customer";
 import Products from "./Product";
 import priceQuotations from "./PriceQuotation";
 import Debts from "./Debts";
+import Purchases from "./Purchase"
+import Suppliers from "./Supplier";
 const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -19,6 +21,8 @@ const store = configureStore({
     Products: Products,
     PriceQuotations: priceQuotations,
     Debts: Debts,
+    Purchases: Purchases,
+    Suppliers: Suppliers,
   },
 });
 

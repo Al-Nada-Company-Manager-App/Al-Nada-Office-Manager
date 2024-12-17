@@ -93,9 +93,7 @@ const salesColumns = [
   },
 ];
 
-const CustomerDetails = ({
-  handleModalClose,
-}) => {
+const CustomerDetails = () => {
   const { selectedCustomer, customerModalVisible,customerSalesData,SalesLoading } = useSelector((state) => state.Customers);
   const dispatch = useDispatch();
 
@@ -103,7 +101,7 @@ const CustomerDetails = ({
     if (selectedCustomer)
       dispatch(fetchSalesHistory(selectedCustomer.c_id));
   }, [selectedCustomer]);
-  handleModalClose = () => {
+ const  handleModalClose = () => {
     dispatch(setCustomerModalVisible(false));
   };
 

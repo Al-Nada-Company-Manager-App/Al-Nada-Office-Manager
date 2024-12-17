@@ -16,9 +16,8 @@ const db = new pg.Client({
   password: "NEW@22wntg",
   port: 5432,
 });
-db.connect();
-
 // const db = new pg.Client({
+
 //   connectionString:
 //     "postgresql://neondb_owner:Z50JaCBQWOMr@ep-nameless-darkness-a5mhhisx.us-east-2.aws.neon.tech/neondb?sslmode=require",
 //   ssl: {
@@ -586,6 +585,241 @@ app.get("/customersales", async (req, res) => {
   }
 });
 // Example Node.js/Express endpoint
+
+//for purchase
+app.get("/allPurchase", async (req, res) => {
+  const result = await db.query(`
+          SELECT 
+            PURCHASE.*, 
+            SUPPLIER.S_NAME,
+            SUPPLIER.S_PHOTO
+        FROM 
+            PURCHASE
+        JOIN 
+            SUPPLIER ON PURCHASE.S_ID = SUPPLIER.S_ID
+        
+    `);
+  const rows = result.rows;
+  res.json(rows);
+});
+
+app.get("/allSupplierPch", async (req, res) => {
+  const result = await db.query(`
+        SELECT  S_ID,S_NAME
+        FROM  SUPPLIER
+    `);
+  const rows = result.rows;
+  res.json(rows);
+});
+
+app.get("/allProductsPch", async (req, res) => {
+  const result = await db.query(`
+        SELECT P_ID, P_NAME, P_COSTPRICE,P_QUANTITY
+        FROM STOCK
+    `);
+  const rows = result.rows;
+
+  res.json(rows);
+});
+
+app.post("/addPch", async (req, res) => {
+  try {
+    let {
+      supplier,
+      billNumber,
+      expense,
+      customscost,
+      customsnum,
+      cost,
+      tax,
+      total,
+      currency,
+      purchasedate,
+      products,
+    } = req.body;
+
+    const formatDate = new Date();
+    const year = formatDate.getFullYear();
+    const month = formatDate.getMonth() + 1;
+    const day = formatDate.getDate();
+    const formattedDate = `${year}-${month}-${day}`;
+
+    const purchaseResult = await db.query(
+      `INSERT INTO PURCHASE 
+          (S_ID, PCH_DATE, PCH_TOTAL, PCH_TAX, PCH_COST, PCH_BILLNUM, PCH_CURRENCY, PCH_EXPENSE, PCH_CUSTOMSCOST, PCH_CUSTOMSNUM) 
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
+         RETURNING PCH_ID`,
+      [
+        supplier.s_id,
+        formatDate,
+        total,
+        tax,
+        cost,
+        billNumber,
+        currency,
+        expense,
+        customscost,
+        customsnum,
+      ]
+    );
+
+    const purchaseId = purchaseResult.rows[0].pch_id;
+
+    const productValues = products
+      .map(
+        (product) =>
+          `(${product.p_id}, ${purchaseId}, ${product.quantity}, ${
+            product.quantity * product.costprice
+          })`
+      )
+      .join(", ");
+
+    await db.query(
+      `INSERT INTO PURCHASE_ITEMS (P_ID, PCH_ID, PI_QUANTITY, PI_TOTAL) 
+         VALUES ${productValues}`
+    );
+
+    for (const product of products) {
+      await db.query(
+        `UPDATE STOCK 
+           SET P_QUANTITY = P_QUANTITY + $1 , P_COSTPRICE = $2
+           WHERE P_ID = $3 `,
+        [product.quantity, product.costprice, product.p_id]
+      );
+    }
+
+    res.json({
+      success: true,
+      message: "Purchase and products added successfully!",
+    });
+  } catch (error) {
+    console.error("Error adding Purchase:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to add Purchase",
+      error: error.message,
+    });
+  }
+});
+
+app.post("/updatePch", async (req, res) => {
+  try {
+    const { PCH_ID, cost, tax, customscost, expense, total, products } =
+      req.body;
+    console.log(req.body);
+
+    await db.query(
+      `UPDATE PURCHASE 
+             SET  PCH_TOTAL = $1, PCH_TAX = $2, 
+                 PCH_COST = $3,
+                 PCH_EXPENSE = $4, PCH_CUSTOMSCOST = $5
+             WHERE PCH_ID = $6`,
+      [total, tax, cost, expense, customscost, PCH_ID]
+    );
+
+    const currentProducts = await db.query(
+      `SELECT P_ID, PI_QUANTITY FROM PURCHASE_ITEMS WHERE PCH_ID = $1`,
+      [PCH_ID]
+    );
+    console.log(currentProducts.rows);
+
+    for (const item of currentProducts.rows) {
+      await db.query(
+        `UPDATE STOCK 
+                   SET P_QUANTITY = P_QUANTITY - $1 
+                   WHERE P_ID = $2`,
+        [item.pi_quantity, item.p_id]
+      );
+    }
+
+    await db.query(`DELETE FROM PURCHASE_ITEMS WHERE PCH_ID = $1`, [PCH_ID]);
+
+    const productValues = products
+      .map(
+        (product) =>
+          `(${product.p_id}, ${PCH_ID}, ${product.quantity},${product.costprice}
+        , ${product.quantity * product.costprice})`
+      )
+      .join(", ");
+    console.log(productValues);
+
+    await db.query(
+      `INSERT INTO PURCHASE_ITEMS (P_ID, PCH_ID, PI_QUANTITY,P_COSTPRICE,PI_TOTAL) 
+               VALUES ${productValues}`
+    );
+
+    for (const product of products) {
+      await db.query(
+        `UPDATE STOCK 
+                 SET P_QUANTITY = P_QUANTITY + $1 , P_COSTPRICE = $2
+                 WHERE P_ID = $3`,
+        [product.quantity, product.costprice, product.p_id]
+      );
+    }
+
+    res.json({ success: true, message: "Purchase updated successfully!" });
+  } catch (error) {
+    console.error("Error updating Purchase:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to update Purchase",
+      error: error.message,
+    });
+  }
+});
+
+app.post("/deletePurchase", async (req, res) => {
+  const { id } = req.body;
+  console.log("Received ID:", id);
+  try {
+    await db.query("DELETE FROM PURCHASE WHERE PCH_ID = $1", [id]);
+    res.json({ success: true });
+  } catch (error) {
+    console.error("Error deleting purchase:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete purchase",
+      error: error.message,
+    });
+  }
+});
+app.get("/getSupplierPurchase/:id", async (req, res) => {
+  const supplierId = req.params.id;
+  try {
+    const purchases = await db.query(
+      `SELECT * FROM PURCHASE WHERE S_ID = $1 ORDER BY PCH_DATE DESC`,
+      [supplierId]
+    );
+    res.json(purchases.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch Purchases history." });
+  }
+});
+
+////Supplier
+app.get("/allsuppliers", async (req, res) => {
+  try {
+    const result = await db.query("SELECT * FROM SUPPLIER");
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error fetching Suppliers");
+  }
+});
+
+app.post("/deletesupplier", async (req, res) => {
+  const { id } = req.body;
+  try {
+    await db.query("DELETE FROM Supplier WHERE S_ID = $1", [id]);
+    res.send("Supplier deleted successfully");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error deleting supplier");
+  }
+});
+
+
 app.get("/getCustomerSales/:id", async (req, res) => {
   const customerId = req.params.id;
   try {
