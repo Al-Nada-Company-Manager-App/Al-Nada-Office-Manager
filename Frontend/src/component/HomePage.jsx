@@ -28,8 +28,6 @@ const contents = {
   10: <Sales />,
   11: <PriceQuotation />,
   12: <Debts />,
-  11: <Sales />,
-  12: <Sales />,
   13: <Supplier />,
   14: <Purchase />,
 };
