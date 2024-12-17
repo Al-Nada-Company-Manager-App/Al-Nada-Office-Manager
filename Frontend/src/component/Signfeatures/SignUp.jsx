@@ -45,7 +45,6 @@ function SignUpForm() {
     if (file) {
       formData.append("photo", file);
     }
-<<<<<<< HEAD
 
     await dispatch(addUser(formData));
     const message =
@@ -56,38 +55,6 @@ function SignUpForm() {
       n_E_ID: result.data.id,
     };
     await dispatch(addNotification(NotificationData));
-=======
-    try {
-      const result = await axios.post(
-        "http://localhost:4000/addUser",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      console.log(formData);
-      const message =
-        result.data.fName + " " + result.data.lName + " need to be approved";
-      const NotificationData = {
-        n_message: message,
-        n_type: "APPROVEUSER",
-        n_E_ID: result.data.id,
-      };
-      await axios.post(
-        "http://localhost:4000/sendNotification",
-        NotificationData,
-        {
-          withCredentials: true,
-        }
-      );
-      return true;
-    } catch (error) {
-      console.error("Error adding user:", error);
-      return false;
-    }
->>>>>>> origin/userProfile
   };
   const handleUploadChange = (info) => {
     console.log(info.fileList);
@@ -245,9 +212,6 @@ function SignUpForm() {
                 labelCol={{ span: 8 }}
                 wrapperCol={{ span: 16 }}
                 name="password"
-<<<<<<< HEAD
-                rules={[{ required: true, message: "Password is required!" }]}
-=======
                 rules={[
                   {
                     required: true,
@@ -255,7 +219,6 @@ function SignUpForm() {
                     min: 8,
                   },
                 ]}
->>>>>>> origin/userProfile
               >
                 <Input.Password />
               </Form.Item>
