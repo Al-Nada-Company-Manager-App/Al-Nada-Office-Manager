@@ -34,18 +34,42 @@ const Products = () => {
     });
 
 
+    const handleupdate = (updatedProduct) => {
+      setproductData((prevProduct) =>
+        prevProduct.map((product) =>
+          product.id === updatedProduct.id ? updatedProduct : product
+        )
+      );
+      dispatch(setSelecteditem(updatedProduct));
+    };
 
-
-    const saveEditedProductData = () => {
-      // setproductData((prevData) => {
-      //   return prevData.map((row) => {
-      //     if (row.id === editedData.id) {
-      //       return { ...row, ...editedData };
-      //     }
-      //     return row;
-      //   });
-      // });
-      // setSelectedProduct(editedData);
+    const saveEditedProductData = async (values) => {
+      
+      const formData = new FormData(); 
+        values.expiredate = values.expiredate ? values.expiredate.format('YYYY-MM-DD') : null;
+    
+        Object.keys(values).forEach((key) => {
+            formData.append(key, values[key]);
+        });
+    
+        if (file) {
+            formData.append('photo', file); 
+        }
+    
+        try {
+            const response = await axios.post('http://localhost:4000/updateProduct', formData, {
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'multipart/formdata',
+                },
+            });
+            const updatedProduct = response.data;
+            handleupdate(updatedProduct);
+            return true;
+        } catch (error) {
+            console.error('Error Updating Product:', error);
+            return false;
+        }
     };
 
 
@@ -302,7 +326,10 @@ const Products = () => {
               loading={productLoading}
             />
 
-            <ProductDetails/>
+            <ProductDetails
+            handleSaveData={saveEditedProductData}
+            editedData={editedData}
+            seteditedData={seteditedData}/>
         </div>
         
         </>

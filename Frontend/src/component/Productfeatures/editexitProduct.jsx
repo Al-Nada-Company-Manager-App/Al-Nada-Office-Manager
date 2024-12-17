@@ -1,7 +1,5 @@
 
 import { Form, Input, Button, Modal, Row, Col, DatePicker, InputNumber} from 'antd';
-//import {Upload, PlusOutlined} from 'antd';
-//import { useEffect } from 'react';
 import moment from 'moment';
 // eslint-disable-next-line react/prop-types
 const EditexitProduct = ({editedData, seteditedData, isEditProductOpen, closeEditProduct, handleSaveData, editingform}) => {
@@ -15,12 +13,12 @@ const EditexitProduct = ({editedData, seteditedData, isEditProductOpen, closeEdi
             centered
             open={isEditProductOpen}
             onCancel={closeEditProduct}
-            onOk={handleSaveData}
+            onOk={() => {handleSaveData(editedData)}}
             footer={[
                 <Button key="close" onClick={closeEditProduct}>
                     Close
                 </Button>,
-                <Button key="save" onClick={() => {handleSaveData();
+                <Button key="save" onClick={() => {handleSaveData(editedData);
                     closeEditProduct();
                 }}>
                 Save

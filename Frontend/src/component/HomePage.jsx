@@ -7,6 +7,7 @@ import Users from "./Usersfeatures/Users";
 import Sales from "./Salesfeatures/Sales";
 import ApproveUser from "./Usersfeatures/ApproveUser";
 import Products from "./Productfeatures/Products";
+import RepairProducts from "./RepairProductfeatures/RepairProducts";
 import axios from "axios";
 import "../Styles/HomePage.css";
 import Customer from "./Customerfeatures/Customer";
@@ -19,7 +20,7 @@ const contents = {
   3: <Users />,
   4: <ApproveUser />,
   6: <Products />,
-  7: <Products />,
+  7: <RepairProducts />,
   8: <Customer />,
   10: <Sales />,
   11: <Sales />,

@@ -4,10 +4,10 @@ import { useState, useEffect } from 'react';
 import EditexitProduct from './editexitProduct';
 import {Form} from 'antd';
 import { useSelector,useDispatch } from 'react-redux';
-import { setdetailProductModalVisible,setSelecteditem,handleDeleteProduct,fetchProducts } from '../../Store/Product';
+import { setdetailProductModalVisible,setSelecteditem,handleDeleteProduct,fetchProducts, setEditedSelectedProduct } from '../../Store/Product';
 import { use } from 'react';
 // eslint-disable-next-line react/prop-types, no-unused-vars
-const ProductDetails = ({ handleSaveData}) => {
+const ProductDetails = ({ handleSaveData, editedData, seteditedData}) => {
   const dispatch = useDispatch();
   const { selectedProduct,detailProductModalVisible,editedSelectedProduct} = useSelector((state) => state.Products);
   const [isEditProductOpen, setisEditProductOpen] = useState(false);
@@ -17,7 +17,7 @@ const ProductDetails = ({ handleSaveData}) => {
 
   const openEditProduct = () => {
     setisEditProductOpen(true);
-    
+    dispatch(setEditedSelectedProduct(selectedProduct));
   };
 
   useEffect(() => {
@@ -98,14 +98,14 @@ const ProductDetails = ({ handleSaveData}) => {
                 </Row>
               </div>
             )}
-            {/* <EditexitProduct
+            <EditexitProduct
             editedData= {editedData}
             seteditedData= {seteditedData}
             isEditProductOpen= {isEditProductOpen}
             closeEditProduct= {closeEditProduct}
             handleSaveData = {handleSaveData}
             editingform={editingform}
-            /> */}
+            />
           </Modal>
           
       )}
