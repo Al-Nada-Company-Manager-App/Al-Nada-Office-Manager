@@ -1,10 +1,18 @@
 
-import { Form, Input, Button, Modal, Row, Col, DatePicker, InputNumber} from 'antd';
+import { Form, Input, Button, Modal, Row, Col, DatePicker, InputNumber,Select} from 'antd';
 import moment from 'moment';
+import React from 'react';
 // eslint-disable-next-line react/prop-types
 const EditexitProduct = ({editedData, seteditedData, isEditProductOpen, closeEditProduct, handleSaveData, editingform}) => {
     
+    console.log(editedData);
 
+        const [selectedCategory, setSelectedCategory] = React.useState(""); 
+        const [ischemical, setischemical] = React.useState(false);
+    const handleCategoryChange = (value) => {
+        setSelectedCategory(value); 
+        setischemical(value === "Chemical");
+      };
 
     return (
         <div>
@@ -63,23 +71,34 @@ const EditexitProduct = ({editedData, seteditedData, isEditProductOpen, closeEdi
                         />
                     </Form.Item>
 
-                        <Form.Item
+                    <Form.Item
                         label="Category"
                         labelCol={{ span: 11 }}
                         wrapperCol={{ span: 16 }}
                         name="category"
                         rules={[{ required: true, message: 'Category is required!' }]}
                         >
-                        <Input 
-                        // eslint-disable-next-line react/prop-types
-                        defaultValue={editedData.p_category}
-                        onChange={(element) => {
-                            seteditedData((prevData) => ({...prevData, p_category: element.target.value}))
-                        }}
-                        />
+                        <Select placeholder="Select a category" onChange={handleCategoryChange}>
+                                <Select.Option value="Spare Part">Spare Part</Select.Option>
+                                <Select.Option value="Laboratory Equipment">Laboratory Equipment</Select.Option>
+                                <Select.Option value="Chemical">Chemical</Select.Option>
+                                <Select.Option value="Measuring & Controllers">Measuring & Controllers</Select.Option>
+                                <Select.Option value="Other">Other</Select.Option>
+                            </Select>
                         </Form.Item>
+                        {selectedCategory === "Other" && (
+                            <Form.Item
+                              label="Specify Category"
+                              labelCol={{ span: 11 }}
+                              wrapperCol={{ span: 16 }}
+                              name="customCategory"
+                              rules={[{ required: true, message: "Please specify the category!" }]}
+                            >
+                              <Input/>
+                            </Form.Item>
+                            )}
                         <Form.Item
-                        label="Opening Stock"
+                        label="Quantity"
                         labelCol={{ span: 11 }}
                         wrapperCol={{ span: 16 }}
                         name="quantity"
@@ -129,21 +148,18 @@ const EditexitProduct = ({editedData, seteditedData, isEditProductOpen, closeEdi
                             }}
                         />
                         </Form.Item>
-                        <Form.Item 
+                        {ischemical && (<Form.Item 
                         name ='expiredate'
                         label="Expire Date" 
                         labelCol={{ span: 11 }} 
                         wrapperCol={{ span: 16 }}
                         >
-                        <DatePicker 
-                        format="YYYY-MM-DD" 
-                        // eslint-disable-next-line react/prop-types
+                        <DatePicker format="YYYY-MM-DD" 
                         defaultValue={editedData.expire_date ? moment(editedData.expire_date) : null}
-                            onChange={(data, datestring) => {
-                                seteditedData((prevData) => ({...prevData, expire_data: datestring}))
-                            }}
-                        />
-                        </Form.Item>
+                        onChange={(data, datestring) => {
+                            seteditedData((prevData) => ({...prevData, expire_data: datestring}))
+                        }}/>
+                        </Form.Item>)}
                         <Form.Item
                             label="Model Code"
                             labelCol={{ span: 11 }}

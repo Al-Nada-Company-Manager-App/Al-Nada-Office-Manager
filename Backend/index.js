@@ -1008,14 +1008,15 @@ app.post("/DeleteProduct", async (req, res) => {
 app.post("/AddProduct", upload.single("photo"), async (req, res) => {
   try {
     const PNAME = req.body.productname;
-    const CATEGORY = req.body.category;
+    const CATEGORY = (req.body.category === "Other")? req.body.customCategory :req.body.category;
     const COSTPRICE = req.body.costprice;
     const SELLPRICE = req.body.sellprice;
     const QUANTITY = req.body.quantity;
-    const EXPIRE_DATE = req.body.expiredate;
     const MODEL_CODE = req.body.modelcode;
     const DESCRIPTION = req.body.pdescription;
     const photo = req.file ? req.file.filename : 'null';
+    const EXPIRE_DATE = (req.body.category === "Chemical")?req.body.expiredate : null;
+
     await db.query(
       "INSERT INTO STOCK (P_NAME, P_COSTPRICE, P_SELLPRICE, P_QUANTITY, P_PHOTO, P_DESCRIPTION, P_CATEGORY, EXPIRE_DATE, MODEL_CODE) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)",
       [

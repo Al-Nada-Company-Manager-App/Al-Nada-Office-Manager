@@ -269,7 +269,10 @@ const Products = () => {
     
     const handleFinish = async (values) => {
         const formData = new FormData(); 
+        if (values.category === "Chemical") {
         values.expiredate = values.expiredate ? values.expiredate.format('YYYY-MM-DD') : null;
+        }
+        console.log(values);
     
         Object.keys(values).forEach((key) => {
             formData.append(key, values[key]);
@@ -286,7 +289,7 @@ const Products = () => {
                     'Content-Type': 'multipart/formdata',
                 },
             });
-    
+
             const updatedData = await fetchProducts();
             setproductData(updatedData); 
             return true;

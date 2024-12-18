@@ -1,10 +1,18 @@
 import React from "react";
-import { Form, Input, Button, Modal, Row, Col, DatePicker, InputNumber, Upload } from 'antd';
+import { Form, Input, Button, Modal, Row, Col, DatePicker, InputNumber, Upload, Select } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 
 // eslint-disable-next-line react/prop-types
 const AddnewProduct = ({ handleFinish, handleUploadChange }) => {
     const [isnewModalVisible, setIsnewModalVisible] = React.useState(false);
+    const [selectedCategory, setSelectedCategory] = React.useState(""); 
+    const [ischemical, setischemical] = React.useState(false);
+    const [form] = Form.useForm();
+        const handleCategoryChange = (value) => {
+          setSelectedCategory(value); 
+          setischemical(value === "Chemical");
+        };
+
     const handlenewModalClose = () => {
         setIsnewModalVisible(false);
     };
@@ -38,6 +46,7 @@ const AddnewProduct = ({ handleFinish, handleUploadChange }) => {
         >
             <Form
                 layout="horizontal"
+                form={form}
                 className="employee-form"
                 onFinish={(values) => {
                     if(handleFinish(values)){
@@ -79,10 +88,27 @@ const AddnewProduct = ({ handleFinish, handleUploadChange }) => {
                         name="category"
                         rules={[{ required: true, message: 'Category is required!' }]}
                         >
-                        <Input />
+                        <Select placeholder="Select a category" onChange={handleCategoryChange}>
+                                <Select.Option value="Spare Part">Spare Part</Select.Option>
+                                <Select.Option value="Laboratory Equipment">Laboratory Equipment</Select.Option>
+                                <Select.Option value="Chemical">Chemical</Select.Option>
+                                <Select.Option value="Measuring & Controllers">Measuring & Controllers</Select.Option>
+                                <Select.Option value="Other">Other</Select.Option>
+                            </Select>
                         </Form.Item>
+                        {selectedCategory === "Other" && (
+                            <Form.Item
+                              label="Specify Category"
+                              labelCol={{ span: 11 }}
+                              wrapperCol={{ span: 16 }}
+                              name="customCategory"
+                              rules={[{ required: true, message: "Please specify the category!" }]}
+                            >
+                              <Input/>
+                            </Form.Item>
+                            )}
                         <Form.Item
-                        label="Opening Stock"
+                        label="Quantity"
                         labelCol={{ span: 11 }}
                         wrapperCol={{ span: 16 }}
                         name="quantity"
@@ -95,28 +121,27 @@ const AddnewProduct = ({ handleFinish, handleUploadChange }) => {
                         labelCol={{ span: 11 }}
                         wrapperCol={{ span: 16 }}
                         name="costprice"
-                        rules={[{ required: true, message: 'Price is required!' }]}
+                        rules={[{ required: true, message: "Please specify the Cost Price!" }]}
                         >
                         <InputNumber suffix="EGP" style={{ width: '100%' }} />
                     </Form.Item>
-
                         <Form.Item
                         label="Sell Price"
                         labelCol={{ span: 11 }}
                         wrapperCol={{ span: 16 }}
                         name="sellprice"
-                        rules={[{ required: true, message: 'Sell Price is required!' }]}
+                        rules={[{ required: true, message: "Please specify the Sell Price!" }]}
                         >
                         <InputNumber suffix="EGP" style={{ width: '100%' }} />
                         </Form.Item>
-                        <Form.Item 
+                        {ischemical && (<Form.Item 
                         name ='expiredate'
                         label="Expire Date" 
                         labelCol={{ span: 11 }} 
                         wrapperCol={{ span: 16 }}
                         >
                         <DatePicker format="YYYY-MM-DD" />
-                        </Form.Item>
+                        </Form.Item>)}
                         <Form.Item
                             label="Model Code"
                             labelCol={{ span: 11 }}

@@ -296,7 +296,6 @@ const RepairProducts = () => {
     <div>
       <h2 style = {{textAlign: "left", fontWeight: "500"}}>Repair Process</h2>
 
-      {/* AddRepairProcess Modal */}
       <AddRepairProcess
         handleFinish={handleAddRepairProcess}
         devices={devices}
@@ -305,8 +304,7 @@ const RepairProducts = () => {
         fetchDevices={fetchDevices}
       />
 
-      {/* Table displaying repair processes */}
-      
+
          <div className = "table-container">
              <Table
                dataSource={repairProcesses}
