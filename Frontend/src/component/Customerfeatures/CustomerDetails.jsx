@@ -1,107 +1,113 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Row, Col, Table } from "antd";
-import {useSelector,useDispatch} from "react-redux";
-import { fetchSalesHistory,setCustomerModalVisible } from "../../Store/Customer";
-import {convertTimestampToDate} from '../../utils/ConvertDate';
+import { useSelector, useDispatch } from "react-redux";
+import {
+  fetchSalesHistory,
+  setCustomerModalVisible,
+} from "../../Store/Customer";
+import { convertTimestampToDate } from "../../utils/ConvertDate";
 
 const salesColumns = [
   {
-      title: 'Sale ID',
-      dataIndex: 'sl_id',
-      sorter: (a, b) => a.sl_id - b.sl_id,
-      sortDirections: ['descend', 'ascend'],
-      defaultSortOrder: 'descend',
+    title: "Sale ID",
+    dataIndex: "sl_id",
+    sorter: (a, b) => a.sl_id - b.sl_id,
+    sortDirections: ["descend", "ascend"],
+    defaultSortOrder: "descend",
   },
   {
-      title: 'Bill Number',
-      dataIndex: 'sl_billnum',
+    title: "Bill Number",
+    dataIndex: "sl_billnum",
   },
   {
-      title: 'Sale Date',
-      dataIndex: 'sl_date',
-      sorter: (a, b) => new Date(a.sl_date) - new Date(b.sl_date),
-      sortDirections: ['descend', 'ascend'],
-      render: (date) => {
-          const formattedDate = convertTimestampToDate(date);
-          return <span>{formattedDate}</span>;
-      },
+    title: "Sale Date",
+    dataIndex: "sl_date",
+    sorter: (a, b) => new Date(a.sl_date) - new Date(b.sl_date),
+    sortDirections: ["descend", "ascend"],
+    render: (date) => {
+      const formattedDate = convertTimestampToDate(date);
+      return <span>{formattedDate}</span>;
+    },
   },
-{
-  title: 'Discount',
-  dataIndex: 'sl_discount',
-},
-{
-  title: 'Tax',
-  dataIndex: 'sl_tax',
-},
-{
-  title: 'Total',
-  dataIndex: 'sl_total',
-  render: (total) => total.toFixed(2),
-  sorter: (a, b) => a.sl_total - b.sl_total,
-},
-{
-  title: 'Currency',
-  dataIndex: 'sl_currency',
-  filters: [
+  {
+    title: "Discount",
+    dataIndex: "sl_discount",
+  },
+  {
+    title: "Tax",
+    dataIndex: "sl_tax",
+  },
+  {
+    title: "Total",
+    dataIndex: "sl_total",
+    render: (total) => total.toFixed(2),
+    sorter: (a, b) => a.sl_total - b.sl_total,
+  },
+  {
+    title: "Currency",
+    dataIndex: "sl_currency",
+    filters: [
       {
-          text: 'USD',
-          value: 'USD',
+        text: "USD",
+        value: "USD",
       },
       {
-          text: 'EUR',
-          value: 'EUR',
+        text: "EUR",
+        value: "EUR",
       },
       {
-          text: 'EGP',
-          value: 'EGP',
+        text: "EGP",
+        value: "EGP",
       },
-
-  ],
-  onFilter: (value, record) => record.sl_currency.indexOf(value) === 0,
-},
-{
-  title: 'Status',
-  dataIndex: 'sl_status',
-  filters: [
+    ],
+    onFilter: (value, record) => record.sl_currency.indexOf(value) === 0,
+  },
+  {
+    title: "Status",
+    dataIndex: "sl_status",
+    filters: [
       {
-          text: 'Completed',
-          value: 'Completed',
-      },
-      {
-          text: 'Pending',
-          value: 'Pending',
+        text: "Completed",
+        value: "Completed",
       },
       {
-          text: 'Cancelled',
-          value: 'Cancelled',
+        text: "Pending",
+        value: "Pending",
       },
-  ],
-  onFilter: (value, record) => record.sl_status.indexOf(value) === 0,
-  render: (status) => {
-      let statusColor = '';
+      {
+        text: "Cancelled",
+        value: "Cancelled",
+      },
+    ],
+    onFilter: (value, record) => record.sl_status.indexOf(value) === 0,
+    render: (status) => {
+      let statusColor = "";
       let statusText = status;
-      if (status === 'Completed') {
-          statusColor = 'green';
-      } else if (status === 'Pending') {
-          statusColor = 'gray';
-      } else if (status === 'Cancelled') {
-          statusColor = 'red';
+      if (status === "Completed") {
+        statusColor = "green";
+      } else if (status === "Pending") {
+        statusColor = "gray";
+      } else if (status === "Cancelled") {
+        statusColor = "red";
       }
       return <span style={{ color: statusColor }}>{statusText}</span>;
-  },
+    },
   },
 ];
 
 const CustomerDetails = () => {
-  const { selectedCustomer, customerModalVisible,customerSalesData,SalesLoading } = useSelector((state) => state.Customers);
+  const {
+    selectedCustomer,
+    customerModalVisible,
+    customerSalesData,
+    SalesLoading,
+  } = useSelector((state) => state.Customers);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (selectedCustomer)
-      dispatch(fetchSalesHistory(selectedCustomer.c_id));
+    if (selectedCustomer) dispatch(fetchSalesHistory(selectedCustomer.c_id));
   }, [selectedCustomer]);
- const  handleModalClose = () => {
+  const handleModalClose = () => {
     dispatch(setCustomerModalVisible(false));
   };
 
@@ -124,7 +130,11 @@ const CustomerDetails = () => {
             {/* Customer Details */}
             <Col span={8}>
               <img
-                src={`http://localhost:4000/uploads/${selectedCustomer.c_name|| "placeholder"}.jpg`}
+                src={
+                  selectedCustomer.c_photo
+                    ? "./Customers/" + selectedCustomer.c_photo
+                    : "https://via.placeholder.com/150"
+                }
                 alt={selectedCustomer.c_name}
                 style={{
                   width: "100%",
@@ -138,12 +148,24 @@ const CustomerDetails = () => {
             </Col>
             <Col span={16}>
               <div>
-                <p><strong>Name:</strong> {selectedCustomer.c_name}</p>
-                <p><strong>Address:</strong> {selectedCustomer.c_address}</p>
-                <p><strong>City:</strong> {selectedCustomer.c_city}</p>
-                <p><strong>Country:</strong> {selectedCustomer.c_country}</p>
-                <p><strong>Zip Code:</strong> {selectedCustomer.c_zipcode}</p>
-                <p><strong>Fax:</strong> {selectedCustomer.c_fax}</p>
+                <p>
+                  <strong>Name:</strong> {selectedCustomer.c_name}
+                </p>
+                <p>
+                  <strong>Address:</strong> {selectedCustomer.c_address}
+                </p>
+                <p>
+                  <strong>City:</strong> {selectedCustomer.c_city}
+                </p>
+                <p>
+                  <strong>Country:</strong> {selectedCustomer.c_country}
+                </p>
+                <p>
+                  <strong>Zip Code:</strong> {selectedCustomer.c_zipcode}
+                </p>
+                <p>
+                  <strong>Fax:</strong> {selectedCustomer.c_fax}
+                </p>
               </div>
             </Col>
           </Row>

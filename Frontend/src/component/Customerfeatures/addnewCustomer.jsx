@@ -7,7 +7,7 @@ import {
   Upload,
 } from "antd";
 import  {useSelector,useDispatch} from "react-redux";
-import { setFile,fetchCustomers,addCustomer, setaddCustomerModalVisible} from "../../Store/Customer";
+import { updateCustomerPhoto,setFile,fetchCustomers,addCustomer, setaddCustomerModalVisible} from "../../Store/Customer";
 import { UploadOutlined } from "@ant-design/icons";
 
 
@@ -23,12 +23,23 @@ const handlefileChange = (file) => {
 
 
 const handleAddCustomer = async (values) => {
-    const formData = new FormData();
+    const CutomerData={};
     Object.entries(values).forEach(([key, value]) =>
-      formData.append(key, value)
+          CutomerData[key] = value
     );
-    if (file) formData.append("photo", file);
-   await dispatch(addCustomer(formData));
+    const response= await dispatch(addCustomer(CutomerData));
+    console.log(responce);
+    if(response.payload.success){
+        if(file){
+            const photoData ={};
+            photoData.C_ID=response.payload.c_id;
+            photoData.photo=file;
+            photoData.C_NAME=CutomerData.C_NAME;
+            await dispatch(updateCustomerPhoto(photoData));
+        }
+    }
+
+
    dispatch(fetchCustomers());
    dispatch(setaddCustomerModalVisible(false));
   };

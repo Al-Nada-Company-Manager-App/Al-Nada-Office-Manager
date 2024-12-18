@@ -5,31 +5,47 @@ import {
   fetchCustomers,
   setupdateCustomerModalVisible,
   updateCustomer,
+  updateCustomerPhoto,
+  setFile,
 } from "../../Store/Customer";
 import { UploadOutlined } from "@ant-design/icons";
 
 const UpdateCustomerModal = () => {
-  const { selectedCustomer,updatecustomerModalVisible,file } = useSelector((state) => state.Customers);
+  const { selectedCustomer, updatecustomerModalVisible, file } = useSelector(
+    (state) => state.Customers
+  );
   const dispatch = useDispatch();
-
-  const handleUpdateCustomer = async (values) => {
-    const formData = new FormData();
-
-    formData.append("C_ID", selectedCustomer.c_id); 
-
-    Object.entries(values).forEach(([key, value]) =>
-      formData.append(key, value)
-    );
-
-    if (file) formData.append("photo", file);
-
-    await dispatch(updateCustomer(formData));
-    dispatch(fetchCustomers());
-    dispatch(setupdateCustomerModalVisible(false));
+  const handlefileChange = (file) => {
+    dispatch(setFile(file));
   };
 
+  const handleUpdateCustomer = async (values) => {
+    const CutomerData = {};
+    CutomerData.C_ID = selectedCustomer.c_id;
+
+    Object.entries(values).forEach(
+      ([key, value]) => (CutomerData[key] = value)
+    );
+
+    await dispatch(updateCustomer(CutomerData));
+    const photoData = {};
+    if (file) {
+      photoData.C_ID = selectedCustomer.c_id;
+      photoData.photo = file;
+      photoData.C_NAME = CutomerData.C_NAME;
+      await dispatch(updateCustomerPhoto(photoData));
+    }
+
+    dispatch(fetchCustomers());
+    handleupdateClose();
+  };
+  const [form] = Form.useForm(); 
+  React.useEffect(() => {
+      form.setFieldsValue(selectedCustomer);
+    }, [selectedCustomer]);
   const handleupdateClose = () => {
     dispatch(setupdateCustomerModalVisible(false));
+    dispatch(setFile(null));
   };
 
   return (
@@ -37,10 +53,11 @@ const UpdateCustomerModal = () => {
       <Modal
         title="Update Customer"
         open={updatecustomerModalVisible}
-        onCancel={() => handleupdateClose()}
+        onCancel={handleupdateClose}
         footer={null}
       >
         <Form
+          form={form}
           layout="vertical"
           onFinish={handleUpdateCustomer}
           initialValues={selectedCustomer}
@@ -82,8 +99,7 @@ const UpdateCustomerModal = () => {
           <Form.Item label="Photo">
             <Upload
               beforeUpload={(file) => {
-                setFile(file);
-                return false;
+                handlefileChange(file);
               }}
               maxCount={1}
             >

@@ -31,6 +31,7 @@ const contents = {
   12: <Debts />,
   13: <Supplier />,
   14: <Purchase />,
+  20: <UserProfile />,
 };
 
 const HomePage = () => {

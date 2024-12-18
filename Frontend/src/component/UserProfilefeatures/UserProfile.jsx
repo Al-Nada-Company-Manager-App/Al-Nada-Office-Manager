@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Form,
   Input,
@@ -12,49 +12,74 @@ import {
 } from "antd";
 import { UploadOutlined, LockOutlined } from "@ant-design/icons";
 import { useSelector } from "react-redux";
-import { updateUserProfile } from "../../Store/UserProfile";
+import { updateUserProfile, updateuserphoto } from "../../Store/UserProfile";
 import "../../Styles/UserProfile.css"; // Import the CSS file
 import { useDispatch } from "react-redux";
 import { handleLogout } from "../../Store/authSlice";
 import { setpasswordChangedModalVisible } from "../../Store/authSlice";
 import FormChangePassword from "./PasswordChange";
+import moment from "moment";
 
 const UserProfile = () => {
   const dispatch = useDispatch();
 
   const { SignedUser } = useSelector((state) => state.auth);
-  const [formData, setFormData] = useState(SignedUser);
+  const [file, setFile] = useState(null);
+  const [formData, setFormData] = useState({
+    ...SignedUser,
+    BirthDate: SignedUser.BirthDate
+      ? moment(SignedUser.BirthDate).format("YYYY-MM-DD")
+      : "",
+  });
   const [isEditing, setIsEditing] = useState(false);
   const handleFormChange = (changedValues) => {
     setFormData({ ...formData, ...changedValues });
     setIsEditing(true);
   };
+  const [form] = Form.useForm();
 
   const handleCancel = () => {
-    setFormData(SignedUser);
+    setFormData({
+      ...SignedUser,
+      BirthDate: SignedUser.BirthDate
+        ? moment(SignedUser.BirthDate).format("YYYY-MM-DD")
+        : "",
+    });
+    setFile(null);
     setIsEditing(false);
+    form.resetFields();
   };
+  useEffect(() => {
+    form.setFieldsValue(formData); // Update form fields when formData changes
+  }, [formData, form]);
   const handleUpdate = async () => {
+    console.log(formData);
     await dispatch(updateUserProfile(formData))
       .then(() => {
         message.success("User information updated successfully!");
-        // Update the signed-in user information
         setFormData(formData);
         dispatch(handleLogout());
       })
       .catch(() => {
         message.error("Failed to update user information.");
       });
+    if (file) {
+      const photoData = {};
+      photoData.E_ID = formData.id;
+      photoData.photo = file;
+      dispatch(updateuserphoto(photoData));
+    }
+
     setIsEditing(false);
   };
 
   const handlePhotoChange = (info) => {
-    // if (info.file.status === "done") {
+    setFile(info.file.originFileObj); // Correctly use the setter function
     const newPhotoURL = URL.createObjectURL(info.file.originFileObj);
     setFormData({ ...formData, Photo: newPhotoURL });
     setIsEditing(true);
-    //}
   };
+
   const handleChangePassword = () => {
     dispatch(setpasswordChangedModalVisible(true));
   };
@@ -62,6 +87,7 @@ const UserProfile = () => {
   return (
     <>
       <Form
+        form={form}
         layout="vertical"
         initialValues={formData}
         onValuesChange={(_, allValues) => handleFormChange(allValues)}
@@ -83,7 +109,13 @@ const UserProfile = () => {
                     }}
                   >
                     <Avatar
-                      src={formData.Photo}
+                      src={
+                        file
+                          ? URL.createObjectURL(file)
+                          : SignedUser.Photo
+                          ? "./Users/" + SignedUser.Photo
+                          : "https://via.placeholder.com/150"
+                      }
                       size={100}
                       style={{ marginBottom: 16 }}
                     />
@@ -120,7 +152,14 @@ const UserProfile = () => {
                     <Input placeholder="Last Name" />
                   </Form.Item>
                   <Form.Item label="Birth Date" name="BirthDate">
-                    <Input type="date" />
+                    <Input
+                      type="date"
+                      defaultValue={
+                        SignedUser.BirthDate
+                          ? moment(SignedUser.BirthDate).format("YYYY-MM-DD")
+                          : ""
+                      }
+                    />
                   </Form.Item>
                 </Col>
 

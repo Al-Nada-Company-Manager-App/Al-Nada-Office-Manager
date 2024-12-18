@@ -37,6 +37,24 @@ export const addCustomer = createAsyncThunk(
     }
   }
 );
+export const updateCustomerPhoto = createAsyncThunk(
+  "Customers/updateCustomerPhoto",
+  async (customer) => {
+    try {
+      console.log(customer);
+      const response = await axiosInstance.post("/updatecustomerphoto", customer
+        ,{
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error updating customer photo:", error);
+    }
+  }
+);
 export const handleDeleteCustomer = createAsyncThunk(
   "Customers/handleDeleteCustomer",
   async (id) => {
@@ -91,11 +109,11 @@ const customerSlice = createSlice({
     setaddCustomerModalVisible: (state, action) => {
       state.addcustomerModalVisible = action.payload;
     },
-    setFile: (state, action) => {
-      state.file = action.payload;
-    },
     setupdateCustomerModalVisible: (state, action) => {
       state.updatecustomerModalVisible = action.payload;
+    },
+    setFile: (state, action) => {
+      state.file = action.payload;
     },
   },
   extraReducers: (builder) => {

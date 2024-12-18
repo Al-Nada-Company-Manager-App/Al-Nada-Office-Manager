@@ -57,27 +57,24 @@ function THeader() {
   };
   const showProfile = () => {
     dispatch(setCurrentContent("20"));
-   };
+  };
   React.useEffect(() => {
     dispatch(fetchNotification());
   }, []);
 
   const handleNotification = async (Notification) => {
-    if(Notification.n_type === "APPROVEUSER"){
-   await  dispatch(approveNotification(Notification.e_id));
-    dispatch(setUserModalVisible(true));
-    }else if(Notification.n_type === "Product Expiry"){
-     await dispatch(expireNotification(Notification.p_id));
+    if (Notification.n_type === "APPROVEUSER") {
+      await dispatch(approveNotification(Notification.e_id));
+      dispatch(setUserModalVisible(true));
+    } else if (Notification.n_type === "Product Expiry") {
+      await dispatch(expireNotification(Notification.p_id));
       dispatch(setdetailProductModalVisible(true));
-    }
-    else if(Notification.n_type === "Debt Due Date"){
+    } else if (Notification.n_type === "Debt Due Date") {
       await dispatch(debtNotification(Notification.d_id));
       dispatch(setDebtModalVisible(true));
     }
 
-    const ids ={n_id:Notification.n_id,
-      e_id: SignedUser.id
-    }
+    const ids = { n_id: Notification.n_id, e_id: SignedUser.id };
 
     await dispatch(deleteNotification(ids));
     dispatch(fetchNotification());
@@ -147,7 +144,10 @@ function THeader() {
         {/* User Profile */}
         <div className="user-profile">
           <img
-            src={SignedUser?.Photo || userPhoto}
+            src={
+              (SignedUser && SignedUser.Photo)? "./Users/" + SignedUser.Photo
+                : "https://via.placeholder.com/150"
+            }
             alt="User"
             className="rounded-circle user-photo"
             style={{ width: "40px", height: "40px", cursor: "pointer" }}
@@ -168,9 +168,6 @@ function THeader() {
               <a href="#" className="dropdown-item" onClick={showProfile}>
                 Profile
               </a>
-              <a href="" className="dropdown-item">
-                Settings
-              </a>
               <div className="dropdown-divider"></div>
               <a href="" className="dropdown-item" onClick={Logout}>
                 Logout
@@ -181,7 +178,6 @@ function THeader() {
         {selectedUser && <UserDetails />}
         {selectedProduct && <ProductDetails />}
         {selectedDebt && <DebtDetails />}
-
       </div>
     </Header>
   );

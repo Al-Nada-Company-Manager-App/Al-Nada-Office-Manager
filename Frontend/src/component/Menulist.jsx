@@ -97,18 +97,15 @@ const MenuList = () => {
         },
         {
           key: "13",
-          icon: <UserOutlined/>,
+          icon: <UserOutlined />,
           label: "Supplier",
-          onClick: () => handleMenuClick("13"),        },
+          onClick: () => handleMenuClick("13"),
+        },
         {
           key: "14",
           icon: <PayCircleOutlined />,
           label: "Purchase Items",
-          onClick: () => handleMenuClick("14"),        },
-        {
-          key: "15",
-          icon: <SettingOutlined />,
-          label: "Setting",
+          onClick: () => handleMenuClick("14"),
         },
       ]}
     />

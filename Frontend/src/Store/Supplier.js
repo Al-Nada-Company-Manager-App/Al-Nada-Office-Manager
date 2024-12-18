@@ -30,10 +30,28 @@ export const addSupplier = createAsyncThunk(
   "Suppliers/addSupplier",
   async (supplier) => {
     try {
-      const response = await axiosInstance.post("/addSupplier", supplier);
+      console.log(supplier);
+      const response = await axiosInstance.post("/addsupplier", supplier);
       return response.data;
     } catch (error) {
       console.error("Error adding supplier:", error);
+    }
+  }
+);
+export const updateSupplierPhoto = createAsyncThunk(
+  "Suppliers/updateSupplierPhoto",
+  async (supplier) => {
+    try {
+      const response = await axiosInstance.post("/updatesupplierphoto", supplier
+        ,{
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error updating customer photo:", error);
     }
   }
 );

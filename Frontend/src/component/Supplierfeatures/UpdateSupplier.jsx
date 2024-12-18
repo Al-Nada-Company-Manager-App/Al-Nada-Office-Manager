@@ -5,31 +5,49 @@ import {
   fetchSuppliers,
   setupdateSupplierModalVisible,
   updateSupplier,
+  setFile,
+  updateSupplierPhoto,
+  setSelectedSupplier,
 } from "../../Store/Supplier";
 import { UploadOutlined } from "@ant-design/icons";
 
 const UpdateSupplierModal = () => {
   const dispatch = useDispatch();
-  const {selectedSupplier,file,updatesupplierModalVisible} = useSelector((state) => state.Suppliers);
-
+  const { selectedSupplier, file, updatesupplierModalVisible } = useSelector(
+    (state) => state.Suppliers
+  );
+  const [form] = Form.useForm();
+  React.useEffect(() => {
+    form.setFieldsValue(selectedSupplier);
+  }, [selectedSupplier]);
+  const handlefileChange = (file) => {
+    dispatch(setFile(file));
+  };
   const handleUpdateSupplier = async (values) => {
-    const formData = new FormData();
+    const SupplierData = {};
+    console.log(selectedSupplier);
+    SupplierData.S_ID = selectedSupplier.s_id;
 
-    formData.append("S_ID", selectedSupplier.s_id); 
-
-    Object.entries(values).forEach(([key, value]) =>
-      formData.append(key, value)
+    Object.entries(values).forEach(
+      ([key, value]) => (SupplierData[key] = value)
     );
 
-    if (file) formData.append("photo", file);
-
-    await dispatch(updateSupplier(formData));
+    await dispatch(updateSupplier(SupplierData));
+    const photoData = {};
+    if (file) {
+      photoData.S_ID = selectedSupplier.s_id;
+      photoData.photo = file;
+      photoData.S_NAME = SupplierData.S_NAME;
+      await dispatch(updateSupplierPhoto(photoData));
+    }
     dispatch(fetchSuppliers());
-    dispatch(setupdateSupplierModalVisible(false));
+    handleupdateClose();
   };
 
   const handleupdateClose = () => {
     dispatch(setupdateSupplierModalVisible(false));
+    dispatch(setFile(null));
+    dispatch(setSelectedSupplier(null));
   };
 
   return (
@@ -41,6 +59,7 @@ const UpdateSupplierModal = () => {
         footer={null}
       >
         <Form
+          form={form}
           layout="vertical"
           onFinish={handleUpdateSupplier}
           initialValues={selectedSupplier}
@@ -82,8 +101,7 @@ const UpdateSupplierModal = () => {
           <Form.Item label="Photo">
             <Upload
               beforeUpload={(file) => {
-                setFile(file);
-                return false;
+                handlefileChange(file);
               }}
               maxCount={1}
             >

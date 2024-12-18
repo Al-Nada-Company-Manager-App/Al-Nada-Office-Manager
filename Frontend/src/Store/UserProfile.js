@@ -13,6 +13,24 @@ export const updateUserProfile = createAsyncThunk(
         }
     }
 );
+export const updateuserphoto = createAsyncThunk(
+    "UserProfile/updateuserphoto",
+    async (photo, { rejectWithValue }) => {
+        try {
+            console.log(photo);
+            const response = await axiosInstance.post("/updateuserphoto", photo
+                ,{
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || "An error occurred");
+        }
+    }
+);
 
 const userProfileSlice = createSlice({
   name: "userProfile",

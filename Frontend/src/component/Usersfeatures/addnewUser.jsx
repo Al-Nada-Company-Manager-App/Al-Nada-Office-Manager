@@ -20,6 +20,7 @@ import {
   setadduserModalVisible,
   setFile,
 } from "../../Store/Users";
+import { updateuserphoto } from "../../Store/UserProfile";
 const AddnewUser = () => {
   const dispatch = useDispatch();
   const { adduserModalVisible, file } = useSelector((state) => state.Users);
@@ -33,18 +34,21 @@ const AddnewUser = () => {
     }
   };
   const handleFinish = async (values) => {
-    const formData = new FormData();
     values.birth_date = values.birth_date
       ? values.birth_date.format("YYYY-MM-DD")
       : null;
+    const userData = { ...values };
 
-    Object.keys(values).forEach((key) => {
-      formData.append(key, values[key]);
-    });
-    if (file) {
-      formData.append("photo", file);
+    const response = await dispatch(addUsers(userData));
+    console.log(response);
+    if (response.payload.success) {
+      if (file) {
+        const photoData = {};
+        photoData.E_ID = response.payload.id;
+        photoData.photo = file;
+        dispatch(updateuserphoto(photoData));
+      }
     }
-    await dispatch(addUsers(formData));
     dispatch(fetchUsers());
   };
   const handlenewModalClose = () => {

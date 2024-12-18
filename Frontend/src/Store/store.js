@@ -12,6 +12,13 @@ import Purchases from "./Purchase"
 import Suppliers from "./Supplier";
 import UserProfile from "./UserProfile";
 const store = configureStore({
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: ['auth/fetchUsers/fulfilled'], // Ignore specific actions
+        ignoredPaths: ['Users.file'], // Ignore specific paths in state
+      },
+    }),
   reducer: {
     auth: authReducer,
     homeMenu: homeMenuReducer,

@@ -56,17 +56,34 @@ app.use("/uploads", express.static("../Frontend/public"));
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "../Frontend/public");
+    let folderName = "";
+    if (req.body.E_ID) {
+      folderName = "Users";
+    } else if (req.body.C_ID) {
+      folderName = "Customers";
+    } else if (req.body.S_ID) {
+      folderName = "Suppliers";
+    } else if (req.body.P_ID) {
+      folderName = "Products";
+    }
+
+    const destinationPath = path.join("../Frontend/public", folderName);
+    cb(null, destinationPath);
   },
   filename: (req, file, cb) => {
     let photoname = "";
-    if (req.body.username) {
-      photoname = req.body.username;
-    } else if (req.body.C_NAME) {
-      const firstName = req.body.C_NAME.split(" ")[0]; // Take the first part before a space
+    console.log(req.body);
+    if (req.body.E_ID) {
+      photoname = req.body.E_ID;
+    } else if (req.body.C_ID) {
+      const firstName = req.body.C_ID;
       photoname = firstName;
     }
-    const username = req.body.username;
+    else if (req.body.S_ID) {
+      const firstName = req.body.S_ID;
+      photoname = firstName;
+    }
+
     const ext = path.extname(file.originalname);
     cb(null, `${photoname}${ext}`);
   },
@@ -122,8 +139,9 @@ app.post("/activateUser", async (req, res) => {
   res.json({ success: true });
 });
 
-app.post("/addUser", upload.single("photo"), async (req, res) => {
+app.post("/addUser", async (req, res) => {
   try {
+    //console.log(req.body);
     const fName = req.body.fName;
     const lName = req.body.lName;
     const gender = req.body.gender;
@@ -137,7 +155,6 @@ app.post("/addUser", upload.single("photo"), async (req, res) => {
     const pass = req.body.password;
     const BirthDate = req.body.birth_date;
 
-    const photo = req.file ? req.file.filename : null;
     const hashedPassword = await bcrypt.hash(pass, 10);
 
     const result = await db.query(
@@ -151,7 +168,7 @@ app.post("/addUser", upload.single("photo"), async (req, res) => {
         BirthDate,
         salary,
         role,
-        photo,
+        null,
         address,
         city,
         country,
@@ -177,8 +194,63 @@ app.post("/addUser", upload.single("photo"), async (req, res) => {
   }
 });
 
-//for Notifications
+app.post("/updateUserProfile", async (req, res) => {
+  try {
+    const result = await db.query(
+      `UPDATE EMPLOYEE SET 
+        F_NAME = $1,
+        L_NAME = $2,
+        Birth_Date = $3,
+        SALARY = $4,
+        E_ADDRESS = $5,
+        E_EMAIL = $6,
+        E_PHONE = $7,
+        E_CITY = $8,
+        E_COUNTRY = $9,
+        E_ZIPCODE = $10,
+        E_USERNAME = $11,
+        E_PASSWORD = $12
+      WHERE E_ID = $13`,
+      [
+        req.body.fName,
+        req.body.lName,
+        req.body.BirthDate,
+        req.body.salary,
+        req.body.Address,
+        req.body.email,
+        req.body.phone,
+        req.body.city,
+        req.body.country,
+        req.body.zipcode,
+        req.body.username,
+        req.body.password,
+        req.body.id,
+      ]
+    );
 
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Error updating user profile:", error);
+    res.status(500).json({ error: "Failed to update user profile" });
+  }
+});
+
+app.post("/updateuserphoto", upload.single("photo"), async (req, res) => {
+  const E_PHOTO = req.file ? req.file.filename : null; 
+  console.log(E_PHOTO);
+  const E_ID = req.body.E_ID; // Should now be available
+  console.log(E_ID);
+  try {
+    await db.query("UPDATE Employee SET E_PHOTO = $1 WHERE E_ID = $2", [
+      E_PHOTO,
+      req.body.E_ID,
+    ]);
+    res.send("Employee photo updated successfully");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error updating Employee photo");
+  }
+});
 app.get("/notificaions", async (req, res) => {
   const result = await db.query(
     "SELECT N.N_ID, N.N_DATE, N.N_TYPE, N.N_MESSAGE, N.N_STATUS, N.E_ID,N.P_ID,N.D_ID FROM NOTIFICATION N, NOTIFICATION_EMPLOYEE NE WHERE N.N_ID = NE.N_ID AND NE.E_ID = $1",
@@ -220,28 +292,23 @@ app.get("/getemployeebyid/", async (req, res) => {
 });
 app.get("/getproductbyid/", async (req, res) => {
   const { id } = req.query;
-  const
-  result = await db.query("SELECT * FROM STOCK WHERE P_ID = $1", [id]);
+  const result = await db.query("SELECT * FROM STOCK WHERE P_ID = $1", [id]);
   res.json(result.rows[0]);
 });
 app.get("/getdebtbyid/", async (req, res) => {
   const { id } = req.query;
-  const
-  result = await db.query("SELECT * FROM DEBTS WHERE D_ID = $1", [id]);
+  const result = await db.query("SELECT * FROM DEBTS WHERE D_ID = $1", [id]);
   res.json(result.rows[0]);
 });
 
 app.post("/deleteNotification", async (req, res) => {
-
-  
-
   await db.query(
     `
         DELETE FROM 
         NOTIFICATION_EMPLOYEE
         WHERE N_ID = $1 and E_ID = $2
         `,
-    [req.body.id.n_id , req.body.id.e_id]
+    [req.body.id.n_id, req.body.id.e_id]
   );
 
   res.json({ success: true });
@@ -514,18 +581,38 @@ app.get("/allcustomers", async (req, res) => {
 });
 
 // Add a customer
-app.post("/addcustomer", upload.single("photo"), async (req, res) => {
+app.post("/addcustomer", async (req, res) => {
+  // console.log(req.body);
   const { C_NAME, C_ADDRESS, C_CITY, C_COUNTRY, C_ZIPCODE, C_FAX } = req.body;
-  const C_PHOTO = req.file ? req.file.filename : null;
+
   try {
-    await db.query(
-      "INSERT INTO Customer (C_NAME, C_ADDRESS, C_CITY, C_COUNTRY, C_ZIPCODE, C_FAX, C_PHOTO) VALUES ($1, $2, $3, $4, $5, $6, $7)",
-      [C_NAME, C_ADDRESS, C_CITY, C_COUNTRY, C_ZIPCODE, C_FAX, C_PHOTO]
+    const result = await db.query(
+      "INSERT INTO Customer (C_NAME, C_ADDRESS, C_CITY, C_COUNTRY, C_ZIPCODE, C_FAX, C_PHOTO) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING C_ID",
+      [C_NAME, C_ADDRESS, C_CITY, C_COUNTRY, C_ZIPCODE, C_FAX, null]
     );
-    res.send("Customer added successfully");
+
+    const newCustomerId = result.rows[0].c_id; 
+    res.json({ success: true, c_id: newCustomerId }); 
   } catch (err) {
     console.error(err);
-    res.status(500).send("Error adding customer");
+    res.status(500).json({ success: false, message: "Error adding customer" });
+  }
+});
+//update customer photo
+app.post("/updatecustomerphoto", upload.single("photo"), async (req, res) => {
+  //console.log(req.body);
+  const { C_ID } = req.body.C_ID;
+  const C_PHOTO = req.file ? req.file.filename : null; 
+  console.log(req.body.C_ID);
+  try {
+    await db.query("UPDATE Customer SET C_PHOTO = $1 WHERE C_ID = $2", [
+      C_PHOTO,
+      req.body.C_ID,
+    ]);
+    res.send("Customer photo updated successfully");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error updating customer photo");
   }
 });
 
@@ -540,14 +627,13 @@ app.post("/deletecustomer", async (req, res) => {
     res.status(500).send("Error deleting customer");
   }
 });
-app.post("/updatecustomer", upload.single("photo"), async (req, res) => {
-  const { C_ID, C_NAME, C_ADDRESS, C_CITY, C_COUNTRY, C_ZIPCODE, C_FAX } =
+app.post("/updatecustomer", async (req, res) => {
+  const { C_ID, c_name, c_address, c_city, c_country, c_zipcode, c_fax } =
     req.body;
-  const C_PHOTO = req.file ? req.file.filename : null; // If a new photo is uploaded, use the new filename
   try {
     await db.query(
-      "UPDATE Customer SET C_NAME = $1, C_ADDRESS = $2, C_CITY = $3, C_COUNTRY = $4, C_ZIPCODE = $5, C_FAX = $6, C_PHOTO = $7 WHERE C_ID = $8",
-      [C_NAME, C_ADDRESS, C_CITY, C_COUNTRY, C_ZIPCODE, C_FAX, C_PHOTO, C_ID]
+      "UPDATE Customer SET C_NAME = $1, C_ADDRESS = $2, C_CITY = $3, C_COUNTRY = $4, C_ZIPCODE = $5, C_FAX = $6  WHERE C_ID = $7",
+      [c_name, c_address, c_city, c_country, c_zipcode, c_fax, C_ID]
     );
 
     res.send("Customer updated successfully");
@@ -818,7 +904,38 @@ app.get("/allsuppliers", async (req, res) => {
     res.status(500).send("Error fetching Suppliers");
   }
 });
+// Add a customer
+app.post("/addsupplier", async (req, res) => {
+  // console.log(req.body);
+  const { S_NAME, S_ADDRESS, S_CITY, S_COUNTRY, S_ZIPCODE, S_FAX } = req.body;
 
+  try {
+    const result = await db.query(
+      "INSERT INTO Supplier (S_NAME, S_ADDRESS, S_CITY, S_COUNTRY, S_ZIPCODE, S_FAX, S_PHOTO) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING S_ID",
+      [S_NAME, S_ADDRESS, S_CITY, S_COUNTRY, S_ZIPCODE, S_FAX, null]
+    );
+
+    const newSupplierId = result.rows[0].s_id; 
+    res.json({ success: true, s_id: newSupplierId }); 
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Error adding customer" });
+  }
+});
+//update customer photo
+app.post("/updatesupplierphoto", upload.single("photo"), async (req, res) => {
+  const S_PHOTO = req.file ? req.file.filename : null; 
+  try {
+    await db.query("UPDATE Supplier SET S_PHOTO = $1 WHERE S_ID = $2", [
+      S_PHOTO,
+      req.body.S_ID,
+    ]);
+    res.send("Supplier photo updated successfully");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error updating Supplier photo");
+  }
+});
 app.post("/deletesupplier", async (req, res) => {
   const { id } = req.body;
   try {
@@ -829,7 +946,22 @@ app.post("/deletesupplier", async (req, res) => {
     res.status(500).send("Error deleting supplier");
   }
 });
+app.post("/updatesupplier", async (req, res) => {
+  console.log(req.body);
+  const { S_ID, s_name, s_address, s_city, s_country, s_zipcode, s_fax } =
+    req.body;
+  try {
+    await db.query(
+      "UPDATE Supplier SET S_NAME = $1, S_ADDRESS = $2, S_CITY = $3, S_COUNTRY = $4, S_ZIPCODE = $5, S_FAX = $6  WHERE S_ID = $7",
+      [s_name, s_address, s_city, s_country, s_zipcode, s_fax, S_ID]
+    );
 
+    res.send("Supplier updated successfully");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error updating Supplier");
+  }
+});
 
 app.get("/getCustomerSales/:id", async (req, res) => {
   const customerId = req.params.id;
@@ -976,48 +1108,6 @@ app.post("/addpq", async (req, res) => {
   }
 });
 
-app.post("/updateUserProfile", upload.single("photo"), async (req, res) => {
-  try {
-    const result = await db.query(
-      `UPDATE EMPLOYEE SET 
-        F_NAME = $1,
-        L_NAME = $2,
-        Birth_Date = $3,
-        SALARY = $4,
-        E_PHOTO = $5,
-        E_ADDRESS = $6,
-        E_EMAIL = $7,
-        E_PHONE = $8,
-        E_CITY = $9,
-        E_COUNTRY = $10,
-        E_ZIPCODE = $11,
-        E_USERNAME = $12,
-        E_PASSWORD = $13
-      WHERE E_ID = $14`,
-      [
-        req.body.fName,
-        req.body.lName,
-        req.body.BirthDate,
-        req.body.salary,
-        req.body.Photo,
-        req.body.Address,
-        req.body.email,
-        req.body.phone,
-        req.body.city,
-        req.body.country,
-        req.body.zipcode,
-        req.body.username,
-        req.body.password,
-        req.body.id,
-      ]
-    );
-
-    res.json(result.rows[0]);
-  } catch (error) {
-    console.error("Error updating user profile:", error);
-    res.status(500).json({ error: "Failed to update user profile" });
-  }
-});
 // Edit Product
 
 // get allDebts
@@ -1110,7 +1200,7 @@ app.post("/updateDebt", async (req, res) => {
         `UPDATE SALES 
          SET SL_PAYED = $1 
          WHERE SL_ID = $2`,
-        [sl_total+D_AMOUNT, SL_ID]
+        [sl_total + D_AMOUNT, SL_ID]
       );
     }
 
@@ -1126,7 +1216,6 @@ app.post("/updateDebt", async (req, res) => {
       success: false,
       message: "Failed to update debt",
       error: error.message,
-
     });
   }
 });

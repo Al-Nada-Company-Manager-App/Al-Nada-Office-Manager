@@ -59,9 +59,8 @@ const UserDetails = () => {
                 {/* Employee Image on the left */}
                 <Col span={8}>
                   <img
-                    src={
-                      selectedUser.e_photo || "https://via.placeholder.com/150"
-                    }
+                    src={selectedUser.e_photo ? "./Users/" + selectedUser.e_photo : "https://via.placeholder.com/150"}
+
                     alt={`${selectedUser.f_name} ${selectedUser.l_name}`}
                     style={{
                       width: "100%",

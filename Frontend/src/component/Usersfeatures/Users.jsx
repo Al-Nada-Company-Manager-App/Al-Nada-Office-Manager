@@ -13,6 +13,26 @@ import {
 
 const columns = [
   {
+    title: "E_ID",
+    dataIndex: "e_id",
+    width: 20,
+  },
+  {
+    title: "Employe Photo",
+    dataIndex: "e_photo",
+    render: (text, record) => (
+      <img
+        src={
+          record.e_photo
+            ? "./Users/" + record.e_photo
+            : "https://via.placeholder.com/150"
+        }
+        alt="Employee"
+        style={{ width: "50px", height: "50px", objectFit: "cover", borderRadius: "5px" }}
+      />
+    ),
+  },
+  {
     title: "fName",
     dataIndex: "f_name",
     showSorterTooltip: {

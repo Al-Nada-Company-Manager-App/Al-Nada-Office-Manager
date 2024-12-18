@@ -181,6 +181,26 @@ const Customer = () => {
 
   const columns = [
     {
+      title: "C_ID",
+      dataIndex: "c_id",
+      width: 20,
+    },
+    {
+      title: "Customer Photo",
+      dataIndex: "c_photo",
+      render: (text, record) => (
+        <img
+          src={
+            record.c_photo
+              ? "./Customers/" + record.c_photo
+              : "https://via.placeholder.com/150"
+          }
+          alt="Supplier"
+          style={{ width: "50px", height: "50px", objectFit: "cover", borderRadius: "5px" }}
+        />
+      ),
+    },
+    {
       title: "Customer Name",
       dataIndex: "c_name",
       ...getColumnSearchProps("c_name"),

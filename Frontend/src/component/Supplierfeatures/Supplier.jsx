@@ -138,7 +138,26 @@ const Supplier = () => {
   
 
   const columns = [
-   
+    {
+      title: "S_ID",
+      dataIndex: "s_id",
+      width: 20,
+    },
+    {
+      title: "Supplier Photo",
+      dataIndex: "s_photo",
+      render: (text, record) => (
+        <img
+          src={
+            record.s_photo
+              ? "./Suppliers/" + record.s_photo
+              : "https://via.placeholder.com/150"
+          }
+          alt="Supplier"
+          style={{ width: "50px", height: "50px", objectFit: "cover", borderRadius: "5px" }}
+        />
+      ),
+    },
     {
       title: "Supplier Name",
       dataIndex: "s_name",
@@ -147,29 +166,25 @@ const Supplier = () => {
     {
       title: "Supplier Address",
       dataIndex: "s_address",
-      ...getColumnSearchProps("s_address"),
     },
     {
       title: "Supplier City",
       dataIndex: "s_city",
-      ...getColumnSearchProps("s_city"),
     },
     {
       title: "Supplier Country",
       dataIndex: "s_country",
-      ...getColumnSearchProps("s_country"),
     },
     {
       title: "Supplier ZIP_Code",
       dataIndex: "s_zipcode",
-      ...getColumnSearchProps("s_zipcode"),
     },
     {
       title: "Supplier Fax",
       dataIndex: "s_fax",
-      ...getColumnSearchProps("s_fax"),
     },
   ];
+  
   return (
     <>
       < AddNewSupplier />
