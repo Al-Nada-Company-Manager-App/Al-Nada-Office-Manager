@@ -12,6 +12,16 @@ export const fetchProducts = createAsyncThunk(
     }
   }
 );
+export const handleAddProduct = createAsyncThunk( 
+  "Products/handleAddProduct",
+  async (product) => {
+    try {
+      await axiosInstance.post("/AddProduct", product);
+    } catch (error) {
+      console.error("Error adding product:", error);
+    }
+  }
+);
 export const handleDeleteProduct = createAsyncThunk(
   "Products/handleDeleteProduct",
   async (id) => {

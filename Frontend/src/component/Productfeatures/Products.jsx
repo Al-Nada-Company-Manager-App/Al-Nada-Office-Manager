@@ -290,8 +290,7 @@ const Products = () => {
                 },
             });
 
-            const updatedData = await fetchProducts();
-            setproductData(updatedData); 
+             await dispatch(fetchProducts());
             return true;
         } catch (error) {
             console.error('Error adding Product:', error);
