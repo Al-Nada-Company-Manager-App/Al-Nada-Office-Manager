@@ -78,9 +78,11 @@ const storage = multer.diskStorage({
     } else if (req.body.C_ID) {
       const firstName = req.body.C_ID;
       photoname = firstName;
-    }
-    else if (req.body.S_ID) {
+    } else if (req.body.S_ID) {
       const firstName = req.body.S_ID;
+      photoname = firstName;
+    } else if (req.body.P_ID) {
+      const firstName = req.body.P_ID;
       photoname = firstName;
     }
 
@@ -236,7 +238,7 @@ app.post("/updateUserProfile", async (req, res) => {
 });
 
 app.post("/updateuserphoto", upload.single("photo"), async (req, res) => {
-  const E_PHOTO = req.file ? req.file.filename : null; 
+  const E_PHOTO = req.file ? req.file.filename : null;
   console.log(E_PHOTO);
   const E_ID = req.body.E_ID; // Should now be available
   console.log(E_ID);
@@ -591,8 +593,8 @@ app.post("/addcustomer", async (req, res) => {
       [C_NAME, C_ADDRESS, C_CITY, C_COUNTRY, C_ZIPCODE, C_FAX, null]
     );
 
-    const newCustomerId = result.rows[0].c_id; 
-    res.json({ success: true, c_id: newCustomerId }); 
+    const newCustomerId = result.rows[0].c_id;
+    res.json({ success: true, c_id: newCustomerId });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: "Error adding customer" });
@@ -602,7 +604,7 @@ app.post("/addcustomer", async (req, res) => {
 app.post("/updatecustomerphoto", upload.single("photo"), async (req, res) => {
   //console.log(req.body);
   const { C_ID } = req.body.C_ID;
-  const C_PHOTO = req.file ? req.file.filename : null; 
+  const C_PHOTO = req.file ? req.file.filename : null;
   console.log(req.body.C_ID);
   try {
     await db.query("UPDATE Customer SET C_PHOTO = $1 WHERE C_ID = $2", [
@@ -915,8 +917,8 @@ app.post("/addsupplier", async (req, res) => {
       [S_NAME, S_ADDRESS, S_CITY, S_COUNTRY, S_ZIPCODE, S_FAX, null]
     );
 
-    const newSupplierId = result.rows[0].s_id; 
-    res.json({ success: true, s_id: newSupplierId }); 
+    const newSupplierId = result.rows[0].s_id;
+    res.json({ success: true, s_id: newSupplierId });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: "Error adding customer" });
@@ -924,7 +926,7 @@ app.post("/addsupplier", async (req, res) => {
 });
 //update customer photo
 app.post("/updatesupplierphoto", upload.single("photo"), async (req, res) => {
-  const S_PHOTO = req.file ? req.file.filename : null; 
+  const S_PHOTO = req.file ? req.file.filename : null;
   try {
     await db.query("UPDATE Supplier SET S_PHOTO = $1 WHERE S_ID = $2", [
       S_PHOTO,
@@ -1021,14 +1023,13 @@ app.get("/AllRepairProcess", async (req, res) => {
       ORDER BY r.REP_DATE DESC NULLS LAST;
       `
     );
-    console.log("all result data",result.rows[0].spare_parts);
+    console.log("all result data", result.rows[0].spare_parts);
     res.json(result.rows.length > 0 ? result.rows : []);
   } catch (error) {
     console.error("Error fetching repair process data:", error.message);
     res.status(500).json({ error: "Failed to fetch data" });
   }
 });
-
 
 // add repair process
 app.post("/AddRepairProcess", async (req, res) => {
@@ -1059,7 +1060,6 @@ app.post("/AddRepairProcess", async (req, res) => {
 
     console.log("Inserted REPAIR with REP_ID:", rep_id);
 
-
     for (const sparePart of spare_parts) {
       const { sp_id, sp_quantity } = sparePart;
 
@@ -1068,17 +1068,16 @@ app.post("/AddRepairProcess", async (req, res) => {
         [sp_id]
       );
 
-
-
       if (
         stockResult.rows.length === 0 ||
         stockResult.rows[0].p_quantity < sp_quantity
       ) {
         throw new Error(
-          `Not enough stock for spare part ID ${sp_id}. Available: ${stockResult.rows[0]?.p_quantity || 0}`
+          `Not enough stock for spare part ID ${sp_id}. Available: ${
+            stockResult.rows[0]?.p_quantity || 0
+          }`
         );
       }
-
 
       await db.query(
         `INSERT INTO REPAIR_PROCESS (REP_ID, SP_ID, SP_QUANTITY) 
@@ -1104,7 +1103,6 @@ app.post("/AddRepairProcess", async (req, res) => {
       );
     }
 
-
     await db.query("COMMIT");
 
     res.json({
@@ -1119,8 +1117,6 @@ app.post("/AddRepairProcess", async (req, res) => {
   }
 });
 
-
-
 app.get("/api/AllDUM", async (req, res) => {
   try {
     const result = await db.query(
@@ -1132,7 +1128,6 @@ app.get("/api/AllDUM", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch devices" });
   }
 });
-
 
 app.get("/api/AllSpareParts", async (req, res) => {
   try {
@@ -1147,26 +1142,30 @@ app.get("/api/AllSpareParts", async (req, res) => {
 });
 
 // Add Device Under Maintenance
-app.post("/AddDUM", async (req, res) => { 
+app.post("/AddDUM", async (req, res) => {
   try {
     const SERIALNUMBER = req.body.serialnumber;
     const PNAME = req.body.productname;
-    const CATEGORY = req.body.category; 
+    const CATEGORY = req.body.category;
     const PSTATUS = req.body.maintenanceStatus;
-
 
     await db.query(
       "INSERT INTO STOCK (P_NAME, P_CATEGORY, SERIAL_NUMBER, P_STATUS) VALUES ($1, 'Device Under Maintenance', $2, $3)",
       [PNAME, SERIALNUMBER, PSTATUS]
     );
 
-    res.json({ success: true, message: "Device Under Maintenance added successfully!" });
+    res.json({
+      success: true,
+      message: "Device Under Maintenance added successfully!",
+    });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: "Failed to add Device Under Maintenance!" });
+    res.status(500).json({
+      success: false,
+      message: "Failed to add Device Under Maintenance!",
+    });
   }
 });
-
 
 //edit spare part quantity
 app.put("/api/repair-process/:rep_id/spare-part/:sp_id", async (req, res) => {
@@ -1174,21 +1173,20 @@ app.put("/api/repair-process/:rep_id/spare-part/:sp_id", async (req, res) => {
   const { sp_quantity } = req.body;
 
   try {
- 
     const checkExistence = await db.query(
       "SELECT * FROM REPAIR_PROCESS WHERE REP_ID = $1 AND SP_ID = $2",
       [rep_id, sp_id]
     );
 
     if (checkExistence.rows.length === 0) {
-      return res.status(404).json({ message: "Spare part not found in this repair process." });
+      return res
+        .status(404)
+        .json({ message: "Spare part not found in this repair process." });
     }
 
     const previousQuantity = checkExistence.rows[0].sp_quantity;
 
-
     const quantityDifference = sp_quantity - previousQuantity;
-
 
     await db.query(
       "UPDATE REPAIR_PROCESS SET SP_QUANTITY = $1 WHERE REP_ID = $2 AND SP_ID = $3",
@@ -1212,69 +1210,73 @@ app.put("/api/repair-process/:rep_id/spare-part/:sp_id", async (req, res) => {
   }
 });
 
+// delete spare part
+app.delete(
+  "/api/repair-process/:rep_id/spare-part/:sp_id",
+  async (req, res) => {
+    const { rep_id, sp_id } = req.params;
 
+    try {
+      const useQuantity = await db.query(
+        "SELECT SP_QUANTITY FROM REPAIR_PROCESS WHERE SP_ID = $1 AND REP_ID = $2",
+        [sp_id, rep_id]
+      );
 
-// delete spare part 
-app.delete("/api/repair-process/:rep_id/spare-part/:sp_id", async (req, res) => {
-  const { rep_id, sp_id } = req.params;
+      if (useQuantity.rows.length === 0) {
+        return res
+          .status(404)
+          .json({ message: "Spare part not found in this repair process." });
+      }
 
-  try {
+      const sp_quantity = useQuantity.rows[0].sp_quantity;
+      console.log(`Spare part used qunatity before delete : ${sp_quantity}`);
 
-    const useQuantity = await db.query(
-      "SELECT SP_QUANTITY FROM REPAIR_PROCESS WHERE SP_ID = $1 AND REP_ID = $2",
-      [sp_id, rep_id]
-    );
+      const result = await db.query(
+        "DELETE FROM REPAIR_PROCESS WHERE REP_ID = $1 AND SP_ID = $2",
+        [rep_id, sp_id]
+      );
 
+      if (result.rowCount === 0) {
+        return res
+          .status(404)
+          .json({ message: "Spare part not found in the repair process." });
+      }
 
-    if (useQuantity.rows.length === 0) {
-      return res.status(404).json({ message: "Spare part not found in this repair process." });
-    }
-
-
-    const sp_quantity = useQuantity.rows[0].sp_quantity;
-    console.log(`Spare part used qunatity before delete : ${sp_quantity}`);
-
-    const result = await db.query(
-      "DELETE FROM REPAIR_PROCESS WHERE REP_ID = $1 AND SP_ID = $2",
-      [rep_id, sp_id]
-    );
-
-    if (result.rowCount === 0) {
-      return res.status(404).json({ message: "Spare part not found in the repair process." });
-    }
-
-    // Update the stock quantity if the spare part quantity was used
-    if (sp_quantity > 0) {
-      await db.query(
-        `UPDATE STOCK 
+      // Update the stock quantity if the spare part quantity was used
+      if (sp_quantity > 0) {
+        await db.query(
+          `UPDATE STOCK 
          SET P_QUANTITY = P_QUANTITY + $1 
          WHERE P_ID = $2`,
-        [sp_quantity, sp_id]
+          [sp_quantity, sp_id]
+        );
+      }
+
+      const updatedQuantity = await db.query(
+        "SELECT P_QUANTITY FROM STOCK WHERE P_ID = $1",
+        [sp_id]
       );
+      //////////////////////////////////
+      console.log(
+        `Spare part stock qunatity after delete : ${updatedQuantity.rows[0].p_quantity}`
+      );
+
+      res.status(200).json({
+        message: "Spare part deleted and stock updated successfully!",
+      });
+    } catch (error) {
+      console.error("Error deleting spare part:", error);
+      res.status(500).json({ message: "Failed to delete spare part." });
     }
-
-    const updatedQuantity = await db.query(
-      "SELECT P_QUANTITY FROM STOCK WHERE P_ID = $1",
-      [sp_id]
-    );
-    //////////////////////////////////
-    console.log(`Spare part stock qunatity after delete : ${updatedQuantity.rows[0].p_quantity}`);
-
-    res.status(200).json({ message: "Spare part deleted and stock updated successfully!" });
-  } catch (error) {
-    console.error("Error deleting spare part:", error);
-    res.status(500).json({ message: "Failed to delete spare part." });
   }
-});
+);
 
 // delete repair process
 app.delete("/api/repair/:rep_id", async (req, res) => {
   const { rep_id } = req.params;
 
   try {
-    
     await db.query("BEGIN");
-
 
     const repairStatusResult = await db.query(
       "SELECT P_STATUS FROM REPAIR r JOIN STOCK s ON r.P_ID = s.P_ID WHERE r.REP_ID = $1",
@@ -1283,14 +1285,14 @@ app.delete("/api/repair/:rep_id", async (req, res) => {
 
     if (repairStatusResult.rows.length === 0) {
       await db.query("ROLLBACK");
-      return res.status(404).json({ success: false, message: "Repair process not found." });
+      return res
+        .status(404)
+        .json({ success: false, message: "Repair process not found." });
     }
 
     const repairStatus = repairStatusResult.rows[0].p_status;
 
-
     if (repairStatus === "Repairing") {
-
       const repairProcessResult = await db.query(
         "SELECT SP_ID, SP_QUANTITY FROM REPAIR_PROCESS WHERE REP_ID = $1",
         [rep_id]
@@ -1299,7 +1301,6 @@ app.delete("/api/repair/:rep_id", async (req, res) => {
       for (const sparePart of repairProcessResult.rows) {
         const { sp_id, sp_quantity } = sparePart;
 
-
         await db.query(
           "UPDATE STOCK SET P_QUANTITY = P_QUANTITY + $1 WHERE P_ID = $2",
           [sp_quantity, sp_id]
@@ -1307,21 +1308,19 @@ app.delete("/api/repair/:rep_id", async (req, res) => {
       }
     }
 
-
     await db.query("DELETE FROM REPAIR_PROCESS WHERE REP_ID = $1", [rep_id]);
-
 
     const deleteRepairResult = await db.query(
       "DELETE FROM REPAIR WHERE REP_ID = $1 RETURNING REP_ID",
       [rep_id]
     );
 
-
     if (deleteRepairResult.rowCount === 0) {
       await db.query("ROLLBACK");
-      return res.status(404).json({ success: false, message: "Repair process not found." });
+      return res
+        .status(404)
+        .json({ success: false, message: "Repair process not found." });
     }
-
 
     await db.query("COMMIT");
 
@@ -1331,27 +1330,24 @@ app.delete("/api/repair/:rep_id", async (req, res) => {
       rep_id: rep_id,
     });
   } catch (error) {
-
     await db.query("ROLLBACK");
     console.error("Error deleting repair process:", error.message);
-    res.status(500).json({ success: false, message: "Failed to delete repair process." });
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to delete repair process." });
   }
 });
-
-
 
 // update repair remarks and date
 app.post("/api/updateRepair", async (req, res) => {
   const { REP_ID, P_ID, P_STATUS, REMARKS, REP_DATE } = req.body;
 
-  console.log("repair ID", REP_ID, P_ID, P_STATUS,REMARKS, REP_DATE);
+  console.log("repair ID", REP_ID, P_ID, P_STATUS, REMARKS, REP_DATE);
   try {
-
-    await db.query(
-      "UPDATE STOCK SET P_STATUS = $1 WHERE P_ID = $2",
-      [P_STATUS, P_ID]
-    );
-
+    await db.query("UPDATE STOCK SET P_STATUS = $1 WHERE P_ID = $2", [
+      P_STATUS,
+      P_ID,
+    ]);
 
     await db.query(
       "UPDATE REPAIR SET REMARKS = $1, REP_DATE = $2 WHERE REP_ID = $3",
@@ -1386,7 +1382,6 @@ app.get("/api/getProductStatus/:p_id", async (req, res) => {
   }
 });
 
-
 // get repairing data to be fetch before open the form
 app.get("/api/getRepairProduct/:rep_id", async (req, res) => {
   const { rep_id } = req.params;
@@ -1408,13 +1403,15 @@ app.get("/api/getRepairProduct/:rep_id", async (req, res) => {
   }
 });
 
-
-// add spare part to repair process table 
+// add spare part to repair process table
 app.post("/addSpare_RepairProcess", async (req, res) => {
   const { rep_id, sp_id, sp_quantity } = req.body;
 
   if (!rep_id || !sp_id || !sp_quantity) {
-    return res.status(400).json({ success: false, message: 'Repair ID, Spare Part ID, and quantity are required.' });
+    return res.status(400).json({
+      success: false,
+      message: "Repair ID, Spare Part ID, and quantity are required.",
+    });
   }
 
   try {
@@ -1430,54 +1427,62 @@ app.post("/addSpare_RepairProcess", async (req, res) => {
     );
     console.log("add spare part in repair is success");
 
-    res.json({ success: true, message: 'Repair process updated successfully.' });
+    res.json({
+      success: true,
+      message: "Repair process updated successfully.",
+    });
   } catch (error) {
-    console.error('Error adding repair process:', error.message);
-    res.status(500).json({ success: false, message: 'Error adding repair process.' });
+    console.error("Error adding repair process:", error.message);
+    res
+      .status(500)
+      .json({ success: false, message: "Error adding repair process." });
   }
 });
-
 
 //get the spare parts that doesn't exist before in the repair process
 app.get("/availableSpareParts", async (req, res) => {
   try {
-
     const query = `
       SELECT P_ID, P_NAME, P_CATEGORY, P_QUANTITY, MODEL_CODE
       FROM STOCK
       WHERE P_CATEGORY = 'Spare Part' 
       AND P_ID NOT IN (SELECT SP_ID FROM REPAIR_PROCESS WHERE REP_ID = $1)
     `;
-    
+
     const { rep_id } = req.query;
-    
+
     const result = await db.query(query, [rep_id]);
-    
+
     res.json(result.rows);
     console.log("available spare parts true");
   } catch (error) {
-    console.error('Error fetching available spare parts:', error.message);
-    res.status(500).json({ success: false, message: 'Error fetching spare parts.' });
+    console.error("Error fetching available spare parts:", error.message);
+    res
+      .status(500)
+      .json({ success: false, message: "Error fetching spare parts." });
   }
 });
-
 
 // update spare part quantity in the stock after add it in the repair process
 app.post("/updateSpareinStock", async (req, res) => {
   const { sp_id, quantity } = req.body;
 
   if (!sp_id || !quantity) {
-    return res.status(400).json({ success: false, message: 'Spare part ID and quantity are required.' });
+    return res.status(400).json({
+      success: false,
+      message: "Spare part ID and quantity are required.",
+    });
   }
 
   try {
-
     await db.query("BEGIN");
 
-
-    const result = await db.query("SELECT P_QUANTITY FROM STOCK WHERE P_ID = $1", [sp_id]);
+    const result = await db.query(
+      "SELECT P_QUANTITY FROM STOCK WHERE P_ID = $1",
+      [sp_id]
+    );
     if (result.rows.length === 0 || result.rows[0].p_quantity < quantity) {
-      throw new Error('Not enough stock for this spare part.');
+      throw new Error("Not enough stock for this spare part.");
     }
 
     // Update the stock quantity
@@ -1486,14 +1491,12 @@ app.post("/updateSpareinStock", async (req, res) => {
       [quantity, sp_id]
     );
 
-
     await db.query("COMMIT");
     console.log("update spare in stock true");
-    res.json({ success: true, message: 'Stock updated successfully.' });
+    res.json({ success: true, message: "Stock updated successfully." });
   } catch (error) {
-
     await db.query("ROLLBACK");
-    console.error('Error updating stock:', error.message);
+    console.error("Error updating stock:", error.message);
     res.status(500).json({ success: false, message: error.message });
   }
 });
@@ -1502,10 +1505,15 @@ app.post("/updateSpareinStock", async (req, res) => {
 app.get("/checkSparePartStock/:sp_id", async (req, res) => {
   const { sp_id } = req.params;
   try {
-    const result = await db.query("SELECT P_QUANTITY FROM STOCK WHERE P_ID = $1", [sp_id]);
+    const result = await db.query(
+      "SELECT P_QUANTITY FROM STOCK WHERE P_ID = $1",
+      [sp_id]
+    );
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ success: false, message: "Spare part not found." });
+      return res
+        .status(404)
+        .json({ success: false, message: "Spare part not found." });
     }
 
     const availableStock = result.rows[0].p_quantity;
@@ -1513,15 +1521,15 @@ app.get("/checkSparePartStock/:sp_id", async (req, res) => {
     console.log("check spare part in the stock is true");
   } catch (error) {
     console.error("Error checking spare part stock:", error.message);
-    res.status(500).json({ success: false, message: 'Error checking stock.' });
+    res.status(500).json({ success: false, message: "Error checking stock." });
   }
 });
 
-
-
 // Get All Products
 app.get("/AllProducts", async (req, res) => {
-  const result = await db.query("SELECT * FROM STOCK WHERE P_CATEGORY <> 'Device Under Maintenance'");
+  const result = await db.query(
+    "SELECT * FROM STOCK WHERE P_CATEGORY <> 'Device Under Maintenance'"
+  );
   const rows = result.rows;
   res.json(rows);
 });
@@ -1532,37 +1540,60 @@ app.post("/DeleteProduct", async (req, res) => {
   res.json({ success: true });
 });
 //Add Product
-app.post("/AddProduct", upload.single("photo"), async (req, res) => {
+app.post("/AddProduct", async (req, res) => {
   try {
     const PNAME = req.body.productname;
-    const CATEGORY = (req.body.category === "Other")? req.body.customCategory :req.body.category;
+    const CATEGORY =
+      req.body.category === "Other"
+        ? req.body.customCategory
+        : req.body.category;
     const COSTPRICE = req.body.costprice;
     const SELLPRICE = req.body.sellprice;
     const QUANTITY = req.body.quantity;
     const MODEL_CODE = req.body.modelcode;
     const DESCRIPTION = req.body.pdescription;
-    const photo = req.file ? req.file.filename : 'null';
-    const EXPIRE_DATE = (req.body.category === "Chemical")?req.body.expiredate : null;
+    const EXPIRE_DATE =
+      req.body.category === "Chemical" ? req.body.expiredate : null;
+    console.log(EXPIRE_DATE);
 
-    await db.query(
-      "INSERT INTO STOCK (P_NAME, P_COSTPRICE, P_SELLPRICE, P_QUANTITY, P_PHOTO, P_DESCRIPTION, P_CATEGORY, EXPIRE_DATE, MODEL_CODE) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)",
+    const result = await db.query(
+      "INSERT INTO STOCK (P_NAME, P_COSTPRICE, P_SELLPRICE, P_QUANTITY, P_PHOTO, P_DESCRIPTION, P_CATEGORY, EXPIRE_DATE, MODEL_CODE) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING P_ID",
       [
         PNAME,
         COSTPRICE,
         SELLPRICE,
         QUANTITY,
-        photo,
+        null,
         DESCRIPTION,
         CATEGORY,
         EXPIRE_DATE,
         MODEL_CODE,
       ]
     );
+    const newProductId = result.rows[0].p_id;
 
-    res.json({ success: true, message: "Product added successfully!" });
+    res.json({
+      success: true,
+      message: "Product added successfully!",
+      p_id: newProductId,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: "Failed to add Product!" });
+  }
+});
+
+app.post("/updatesproductphoto", upload.single("photo"), async (req, res) => {
+  const P_PHOTO = req.file ? req.file.filename : null;
+  try {
+    await db.query("UPDATE Stock SET P_PHOTO = $1 WHERE P_ID = $2", [
+      P_PHOTO,
+      req.body.P_ID,
+    ]);
+    res.send("Product photo updated successfully");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error updating Product photo");
   }
 });
 
@@ -1652,31 +1683,36 @@ app.post("/addpq", async (req, res) => {
 });
 
 // Edit Product
-app.post("/updateProduct", upload.single("photo"), async (req, res) => {
-  const { P_ID, P_NAME, P_COSTPRICE, P_SELLPRICE, P_QUANTITY, P_DESCRIPTION, P_CATEGORY, MODEL_CODE, EXPIRE_DATE} =
-    req.body;
-  const P_PHOTO = req.file ? req.file.filename : null;
+app.post("/updateProduct",async (req, res) => {
+  const {
+    P_ID,
+    p_name,
+    p_quantity,
+    p_costprice,
+    p_sellprice,
+    model_code,
+    p_discription,
+    expire_date,
+  } = req.body;
   try {
     await db.query(
-      "UPDATE STOCK SET P_NAME = $1, P_COSTPRICE = $2, P_SELLPRICE = $3, P_QUANTITY = $4, P_DESCRIPTION = $5, P_CATEGORY = $6, MODEL_CODE = $7, EXPIRE_DATE = $8, P_PHOTO = $9 WHERE P_ID = $10",
+      "UPDATE STOCK SET P_NAME = $1, P_COSTPRICE = $2, P_SELLPRICE = $3, P_QUANTITY = $4, P_DESCRIPTION = $5, MODEL_CODE = $6, EXPIRE_DATE = $7 WHERE P_ID = $8",
       [
-        P_NAME,
-        P_COSTPRICE,
-        P_SELLPRICE,
-        P_QUANTITY,
-        P_DESCRIPTION,
-        P_CATEGORY,
-        MODEL_CODE,
-        EXPIRE_DATE,
-        P_PHOTO,
-        P_ID
+        p_name,
+        p_costprice,
+        p_sellprice,
+        p_quantity,
+        p_discription,
+        model_code,
+        expire_date,
+        P_ID,
       ]
     );
 
-    res.send("Product updated successfully"); 
+    res.send("Product updated successfully");
   } catch (err) {
-    console.error(err); 
-    res.status(500).send("Error updating product"); 
+    console.error(err);
+    res.status(500).send("Error updating product");
   }
 });
 
@@ -1705,10 +1741,6 @@ app.post("/updateProduct", upload.single("photo"), async (req, res) => {
 // });
 
 // edit repair product
-
-
-
-
 
 // get allDebts
 app.get("/allDebts", async (req, res) => {

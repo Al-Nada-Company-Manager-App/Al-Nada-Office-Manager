@@ -12,13 +12,41 @@ export const fetchProducts = createAsyncThunk(
     }
   }
 );
-export const handleAddProduct = createAsyncThunk( 
+export const handleAddProduct = createAsyncThunk(
   "Products/handleAddProduct",
   async (product) => {
     try {
-      await axiosInstance.post("/AddProduct", product);
+      const response = await axiosInstance.post("/AddProduct", product);
+      return response.data;
     } catch (error) {
       console.error("Error adding product:", error);
+    }
+  }
+);
+export const updatesproductphoto = createAsyncThunk(
+  "Products/updatesproductphoto",
+  async (product) => {
+    console.log(product);
+
+    try {
+      await axiosInstance.post("/updatesproductphoto", product, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+    } catch (error) {
+      console.error("Error updating product photo:", error);
+    }
+  }
+);
+export const updateProduct = createAsyncThunk(
+  "Products/handleUpdateProduct",
+  async (product) => {
+    try {
+      const response = await axiosInstance.post("/updateProduct", product);
+      return response.data;
+    } catch (error) {
+      console.error("Error updating product:", error);
     }
   }
 );
@@ -26,7 +54,7 @@ export const handleDeleteProduct = createAsyncThunk(
   "Products/handleDeleteProduct",
   async (id) => {
     try {
-      await axiosInstance.post("/DeleteProduct", {id});
+      await axiosInstance.post("/DeleteProduct", { id });
       return id;
     } catch (error) {
       console.error("Error deleting product:", error);
@@ -39,11 +67,14 @@ const initialState = {
   productsData: [],
   selectedProducts: [],
   editedSelectedProduct: null,
-  selectedProduct:null,
+  selectedProduct: null,
   filteredProducts: [],
   selectedProductModalVisible: false,
   detailProductModalVisible: false,
+  addProductModalVisible: false,
+  updateProductModalVisible: false,
   productLoading: false,
+  file: null,
 };
 
 // Slice
@@ -64,11 +95,20 @@ const productSlice = createSlice({
       state.detailProductModalVisible = action.payload;
     },
     setSelecteditem: (state, action) => {
-      state.selectedProduct = action.payload
+      state.selectedProduct = action.payload;
     },
     setEditedSelectedProduct: (state, action) => {
       state.editedSelectedProduct = action.payload;
-    },  
+    },
+    setaddProductModalVisible: (state, action) => {
+      state.addProductModalVisible = action.payload;
+    },
+    setFile: (state, action) => {
+      state.file = action.payload;
+    },
+    setupdateProductModalVisible: (state, action) => {
+      state.updateProductModalVisible = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -93,6 +133,8 @@ export const {
   setdetailProductModalVisible,
   setSelecteditem,
   setEditedSelectedProduct,
-
+  setaddProductModalVisible,
+  setFile,
+  setupdateProductModalVisible,
 } = productSlice.actions;
 export default productSlice.reducer;

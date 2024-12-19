@@ -33,3 +33,23 @@
     top: 100%;
     font-size: 12px;
   } */
+
+  /* Style for table headings */
+.table-heading {
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .table-heading h3 {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+  }
+  
+  .heading-line {
+    margin: 10px auto;
+    width: 60%;
+    height: 2px;
+    background-color: #333; /* You can change this color */
+  }
+  
