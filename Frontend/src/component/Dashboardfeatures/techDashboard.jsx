@@ -1,39 +1,58 @@
-//import React from 'react';
-//import { Pie } from '@ant-design/plots';
+import { Bar } from '@ant-design/plots';
+import React from 'react';
 
-const techDashboard = () => {
+//labelName
+//value
 
-  // const [data, setData] = React.useState([]);
-  // React.useEffect(() => {
-  //   setTimeout(() => {
-  //     setData([
-  //       { type: '分类一', value: 27 },
-  //       { type: '分类二', value: 25 },
-  //       { type: '分类三', value: 18 },
-  //       { type: '分类四', value: 15 },
-  //       { type: '分类五', value: 10 },
-  //       { type: '其他', value: 5 },
-  //     ]);
-  //   }, 1000);
-  // }, []);
+const TechDashboard = () => {
+  // const [data, setdata] = React.useState([]);
   // const config = {
   //   data,
-  //   angleField: 'value',
-  //   colorField: 'type',
-  //   label: {
-  //     text: 'value',
+  //   xField: 'labelName',
+  //   yField: 'value',
+  //   paddingRight: 80,
+  //   style: {
+  //     maxWidth: 25,
+  //   },
+  //   markBackground: {
+  //     label: {
+  //       text: ({ originData }) => {
+  //         return `${(originData.value / 1000) * 100}% | ${originData.value}`;
+  //       },
+  //       position: 'right',
+  //       dx: 80,
+  //       style: {
+  //         fill: '#aaa',
+  //         fillOpacity: 1,
+  //         fontSize: 14,
+  //       },
+  //     },
   //     style: {
-  //       fontWeight: 'bold',
+  //       fill: '#eee',
   //     },
   //   },
-  //   legend: {
-  //     color: {
-  //       title: false,
-  //       position: 'right',
-  //       rowPadding: 5,
+  //   scale: {
+  //     y: {
+  //       domain: [0, 1000],
   //     },
+  //   },
+  //   axis: {
+  //     x: {
+  //       tick: false,
+  //       title: false,
+  //     },
+  //     y: {
+  //       grid: false,
+  //       tick: false,
+  //       label: false,
+  //       title: false,
+  //     },
+  //   },
+  //   interaction: {
+  //     elementHighlight: false,
   //   },
   // };
-  // return <Pie {...config} />;
+  // return <Bar {...config} />;
 };
-export default techDashboard;
+
+export default TechDashboard;
