@@ -202,7 +202,7 @@ const RepairProducts = () => {
       const payload = {
         p_id: values.p_id, 
         remarks: values.remarks,
-        rep_date: values.rep_date?.format("YYYY-MM-DD") || null,
+        rep_date: values.rep_date,
         spare_parts: values.spare_parts,
       };
   

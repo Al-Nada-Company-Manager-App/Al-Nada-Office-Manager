@@ -13,7 +13,7 @@ const db = new pg.Client({
   user: "postgres",
   host: "localhost",
   database: "Al Nada",
-  password: "NEW@22wntg",
+  password: "1233215",
   port: 5432,
 });
 db.connect();
@@ -619,17 +619,17 @@ app.get("/api/AllSpareParts", async (req, res) => {
   }
 });
 
-// app.get("/api/ProductStatus", async (req, res) => {
-//   try {
-//     const result = await db.query(
-//       "SELECT P_ID, P_NAME, P_QUANTITY, MODEL_CODE, P_CATEGORY FROM STOCK WHERE P_CATEGORY = 'Spare Part'"
-//     );
-//     res.json(result.rows);
-//   } catch (error) {
-//     console.error("Error fetching spare parts:", error.message);
-//     res.status(500).json({ error: "Failed to fetch spare parts" });
-//   }
-// });
+app.get("/api/ProductStatus", async (req, res) => {
+  try {
+    const result = await db.query(
+      "SELECT P_STATUS, COUNT(P_ID) FROM STOCK WHERE P_CATEGORY = 'Spare Part'"
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error fetching spare parts:", error.message);
+    res.status(500).json({ error: "Failed to fetch spare parts" });
+  }
+});
 
 // Add Device Under Maintenance
 app.post("/AddDUM", async (req, res) => { 
