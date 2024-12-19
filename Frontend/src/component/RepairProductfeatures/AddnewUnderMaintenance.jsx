@@ -15,9 +15,9 @@ const AddnewUnderMaintenance = ({ handleFinish}) => {
         <div>
              <Button 
                 style={{ 
-                    position: "absolute",
-                    right: "40px",
-                    top: "130px"
+                    position:"absolute",
+                    top: '0px',
+                    right: "0px"
                 }}
                 type="primary"
                 onClick={handlenewModalOpen}
@@ -101,9 +101,9 @@ const AddnewUnderMaintenance = ({ handleFinish}) => {
 
                 {/* Submit Button */}
                 <Row>
-                    <Col span={24} style={{ textAlign: 'right' }}>
-                        <Button type="primary" htmlType="submit" className="submit-button">
-                            Add 
+                    <Col span={24} >
+                        <Button type="primary" htmlType="submit" >
+                            Add
                         </Button>
                     </Col>
                 </Row>

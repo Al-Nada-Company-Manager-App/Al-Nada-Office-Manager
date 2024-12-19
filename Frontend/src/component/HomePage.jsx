@@ -8,7 +8,7 @@ import Sales from "./Salesfeatures/Sales";
 import ApproveUser from "./Usersfeatures/ApproveUser";
 import Products from "./Productfeatures/Products";
 import RepairProducts from "./RepairProductfeatures/RepairProducts";
-import techDashboard from "./Dashboardfeatures/techDashboard";
+import TechDashboard from "./Dashboardfeatures/techDashboard";
 import axios from "axios";
 import "../Styles/HomePage.css";
 import Customer from "./Customerfeatures/Customer";
@@ -17,7 +17,7 @@ import { handleLogout } from "../Store/authSlice";
 const { Sider, Content } = Layout;
 
 const contents = {
-  1: <techDashboard/>,
+  1: <TechDashboard/>,
   3: <Users />,
   4: <ApproveUser />,
   6: <Products />,

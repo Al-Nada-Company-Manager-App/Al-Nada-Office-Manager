@@ -6,10 +6,11 @@ import axios from "axios";
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined } from '@ant-design/icons';
 import RepairDetails from './RepairDetails';
+import AddnewUnderMaintenance from './AddnewUnderMaintenance';
 
 const RepairProducts = () => {
   
-  const [repairProcesses, setRepairProcesses] = useState([]); // Main table data
+  const [repairProcesses, setRepairProcesses] = useState([]);
   const [devices, setDevices] = useState([]); // Devices under maintenance
   const [spareParts, setSpareParts] = useState([]); // Available spare parts
   const [loading, setLoading] = useState(false);
@@ -144,6 +145,23 @@ const RepairProducts = () => {
           }
   };
 
+
+  // const fetchDeviceData = async () => {
+  //   try {
+  //     setLoadingDUMData(true);
+  //     const response = await axios.get("http://localhost:4000/AllDUM");
+  //     console.log("fetch all data");
+  //     setRepairProcesses(response.data);
+  //     console.log(response.data);
+  //     return (response.data);
+  //   } catch (error) {
+  //     console.error("Error fetching repair processes:", error.message);
+  //     console.log("error fetch data");
+  //   } finally {
+  //     setLoadingDUMData(false);
+  //         }
+  // };
+
   // const handleDeleteSparePart = async (rep_id, sp_id) => {
   //   try {
   //     await axios.delete(`http://localhost:4000/api/repair-process/${rep_id}/spare-part/${sp_id}`);
@@ -225,7 +243,40 @@ const RepairProducts = () => {
     }
   };
 
+    const handleFinish = async(values) => {
+      try {
 
+        console.log("DUM data:", values);
+  
+        const payload = {
+          serialnumber: values.serialnumber,
+          productname: values.productname,
+          //category: values.category,
+          maintenanceStatus: values.maintenanceStatus,
+        };
+    
+  
+        console.log("Constructed payload:", payload);
+    
+  
+        const response = await axios.post("http://localhost:4000/AddDUM", payload);
+    
+        if (response.data.success) {
+          console.log("Device Under Maintenance added successfully");
+  
+          fetchAllDUM();
+          fetchDevices();
+        } else {
+          console.error("Error while adding Device Under Maintenance:", response.data.message);
+        }
+    
+        return true;
+      } catch (error) {
+        console.error("Error in handleDeviceUnderMaintenace:", error.message);
+        console.log("errrrrror");
+        return false;
+      }
+    };
 
 
     const handleRowClick = (record) => {
@@ -239,6 +290,33 @@ const RepairProducts = () => {
     fetchDevices();
     fetchSpareParts();
   }, []);
+
+
+  const DUMColumns = [
+    {
+      title: "Serial Number",
+      dataIndex: "serial_number",
+      key: "serial_number",
+      ...getColumnSearchProps('serial_number'),
+    },
+    {
+      title: "Product Name",
+      dataIndex: "p_name",
+      key: "p_name",
+      ...getColumnSearchProps('p_name'),
+    },
+    {
+      title: "Status",
+      dataIndex: "p_status",
+      key: "p_status",
+      ...getColumnSearchProps('p_status'),
+      render: (status) => {
+        let color = status === "Completed" ? "green" : "blue";
+        return <span style={{ color }}>{status}</span>;
+      },
+    },
+    
+  ];
 
   const columns = [
     {
@@ -320,6 +398,27 @@ const RepairProducts = () => {
                pagination={{ pageSize: 5 }}
              />
          </div>
+
+              <div className="div" style={{position: "relative"}}>
+           <h2 style = {{textAlign: "left", fontWeight: "500"}}>Device Under Maintenance</h2>
+             <AddnewUnderMaintenance 
+              handleFinish= {handleFinish}
+             />
+
+         <div className = "table-container" style={{}}>
+             <Table
+               dataSource={devices}
+               showSorterTooltip={{
+                 target: 'sorter-icon',
+               }}
+               columns={DUMColumns}
+               pagination={{ pageSize: 5 }}
+             />
+         </div>
+
+         </div>
+
+
         <RepairDetails
         selectedRepair= {selectedRepair}
         setSelectedRepair={setSelectedRepair}

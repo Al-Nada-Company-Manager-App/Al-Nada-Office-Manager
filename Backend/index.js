@@ -619,12 +619,24 @@ app.get("/api/AllSpareParts", async (req, res) => {
   }
 });
 
+// app.get("/api/ProductStatus", async (req, res) => {
+//   try {
+//     const result = await db.query(
+//       "SELECT P_ID, P_NAME, P_QUANTITY, MODEL_CODE, P_CATEGORY FROM STOCK WHERE P_CATEGORY = 'Spare Part'"
+//     );
+//     res.json(result.rows);
+//   } catch (error) {
+//     console.error("Error fetching spare parts:", error.message);
+//     res.status(500).json({ error: "Failed to fetch spare parts" });
+//   }
+// });
+
 // Add Device Under Maintenance
 app.post("/AddDUM", async (req, res) => { 
   try {
     const SERIALNUMBER = req.body.serialnumber;
     const PNAME = req.body.productname;
-    const CATEGORY = req.body.category; 
+    //const CATEGORY = req.body.category; 
     const PSTATUS = req.body.maintenanceStatus;
 
 
