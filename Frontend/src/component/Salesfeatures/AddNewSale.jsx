@@ -29,6 +29,7 @@ import {
   setSelectedProduct,
   fetchProducts,
 } from "../../Store/Product";
+import AddnewUnderMaintenance from "../RepairProductfeatures/AddnewUnderMaintenance";
 
 const statuses = ["Pending", "Completed", "Canceled"];
 const currencies = ["USD", "EUR", "EGP"];
@@ -116,6 +117,41 @@ const AddNewSale = () => {
     closeSaleModal();
   };
 
+  const handleaddDum = async (values) => {
+    try {
+      console.log("DUM data:", values);
+
+      const payload = {
+        serialnumber: values.serialnumber,
+        productname: values.productname,
+        //category: values.category,
+        maintenanceStatus: values.maintenanceStatus,
+      };
+
+      console.log("Constructed payload:", payload);
+
+      const response = await axios.post(
+        "http://localhost:4000/AddDUM",
+        payload
+      );
+
+      if (response.data.success) {
+        console.log("Device Under Maintenance added successfully");
+      } else {
+        console.error(
+          "Error while adding Device Under Maintenance:",
+          response.data.message
+        );
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Error in handleDeviceUnderMaintenace:", error.message);
+      console.log("errrrrror");
+      return false;
+    }
+  };
+
   return (
     <div>
       <Modal
@@ -167,7 +203,9 @@ const AddNewSale = () => {
                   {
                     validator: (_, value) => {
                       if (!selectedCustomer) {
-                        return Promise.reject(new Error("Please select a customer!"));
+                        return Promise.reject(
+                          new Error("Please select a customer!")
+                        );
                       }
                       return Promise.resolve();
                     },
@@ -192,7 +230,9 @@ const AddNewSale = () => {
                     {
                       validator: (_, value) => {
                         if (!selectedCustomer) {
-                          return Promise.reject(new Error("Please select a customer!"));
+                          return Promise.reject(
+                            new Error("Please select a customer!")
+                          );
                         }
                         return Promise.resolve();
                       },
@@ -205,6 +245,16 @@ const AddNewSale = () => {
                       ? `${selectedProducts.length} Products Selected`
                       : "Select Products"}
                   </Button>
+                </Form.Item>
+              </Col>
+            )}
+            {saleType === "REPAIR" && (
+              <Col span={19}>
+                <Form.Item
+                  label="Add Devices needing Maintenance"
+                  name="customer"
+                >
+                    <AddnewUnderMaintenance handleFinish={handleaddDum} />
                 </Form.Item>
               </Col>
             )}

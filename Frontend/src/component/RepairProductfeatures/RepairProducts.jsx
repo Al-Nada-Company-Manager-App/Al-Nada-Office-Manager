@@ -311,7 +311,20 @@ const RepairProducts = () => {
       key: "p_status",
       ...getColumnSearchProps('p_status'),
       render: (status) => {
-        let color = status === "Completed" ? "green" : "blue";
+        let color;
+        switch (status) {
+          case "Completed":
+            color = "green";
+            break;
+          case "Under Maintenance":
+            color = "blue";
+            break;
+          case "Pending":
+            color = "gray";
+            break;
+          default:
+            color = "black"; 
+        }
         return <span style={{ color }}>{status}</span>;
       },
     },
