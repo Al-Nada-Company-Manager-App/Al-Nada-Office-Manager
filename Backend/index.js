@@ -1229,6 +1229,105 @@ app.get("/session", (req, res) => {
   }
 });
 
+//technical support dashboard 
+// status
+app.get("/api/repair-status", async (req, res) => {
+  try {
+    const result = await db.query(
+      "SELECT P_STATUS, COUNT(*) AS status_count FROM STOCK WHERE P_CATEGORY = 'Device Under Maintenance' GROUP BY P_STATUS"
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error fetching repair status overview:", error);
+    res.status(500).json({ error: "Failed to fetch repair status." });
+  }
+});
+
+
+//total spare parts used
+app.get("/api/spare-parts-used", async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT s.P_NAME AS spare_part_name, SUM(rp.SP_QUANTITY) AS total_used
+      FROM REPAIR_PROCESS rp
+      JOIN STOCK s ON rp.SP_ID = s.P_ID
+      WHERE s.P_CATEGORY = 'Spare Part'
+      GROUP BY s.P_NAME
+    `);
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error fetching spare parts usage:", error);
+    res.status(500).json({ error: "Failed to fetch spare parts usage." });
+  }
+});
+
+
+app.get("/api/repairs-over-time", async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT REP_DATE, COUNT(*) AS repairs_count
+      FROM REPAIR
+      WHERE REP_DATE IS NOT NULL
+      GROUP BY REP_DATE
+      ORDER BY REP_DATE
+    `);
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error fetching repairs over time:", error);
+    res.status(500).json({ error: "Failed to fetch repair data." });
+  }
+});
+
+// alert low quantity of spare parts in stock
+app.get("/api/low-stock-alert", async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT P_NAME, P_QUANTITY
+      FROM STOCK
+      WHERE P_CATEGORY = 'Spare Part' AND P_QUANTITY < 10
+    `);
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error fetching low stock alert:", error);
+    res.status(500).json({ error: "Failed to fetch stock alert." });
+  }
+});
+
+
+// count total repairs
+app.get("/api/total-repairs", async (req, res) => {
+  try {
+    const result = await db.query("SELECT COUNT(*) FROM REPAIR");
+    res.json({ totalRepairs: result.rows[0].count });
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+
+//total device under maintenance
+app.get("/api/total-DUM", async (req, res) => {
+  try {
+    const result = await db.query("SELECT COUNT(*) FROM STOCK WHERE P_CATEGORY = 'Device Under Maintenance'");
+    res.json({ totalDUM: result.rows[0].count });
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+//total spare parts used in repair process
+app.get("/api/total-spare-parts", async (req, res) => {
+  try {
+    const result = await db.query("SELECT SUM(SP_QUANTITY) FROM REPAIR_PROCESS");
+
+    res.json({ totalSpare: result.rows[0].sum});
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+//PENDING
+
 // Start server
 const PORT = 4000;
 app.listen(PORT, () => {

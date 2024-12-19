@@ -1,58 +1,136 @@
-import { Bar } from '@ant-design/plots';
-import React from 'react';
+import "../../Styles/Dashboard.css";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { Row, Col, Card, Statistic } from "antd";
+import RepairStatusChart from "./DashboardCharts/RepairStatusChart";
+import SparePartsChart from "./DashboardCharts/SparePartsChart";
+import RepairsOverTimeChart from "./DashboardCharts/RepairOverTimeChart";
+import SparePartsLowStock from "./DashboardCharts/SparePartsLowStock";
+import {ToolOutlined, StopOutlined, RiseOutlined, PlusCircleOutlined} from '@ant-design/icons';
 
-//labelName
-//value
 
 const TechDashboard = () => {
-  // const [data, setdata] = React.useState([]);
-  // const config = {
-  //   data,
-  //   xField: 'labelName',
-  //   yField: 'value',
-  //   paddingRight: 80,
-  //   style: {
-  //     maxWidth: 25,
-  //   },
-  //   markBackground: {
-  //     label: {
-  //       text: ({ originData }) => {
-  //         return `${(originData.value / 1000) * 100}% | ${originData.value}`;
-  //       },
-  //       position: 'right',
-  //       dx: 80,
-  //       style: {
-  //         fill: '#aaa',
-  //         fillOpacity: 1,
-  //         fontSize: 14,
-  //       },
-  //     },
-  //     style: {
-  //       fill: '#eee',
-  //     },
-  //   },
-  //   scale: {
-  //     y: {
-  //       domain: [0, 1000],
-  //     },
-  //   },
-  //   axis: {
-  //     x: {
-  //       tick: false,
-  //       title: false,
-  //     },
-  //     y: {
-  //       grid: false,
-  //       tick: false,
-  //       label: false,
-  //       title: false,
-  //     },
-  //   },
-  //   interaction: {
-  //     elementHighlight: false,
-  //   },
-  // };
-  // return <Bar {...config} />;
+
+  const [TotalRepairs , setTotalRepairs] = useState([]);
+  const [TotalDUM, setTotalDUM] = useState([]);
+  const [TotalSpareParts, setTotalSpareParts] = useState([]);
+
+  useEffect(() => {
+
+    axios.get("http://localhost:4000/api/total-repairs")
+      .then((res) => setTotalRepairs(res.data.totalRepairs))
+      .catch((err) => console.error("Error fetching total repairs:", err));
+
+
+    axios.get("http://localhost:4000/api/total-DUM")
+      .then((res) => setTotalDUM(res.data.totalDUM))
+      .catch((err) => console.error("Error fetching total dum:", err));
+
+
+      axios.get("http://localhost:4000/api/total-spare-parts")
+      .then((res) => setTotalSpareParts(res.data.totalSpare))
+      .catch((err) => console.error("Error fetching total spare part:", err));
+      
+  }, []);
+
+
+
+
+  return (
+    <>
+    <div style={{ padding: "20px", minHeight: "100vh" }}>
+    <h2 style = {{textAlign: "left", fontWeight: "500"}}>Dashboard</h2>
+      <Row gutter={[16, 16]}>
+        <Col span={6}>
+          <Card 
+          className="card-style" bordered >
+            <Statistic 
+            prefix= {<RiseOutlined />}
+            title="Total Repairs" 
+            value={TotalRepairs} 
+            valueStyle={{ color: "green" }} />
+          </Card>
+        </Col>
+        <Col span={6}>
+          <Card className="card-style" bordered>
+            <Statistic 
+            title="Devices Under Maintenance" 
+            prefix= {<ToolOutlined />}
+            value={TotalDUM} 
+            valueStyle={{ color: "#1677ff" }} />
+          </Card>
+        </Col>
+        <Col span={6}>
+          <Card className="card-style" bordered >
+            <Statistic 
+            title="Spare Parts Used" 
+            value={TotalSpareParts} 
+            prefix= {<PlusCircleOutlined />}
+            valueStyle={{ color: "#cf1322" }} />
+          </Card>
+        </Col>
+        <Col span={6}>
+          <Card className="card-style" bordered >
+            <Statistic 
+            title="Pending" 
+            prefix= {<StopOutlined />}
+            value="le7d ma tegy" 
+            valueStyle={{ color: "red" }} />
+          </Card>
+        </Col>
+      </Row>
+
+
+      <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
+        <Col span={12}>
+          <Card
+            title="Repair Process Overview"
+            bordered
+            className="card-chart"
+          >
+            <RepairsOverTimeChart />
+          </Card>
+        </Col>
+
+        {/* Category Distribution */}
+        <Col span={12}>
+          <Card
+            title="Spare Parts Usage"
+            bordered
+            className="card-chart"
+          >
+            <SparePartsChart />
+          </Card>
+        </Col>
+      </Row>
+
+      <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
+
+
+        <Col span={24}>
+          <Card
+            title="Repair Status Overview"
+            bordered
+            className="card-chart"
+            >
+            <RepairStatusChart />
+          </Card>
+        </Col>
+        <Col span={12}>
+          <Card
+            title="Low Stock Alerts"
+            bordered
+            className="card-chart"
+            >
+          <SparePartsLowStock />
+            </Card>
+          </Col>
+      </Row>
+
+    </div>
+    </>
+  );
 };
 
 export default TechDashboard;
+
