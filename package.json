@@ -12,6 +12,7 @@
     "concurrently": "^9.1.0"
   },
   "dependencies": {
+    "@ant-design/plots": "^2.3.2",
     "antd": "^5.22.2",
     "jspdf": "^2.5.2",
     "jspdf-autotable": "^3.8.4",

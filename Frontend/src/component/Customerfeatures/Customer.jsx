@@ -19,12 +19,14 @@ import UpdateCustomerModal from "./updateCustomer";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { useSelector,useDispatch } from "react-redux";
-import { handleDeleteCustomer,fetchCustomers,setCustomerModalVisible,setSelectedCustomer,setaddCustomerModalVisible,setupdateCustomerModalVisible } from "../../Store/Customer";
+import { handleDeleteCustomer,addMarkiting,fetchCustomers,setCustomerModalVisible,setSelectedCustomer,setaddCustomerModalVisible,setupdateCustomerModalVisible } from "../../Store/Customer";
 
 
 
 const Customer = () => {
   const { customersData, CustomersLoading} = useSelector((state) => state.Customers);
+  const { SignedUser } = useSelector((state) => state.auth);
+
   const dispatch = useDispatch();
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
@@ -73,7 +75,13 @@ const Customer = () => {
     clearFilters();
     setSearchText("");
   };
-
+  const handleAddMarketing = (customerId) => {
+    const e_id = SignedUser.id;
+    const data={e_id:e_id,c_id:customerId} 
+    dispatch(addMarkiting(data));
+    
+  };
+  
   const getColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({
       setSelectedKeys,
@@ -214,11 +222,22 @@ const Customer = () => {
           >
             Delete
           </Button>
+          {SignedUser.Role === "SalesMan" && <Button
+            type="link"
+            className="add-marketing-btn"
+            onClick={(e) => {
+              e.stopPropagation(); 
+              handleAddMarketing(record.c_id); // You can define this function
+            }}
+          >
+            Add Marketing
+          </Button>}
+          
         </>
       ),
     },
   ];
-
+  
 
   const handleDelete = async (id) => {
      await dispatch(handleDeleteCustomer(id));

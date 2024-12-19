@@ -526,12 +526,93 @@ ON
     res.status(500).json({ error: "Failed to fetch price quotations" });
   }
 });
+app.get("/getcustomersales", async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT 
+          CUSTOMER.C_NAME AS c_name,
+          COUNT(SALES.SL_ID) AS salescount
+      FROM 
+          CUSTOMER
+      JOIN 
+          SALES ON CUSTOMER.C_ID = SALES.C_ID
+      GROUP BY 
+          CUSTOMER.c_id
+      ORDER BY 
+          salescount DESC
+    `);
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Database query failed:", error);
+    res.status(500).json({ error: "Database query failed" });
+  }
+});
+
+app.get("/getcustomermarkets", async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT 
+          CUSTOMER.C_NAME AS c_name,
+          COUNT(MARKETING.E_ID) AS marketing_count
+      FROM 
+          CUSTOMER
+      JOIN 
+          MARKETING ON CUSTOMER.C_ID = MARKETING.C_ID
+      GROUP BY 
+          CUSTOMER.c_id
+      ORDER BY 
+          marketing_count DESC
+    `);
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Database query failed:", error);
+    res.status(500).json({ error: "Database query failed" });
+  }
+});
+
+
+
 
 app.post("/deletepq", async (req, res) => {
   const id = req.body.id;
   await db.query("DELETE FROM PRICE_QUOTATION WHERE pq_id = $1", [id]);
   await db.query("DELETE FROM OFFER WHERE pq_id = $1", [id]);
   res.json({ success: true });
+});
+app.post("/addMarketing", async (req, res) => {
+  const { c_id, e_id } = req.body;
+
+  // Check if c_id and e_id are valid
+  if (!c_id || !e_id) {
+    return res.status(400).json({
+      success: false,
+      message: "Missing required fields: c_id or e_id",
+    });
+  }
+
+  console.log("Received data:", c_id, e_id);
+
+  try {
+    // Execute the query to insert into the database
+    const result = await db.query(
+      "INSERT INTO MARKETING (C_ID, E_ID) VALUES ($1, $2)",
+      [c_id, e_id]
+    );
+
+    // Check if the query was successful
+    if (result.rowCount > 0) {
+      res.json({ success: true, message: "Marketing added successfully!" });
+    } else {
+      res.status(500).json({ success: false, message: "Failed to add Marketing!" });
+    }
+  } catch (error) {
+    console.error("Error adding marketing:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to add Marketing due to internal error.",
+      error: error.message,
+    });
+  }
 });
 
 app.post("/addpq", async (req, res) => {

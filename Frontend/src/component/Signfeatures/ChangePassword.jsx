@@ -71,10 +71,8 @@ function FormChangePassword() {
   };
 
   return (
-    <>
-      <Button type="primary" onClick={handleOpenModal}>
-        Change Password
-      </Button>
+    <div className="change-password">
+      
       <Modal
         title="Change Password"
         open={passwordChangedModalVisible}
@@ -147,7 +145,7 @@ function FormChangePassword() {
           </Form.Item>
         </Form>
       </Modal>
-    </>
+    </div>
   );
 }
 

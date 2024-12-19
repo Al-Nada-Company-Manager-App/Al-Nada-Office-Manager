@@ -74,9 +74,7 @@ function FormChangePassword() {
 
   return (
     <>
-      <Button type="primary" onClick={handleOpenModal}>
-        Change Password
-      </Button>
+      
       <Modal
         title="Change Password"
         open={passwordChangedModalVisible}

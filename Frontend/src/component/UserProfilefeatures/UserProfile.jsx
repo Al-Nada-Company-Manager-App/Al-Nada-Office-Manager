@@ -60,7 +60,7 @@ const UserProfile = () => {
   };
 
   return (
-    <>
+    <div className="user-d-profile">
       <Form
         layout="vertical"
         initialValues={formData}
@@ -241,7 +241,7 @@ const UserProfile = () => {
         )}
       </Form>
       <FormChangePassword />
-    </>
+    </div>
   );
 };
 
