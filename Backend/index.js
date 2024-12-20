@@ -579,6 +579,10 @@ app.post("/deletepq", async (req, res) => {
   await db.query("DELETE FROM OFFER WHERE pq_id = $1", [id]);
   res.json({ success: true });
 });
+app.post("/deleteAllMarkitings", async (req, res) => {
+  await db.query("DELETE FROM MARKETING");
+  res.json({ success: true });
+});
 app.post("/addMarketing", async (req, res) => {
   const { c_id, e_id } = req.body;
 
@@ -590,7 +594,6 @@ app.post("/addMarketing", async (req, res) => {
     });
   }
 
-  console.log("Received data:", c_id, e_id);
 
   try {
     // Execute the query to insert into the database

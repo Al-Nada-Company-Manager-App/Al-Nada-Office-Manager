@@ -19,7 +19,7 @@ import UpdateCustomerModal from "./updateCustomer";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { useSelector,useDispatch } from "react-redux";
-import { handleDeleteCustomer,addMarkiting,fetchCustomers,setCustomerModalVisible,setSelectedCustomer,setaddCustomerModalVisible,setupdateCustomerModalVisible } from "../../Store/Customer";
+import { handleDeleteCustomer,addMarkiting,deleteAllMarkitings,fetchCustomers,setCustomerModalVisible,setSelectedCustomer,setaddCustomerModalVisible,setupdateCustomerModalVisible } from "../../Store/Customer";
 
 
 
@@ -79,6 +79,10 @@ const Customer = () => {
     const e_id = SignedUser.id;
     const data={e_id:e_id,c_id:customerId} 
     dispatch(addMarkiting(data));
+    
+  };
+  const handDeleteMarkitings = () => {
+    dispatch(deleteAllMarkitings());
     
   };
   
@@ -264,8 +268,15 @@ const Customer = () => {
       >
         Add Customer
       </Button>
-      <Button type="primary" onClick={exportToPDF} style={{ marginBottom: 16 }}>
+      <Button type="primary" onClick={exportToPDF} style={{ marginBottom: 16,marginRight: 16 }}>
         Export to PDF
+      </Button>
+      <Button
+        type="primary"
+        onClick={() => handDeleteMarkitings()}
+        style={{ marginRight: 16 }}
+      >
+        Delete All Markitings
       </Button>
       <Table
         columns={columns}

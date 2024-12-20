@@ -82,6 +82,20 @@ export const addMarkiting = (data) => async (dispatch) => {
       message.error('Error adding marketing');
   }
 };
+export const deleteAllMarkitings = () => async (dispatch) => {
+  try {
+      const response = await axiosInstance.post('/deleteAllMarkitings');  // Post data to the server
+
+      message.success('Marketings deleted successfully');
+      
+  } catch (error) {
+      dispatch({
+          type: 'DELETE_MARKITINGS_FAILURE',
+          payload: 'Error deleting marketings',
+      });
+      message.error('Error deleting marketings');
+  }
+};
 
 // Initial state
 const initialState = {
