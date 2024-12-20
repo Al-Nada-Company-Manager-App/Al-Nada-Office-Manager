@@ -17,12 +17,13 @@ import PriceQuotation from "./PriceQoutationfeatures/PriceQuotation";
 import Supplier from "./Supplierfeatures/Supplier";
 import Purchase from "./Purchasefeachers/Purchase";
 import { useSelector, useDispatch } from "react-redux";
+import ManagerDashboard from './DashboardManagerfeatures/ManagerDashboard';
 import { handleLogout } from "../Store/authSlice";
 import UserProfile from "./UserProfilefeatures/UserProfile";
 const { Sider, Content } = Layout;
 
 const contents = {
-  1: <TechDashboard/>,
+  1: <ManagerDashboard/>,
   3: <Users />,
   4: <ApproveUser />,
   6: <Products />,

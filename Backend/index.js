@@ -2040,6 +2040,35 @@ app.get("/logout", (req, res, next) => {
   });
 });
 
+//summary of the stock
+app.get('/api/stocks/summary', async (req, res) => {
+  try {
+    const result = await db.query(`
+        SELECT P_CATEGORY, COUNT(*) AS TOTAL_PRODUCTS, SUM(P_QUANTITY) AS TOTAL_QUANTITY
+        FROM STOCK
+        GROUP BY P_CATEGORY
+    `);
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+// total products in stock
+app.get('/api/total-stock', async (req, res) => {
+  try {
+    const result = await db.query(`
+        SELECT SUM(P_QUANTITY)
+        FROM STOCK
+    `);
+    console.log(result.rows[0].sum);
+    res.json(result.rows[0].sum);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+
 app.get("/session", (req, res) => {
   if (req.isAuthenticated()) {
     res.json({ success: true, user: req.user });
@@ -2047,6 +2076,7 @@ app.get("/session", (req, res) => {
     res.json({ success: false, message: "Not authenticated" });
   }
 });
+
 
 // Start server
 const PORT = 4000;
