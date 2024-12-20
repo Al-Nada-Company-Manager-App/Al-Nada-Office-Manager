@@ -146,32 +146,6 @@ const RepairProducts = () => {
   };
 
 
-  // const fetchDeviceData = async () => {
-  //   try {
-  //     setLoadingDUMData(true);
-  //     const response = await axios.get("http://localhost:4000/AllDUM");
-  //     console.log("fetch all data");
-  //     setRepairProcesses(response.data);
-  //     console.log(response.data);
-  //     return (response.data);
-  //   } catch (error) {
-  //     console.error("Error fetching repair processes:", error.message);
-  //     console.log("error fetch data");
-  //   } finally {
-  //     setLoadingDUMData(false);
-  //         }
-  // };
-
-  // const handleDeleteSparePart = async (rep_id, sp_id) => {
-  //   try {
-  //     await axios.delete(`http://localhost:4000/api/repair-process/${rep_id}/spare-part/${sp_id}`);
-  //     console.log("Spare part deleted successfully!");
-  //     fetchAllDUM(); // Refresh table after deletion
-  //   } catch (error) {
-  //     console.error("Error deleting spare part:", error);
-  //     console.log("Failed to delete spare part.");
-  //   }
-  // };
 
   // Fetch devices
   const fetchDevices = async () => {
@@ -261,6 +235,7 @@ const RepairProducts = () => {
   
         const response = await axios.post("http://localhost:4000/AddDUM", payload);
     
+        console.log(response.data);
         if (response.data.success) {
           console.log("Device Under Maintenance added successfully");
   
@@ -316,7 +291,7 @@ const RepairProducts = () => {
           case "Completed":
             color = "green";
             break;
-          case "Under Maintenance":
+          case "Repairing":
             color = "blue";
             break;
           case "Pending":
@@ -358,7 +333,7 @@ const RepairProducts = () => {
       dataIndex: "p_status",
       key: "p_status",
       render: (status) => {
-        let color = status === "Completed" ? "green" : "blue";
+        let color = status === "Completed" ? "green" : status === "Pending" ? "gray" : "blue";
         return <span style={{ color }}>{status}</span>;
       },
     },

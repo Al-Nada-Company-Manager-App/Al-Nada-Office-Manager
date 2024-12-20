@@ -13,7 +13,7 @@ const db = new pg.Client({
   user: "postgres",
   host: "localhost",
   database: "Al Nada",
-  password: "NEW@22wntg",
+  password: "1233215",
   port: 5432,
 });
 // const db = new pg.Client({
@@ -1158,12 +1158,13 @@ app.post("/AddDUM", async (req, res) => {
   try {
     const SERIALNUMBER = req.body.serialnumber;
     const PNAME = req.body.productname;
-    //const CATEGORY = req.body.category; 
+    const CATEGORY = 'Device Under Maintenance'; 
     const PSTATUS = req.body.maintenanceStatus;
 
+    console.log(PSTATUS);
     await db.query(
-      "INSERT INTO STOCK (P_NAME, P_CATEGORY, SERIAL_NUMBER, P_STATUS) VALUES ($1, 'Device Under Maintenance', $2, $3)",
-      [PNAME, SERIALNUMBER, PSTATUS]
+      "INSERT INTO STOCK (P_NAME, P_CATEGORY, SERIAL_NUMBER, P_STATUS) VALUES ($1, $2, $3, $4)",
+      [PNAME, CATEGORY, SERIALNUMBER, PSTATUS]
     );
 
     res.json({
