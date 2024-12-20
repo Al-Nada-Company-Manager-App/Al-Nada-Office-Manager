@@ -24,6 +24,7 @@ import { updateuserphoto } from "../../Store/UserProfile";
 const AddnewUser = () => {
   const dispatch = useDispatch();
   const { adduserModalVisible, file } = useSelector((state) => state.Users);
+  const { userAccess } = useSelector((state) => state.auth);
 
   const handleUploadChange = (info) => {
     if (info.fileList.length > 0) {

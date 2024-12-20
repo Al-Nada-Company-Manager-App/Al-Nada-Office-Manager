@@ -709,127 +709,127 @@ VALUES
     (2, 2, 10, 'Category B', 750);
 
 
-    -- 1. Manager: Full access to all pages and actions
-INSERT INTO ACCESS_Actions (
-    E_ID, 
-    Users_Page, Users_ADD, Users_EDIT, Users_DELETE, Users_VIEW,
-    Products_Page, Products_ADD, Products_EDIT, Products_DELETE, Products_VIEW,
-    Repaire_Page, Repaire_ADD, Repaire_EDIT, Repaire_DELETE, Repaire_VIEW, Repaire_ADDDUM,
-    Sales_Page, Sales_ADD, Sales_EDIT, Sales_DELETE, Sales_VIEW,
-    Price_Page, Price_ADD, Price_EDIT, Price_DELETE, Price_VIEW,
-    Debts_Page, Debts_ADD, Debts_EDIT, Debts_DELETE, Debts_VIEW,
-    Purchase_Page, Purchase_ADD, Purchase_EDIT, Purchase_DELETE, Purchase_VIEW,
-    Customer_Page, Customer_ADD, Customer_EDIT, Customer_DELETE, Customer_VIEW,
-    Supplier_Page, Supplier_ADD, Supplier_EDIT, Supplier_DELETE, Supplier_VIEW
-) VALUES (
-    1, -- Manager ID
-    True, True, True, True, True, -- Users
-    True, True, True, True, True, -- Products
-    True, True, True, True, True, True, -- Repaire
-    True, True, True, True, True, -- Sales
-    True, True, True, True, True, -- Price
-    True, True, True, True, True, -- Debts
-    True, True, True, True, True, -- Purchase
-    True, True, True, True, True, -- Customer
-    True, True, True, True, True  -- Supplier
-);
+--     -- 1. Manager: Full access to all pages and actions
+-- INSERT INTO ACCESS_Actions (
+--     E_ID, 
+--     Users_Page, Users_ADD, Users_EDIT, Users_DELETE, Users_VIEW,
+--     Products_Page, Products_ADD, Products_EDIT, Products_DELETE, Products_VIEW,
+--     Repaire_Page, Repaire_ADD, Repaire_EDIT, Repaire_DELETE, Repaire_VIEW, Repaire_ADDDUM,
+--     Sales_Page, Sales_ADD, Sales_EDIT, Sales_DELETE, Sales_VIEW,
+--     Price_Page, Price_ADD, Price_EDIT, Price_DELETE, Price_VIEW,
+--     Debts_Page, Debts_ADD, Debts_EDIT, Debts_DELETE, Debts_VIEW,
+--     Purchase_Page, Purchase_ADD, Purchase_EDIT, Purchase_DELETE, Purchase_VIEW,
+--     Customer_Page, Customer_ADD, Customer_EDIT, Customer_DELETE, Customer_VIEW,
+--     Supplier_Page, Supplier_ADD, Supplier_EDIT, Supplier_DELETE, Supplier_VIEW
+-- ) VALUES (
+--     1, -- Manager ID
+--     True, True, True, True, True, -- Users
+--     True, True, True, True, True, -- Products
+--     True, True, True, True, True, True, -- Repaire
+--     True, True, True, True, True, -- Sales
+--     True, True, True, True, True, -- Price
+--     True, True, True, True, True, -- Debts
+--     True, True, True, True, True, -- Purchase
+--     True, True, True, True, True, -- Customer
+--     True, True, True, True, True  -- Supplier
+-- );
 
--- 2. Technical Support: Limited access to repair and products
-INSERT INTO ACCESS_Actions (
-    E_ID,
-    Users_Page, Users_ADD, Users_EDIT, Users_DELETE, Users_VIEW,
-    Products_Page, Products_ADD, Products_EDIT, Products_DELETE, Products_VIEW,
-    Repaire_Page, Repaire_ADD, Repaire_EDIT, Repaire_DELETE, Repaire_VIEW, Repaire_ADDDUM,
-    Sales_Page, Sales_ADD, Sales_EDIT, Sales_DELETE, Sales_VIEW,
-    Price_Page, Price_ADD, Price_EDIT, Price_DELETE, Price_VIEW,
-    Debts_Page, Debts_ADD, Debts_EDIT, Debts_DELETE, Debts_VIEW,
-    Purchase_Page, Purchase_ADD, Purchase_EDIT, Purchase_DELETE, Purchase_VIEW,
-    Customer_Page, Customer_ADD, Customer_EDIT, Customer_DELETE, Customer_VIEW,
-    Supplier_Page, Supplier_ADD, Supplier_EDIT, Supplier_DELETE, Supplier_VIEW
-) VALUES (
-    2, -- Technical Support ID
-    False, False, False, False, False, -- Users
-    True, True, True, False, True, -- Products
-    True, True, True, False, True, True, -- Repaire
-    False, False, False, False, False, -- Sales
-    False, False, False, False, False, -- Price
-    False, False, False, False, False, -- Debts
-    False, False, False, False, False, -- Purchase
-    False, False, False, False, False, -- Customer
-    False, False, False, False, False  -- Supplier
-);
+-- -- 2. Technical Support: Limited access to repair and products
+-- INSERT INTO ACCESS_Actions (
+--     E_ID,
+--     Users_Page, Users_ADD, Users_EDIT, Users_DELETE, Users_VIEW,
+--     Products_Page, Products_ADD, Products_EDIT, Products_DELETE, Products_VIEW,
+--     Repaire_Page, Repaire_ADD, Repaire_EDIT, Repaire_DELETE, Repaire_VIEW, Repaire_ADDDUM,
+--     Sales_Page, Sales_ADD, Sales_EDIT, Sales_DELETE, Sales_VIEW,
+--     Price_Page, Price_ADD, Price_EDIT, Price_DELETE, Price_VIEW,
+--     Debts_Page, Debts_ADD, Debts_EDIT, Debts_DELETE, Debts_VIEW,
+--     Purchase_Page, Purchase_ADD, Purchase_EDIT, Purchase_DELETE, Purchase_VIEW,
+--     Customer_Page, Customer_ADD, Customer_EDIT, Customer_DELETE, Customer_VIEW,
+--     Supplier_Page, Supplier_ADD, Supplier_EDIT, Supplier_DELETE, Supplier_VIEW
+-- ) VALUES (
+--     2, -- Technical Support ID
+--     False, False, False, False, False, -- Users
+--     True, True, True, False, True, -- Products
+--     True, True, True, False, True, True, -- Repaire
+--     False, False, False, False, False, -- Sales
+--     False, False, False, False, False, -- Price
+--     False, False, False, False, False, -- Debts
+--     False, False, False, False, False, -- Purchase
+--     False, False, False, False, False, -- Customer
+--     False, False, False, False, False  -- Supplier
+-- );
 
--- 3. Salesman: Limited access to sales and customers
-INSERT INTO ACCESS_Actions (
-    E_ID,
-    Users_Page, Users_ADD, Users_EDIT, Users_DELETE, Users_VIEW,
-    Products_Page, Products_ADD, Products_EDIT, Products_DELETE, Products_VIEW,
-    Repaire_Page, Repaire_ADD, Repaire_EDIT, Repaire_DELETE, Repaire_VIEW, Repaire_ADDDUM,
-    Sales_Page, Sales_ADD, Sales_EDIT, Sales_DELETE, Sales_VIEW,
-    Price_Page, Price_ADD, Price_EDIT, Price_DELETE, Price_VIEW,
-    Debts_Page, Debts_ADD, Debts_EDIT, Debts_DELETE, Debts_VIEW,
-    Purchase_Page, Purchase_ADD, Purchase_EDIT, Purchase_DELETE, Purchase_VIEW,
-    Customer_Page, Customer_ADD, Customer_EDIT, Customer_DELETE, Customer_VIEW,
-    Supplier_Page, Supplier_ADD, Supplier_EDIT, Supplier_DELETE, Supplier_VIEW
-) VALUES (
-    3, -- Salesman ID
-    False, False, False, False, False, -- Users
-    False, False, False, False, False, -- Products
-    False, False, False, False, False, False, -- Repaire
-    True, True, True, False, True, -- Sales
-    True, True, True, False, True, -- Price
-    True, True, True, False, True, -- Debts
-    False, False, False, False, False, -- Purchase
-    True, True, True, False, True, -- Customer
-    False, False, False, False, False  -- Supplier
-);
+-- -- 3. Salesman: Limited access to sales and customers
+-- INSERT INTO ACCESS_Actions (
+--     E_ID,
+--     Users_Page, Users_ADD, Users_EDIT, Users_DELETE, Users_VIEW,
+--     Products_Page, Products_ADD, Products_EDIT, Products_DELETE, Products_VIEW,
+--     Repaire_Page, Repaire_ADD, Repaire_EDIT, Repaire_DELETE, Repaire_VIEW, Repaire_ADDDUM,
+--     Sales_Page, Sales_ADD, Sales_EDIT, Sales_DELETE, Sales_VIEW,
+--     Price_Page, Price_ADD, Price_EDIT, Price_DELETE, Price_VIEW,
+--     Debts_Page, Debts_ADD, Debts_EDIT, Debts_DELETE, Debts_VIEW,
+--     Purchase_Page, Purchase_ADD, Purchase_EDIT, Purchase_DELETE, Purchase_VIEW,
+--     Customer_Page, Customer_ADD, Customer_EDIT, Customer_DELETE, Customer_VIEW,
+--     Supplier_Page, Supplier_ADD, Supplier_EDIT, Supplier_DELETE, Supplier_VIEW
+-- ) VALUES (
+--     3, -- Salesman ID
+--     False, False, False, False, False, -- Users
+--     False, False, False, False, False, -- Products
+--     False, False, False, False, False, False, -- Repaire
+--     True, True, True, False, True, -- Sales
+--     True, True, True, False, True, -- Price
+--     True, True, True, False, True, -- Debts
+--     False, False, False, False, False, -- Purchase
+--     True, True, True, False, True, -- Customer
+--     False, False, False, False, False  -- Supplier
+-- );
 
--- 4. Accountant: Limited access to purchases, sales, and supplier management
-INSERT INTO ACCESS_Actions (
-    E_ID,
-    Users_Page, Users_ADD, Users_EDIT, Users_DELETE, Users_VIEW,
-    Products_Page, Products_ADD, Products_EDIT, Products_DELETE, Products_VIEW,
-    Repaire_Page, Repaire_ADD, Repaire_EDIT, Repaire_DELETE, Repaire_VIEW, Repaire_ADDDUM,
-    Sales_Page, Sales_ADD, Sales_EDIT, Sales_DELETE, Sales_VIEW,
-    Price_Page, Price_ADD, Price_EDIT, Price_DELETE, Price_VIEW,
-    Debts_Page, Debts_ADD, Debts_EDIT, Debts_DELETE, Debts_VIEW,
-    Purchase_Page, Purchase_ADD, Purchase_EDIT, Purchase_DELETE, Purchase_VIEW,
-    Customer_Page, Customer_ADD, Customer_EDIT, Customer_DELETE, Customer_VIEW,
-    Supplier_Page, Supplier_ADD, Supplier_EDIT, Supplier_DELETE, Supplier_VIEW
-) VALUES (
-    4, -- Accountant ID
-    False, False, False, False, False, -- Users
-    False, False, False, False, False, -- Products
-    False, False, False, False, False, False, -- Repaire
-    True, False, True, False, True, -- Sales
-    True, True, True, False, True, -- Price
-    True, True, True, False, True, -- Debts
-    True, True, True, False, True, -- Purchase
-    False, False, False, False, False, -- Customer
-    True, True, True, False, True  -- Supplier
-);
+-- -- 4. Accountant: Limited access to purchases, sales, and supplier management
+-- INSERT INTO ACCESS_Actions (
+--     E_ID,
+--     Users_Page, Users_ADD, Users_EDIT, Users_DELETE, Users_VIEW,
+--     Products_Page, Products_ADD, Products_EDIT, Products_DELETE, Products_VIEW,
+--     Repaire_Page, Repaire_ADD, Repaire_EDIT, Repaire_DELETE, Repaire_VIEW, Repaire_ADDDUM,
+--     Sales_Page, Sales_ADD, Sales_EDIT, Sales_DELETE, Sales_VIEW,
+--     Price_Page, Price_ADD, Price_EDIT, Price_DELETE, Price_VIEW,
+--     Debts_Page, Debts_ADD, Debts_EDIT, Debts_DELETE, Debts_VIEW,
+--     Purchase_Page, Purchase_ADD, Purchase_EDIT, Purchase_DELETE, Purchase_VIEW,
+--     Customer_Page, Customer_ADD, Customer_EDIT, Customer_DELETE, Customer_VIEW,
+--     Supplier_Page, Supplier_ADD, Supplier_EDIT, Supplier_DELETE, Supplier_VIEW
+-- ) VALUES (
+--     4, -- Accountant ID
+--     False, False, False, False, False, -- Users
+--     False, False, False, False, False, -- Products
+--     False, False, False, False, False, False, -- Repaire
+--     True, False, True, False, True, -- Sales
+--     True, True, True, False, True, -- Price
+--     True, True, True, False, True, -- Debts
+--     True, True, True, False, True, -- Purchase
+--     False, False, False, False, False, -- Customer
+--     True, True, True, False, True  -- Supplier
+-- );
 
--- 5. Secretary: View-only access to most pages
-INSERT INTO ACCESS_Actions (
-   E_ID,
-    Users_Page, Users_ADD, Users_EDIT, Users_DELETE, Users_VIEW,
-    Products_Page, Products_ADD, Products_EDIT, Products_DELETE, Products_VIEW,
-    Repaire_Page, Repaire_ADD, Repaire_EDIT, Repaire_DELETE, Repaire_VIEW, Repaire_ADDDUM,
-    Sales_Page, Sales_ADD, Sales_EDIT, Sales_DELETE, Sales_VIEW,
-    Price_Page, Price_ADD, Price_EDIT, Price_DELETE, Price_VIEW,
-    Debts_Page, Debts_ADD, Debts_EDIT, Debts_DELETE, Debts_VIEW,
-    Purchase_Page, Purchase_ADD, Purchase_EDIT, Purchase_DELETE, Purchase_VIEW,
-    Customer_Page, Customer_ADD, Customer_EDIT, Customer_DELETE, Customer_VIEW,
-    Supplier_Page, Supplier_ADD, Supplier_EDIT, Supplier_DELETE, Supplier_VIEW
-) VALUES (
-    5, -- Secretary ID
-    True, False, False, False, True, -- Users
-    True, False, False, False, True, -- Products
-    True, False, False, False, True, False, -- Repaire
-    True, False, False, False, True, -- Sales
-    True, False, False, False, True, -- Price
-    True, False, False, False, True, -- Debts
-    True, False, False, False, True, -- Purchase
-    True, False, False, False, True, -- Customer
-    True, False, False, False, True  -- Supplier
-);
+-- -- 5. Secretary: View-only access to most pages
+-- INSERT INTO ACCESS_Actions (
+--    E_ID,
+--     Users_Page, Users_ADD, Users_EDIT, Users_DELETE, Users_VIEW,
+--     Products_Page, Products_ADD, Products_EDIT, Products_DELETE, Products_VIEW,
+--     Repaire_Page, Repaire_ADD, Repaire_EDIT, Repaire_DELETE, Repaire_VIEW, Repaire_ADDDUM,
+--     Sales_Page, Sales_ADD, Sales_EDIT, Sales_DELETE, Sales_VIEW,
+--     Price_Page, Price_ADD, Price_EDIT, Price_DELETE, Price_VIEW,
+--     Debts_Page, Debts_ADD, Debts_EDIT, Debts_DELETE, Debts_VIEW,
+--     Purchase_Page, Purchase_ADD, Purchase_EDIT, Purchase_DELETE, Purchase_VIEW,
+--     Customer_Page, Customer_ADD, Customer_EDIT, Customer_DELETE, Customer_VIEW,
+--     Supplier_Page, Supplier_ADD, Supplier_EDIT, Supplier_DELETE, Supplier_VIEW
+-- ) VALUES (
+--     5, -- Secretary ID
+--     True, False, False, False, True, -- Users
+--     True, False, False, False, True, -- Products
+--     True, False, False, False, True, False, -- Repaire
+--     True, False, False, False, True, -- Sales
+--     True, False, False, False, True, -- Price
+--     True, False, False, False, True, -- Debts
+--     True, False, False, False, True, -- Purchase
+--     True, False, False, False, True, -- Customer
+--     True, False, False, False, True  -- Supplier
+-- );
