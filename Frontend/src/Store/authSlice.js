@@ -58,6 +58,7 @@ const initialState = {
   isLoggedIn: false,
   loading: true,
   SignedUser: null,
+  userAccess: null,
   passwordChangedModalVisible: false,
 };
 
@@ -82,7 +83,8 @@ const authSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchSignedUser.fulfilled, (state, action) => {
-        state.SignedUser = action.payload;
+        state.SignedUser = action.payload.user;
+        state.userAccess = action.payload.access;
         state.loading = false;
       })
       .addCase(fetchSignedUser.rejected, (state) => {

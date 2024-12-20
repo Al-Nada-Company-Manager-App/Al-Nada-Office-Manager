@@ -9,7 +9,7 @@ import {
   setSelectedUser,
   setUserModalVisible,
 } from "../../Store/Users";
-import {convertTimestampToDate} from '../../utils/ConvertDate';
+import { convertTimestampToDate } from "../../utils/ConvertDate";
 
 const UserDetails = () => {
   const dispatch = useDispatch();
@@ -59,8 +59,11 @@ const UserDetails = () => {
                 {/* Employee Image on the left */}
                 <Col span={8}>
                   <img
-                    src={selectedUser.e_photo ? "./Users/" + selectedUser.e_photo : "https://via.placeholder.com/150"}
-
+                    src={
+                      selectedUser.e_photo
+                        ? "./Users/" + selectedUser.e_photo
+                        : "https://via.placeholder.com/150"
+                    }
                     alt={`${selectedUser.f_name} ${selectedUser.l_name}`}
                     style={{
                       width: "100%",
@@ -72,15 +75,18 @@ const UserDetails = () => {
                     }}
                   />
                   <div className="user-actions">
-                    <Button
-                      className="user-actions-btn"
-                      key="deleteUser"
-                      onClick={handleDeleteUser(selectedUser.e_id)}
-                      type="primary"
-                      danger
-                    >
-                      Delete User
-                    </Button>
+                    {userAccess.users_delete && (
+                      <Button
+                        className="user-actions-btn"
+                        key="deleteUser"
+                        onClick={handleDeleteUser(selectedUser.e_id)}
+                        type="primary"
+                        danger
+                      >
+                        Delete User
+                      </Button>
+                    )}
+                    userAccess.users_edit && (
                     {selectedUser.e_active === true ? (
                       <Button
                         className="user-actions-btn"
@@ -100,6 +106,7 @@ const UserDetails = () => {
                         Activate User
                       </Button>
                     )}
+                    )
                   </div>
                 </Col>
 
@@ -113,7 +120,8 @@ const UserDetails = () => {
                       <strong>Last Name:</strong> {selectedUser.l_name}
                     </p>
                     <p>
-                      <strong>Birth Date:</strong> {convertTimestampToDate(selectedUser.birth_date)}
+                      <strong>Birth Date:</strong>{" "}
+                      {convertTimestampToDate(selectedUser.birth_date)}
                     </p>
                     <p>
                       <strong>Salary:</strong> ${selectedUser.salary}

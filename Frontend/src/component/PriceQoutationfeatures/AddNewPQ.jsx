@@ -35,6 +35,7 @@ const AddNewPriceQuotation = () => {
   const [discount, setDiscount] = useState(0);
   const [total, setTotal] = useState(0);
   const [duration, setDuration] = useState(0);
+  const { userAccess } = useSelector((state) => state.auth);
   const [form] = Form.useForm();
   const openPQModal = () => dispatch(setAddPQModalVisible(true));
   const closePQModal = () => {
@@ -64,7 +65,7 @@ const AddNewPriceQuotation = () => {
       setTotal(tota);
     };
     calculateTotal();
-  }, [selectedProducts,discount]);
+  }, [selectedProducts, discount]);
   const dispatch = useDispatch();
   const { addPQModalVisible } = useSelector((state) => state.PriceQuotations);
 
@@ -74,7 +75,6 @@ const AddNewPriceQuotation = () => {
       customer: selectedCustomer,
       products: selectedProducts,
       total: total,
-      
     };
     await dispatch(addPriceQuotation(pqdata));
     dispatch(fetchPriceQuotations());
@@ -83,20 +83,22 @@ const AddNewPriceQuotation = () => {
 
   return (
     <div>
-      <Button
-        type="primary"
-        onClick={openPQModal}
-        style={{
-          marginBottom: "16px",
-          backgroundColor: "#389e0d",
-          marginLeft: "auto",
-          display: "flex",
-          alignItems: "center",
-        }}
-        icon={<PlusOutlined />}
-      >
-        Add Price Quotation
-      </Button>
+      {userAccess.price_add && (
+        <Button
+          type="primary"
+          onClick={openPQModal}
+          style={{
+            marginBottom: "16px",
+            backgroundColor: "#389e0d",
+            marginLeft: "auto",
+            display: "flex",
+            alignItems: "center",
+          }}
+          icon={<PlusOutlined />}
+        >
+          Add Price Quotation
+        </Button>
+      )}
       <Modal
         title="Add New Price Quotation"
         open={addPQModalVisible}

@@ -113,9 +113,40 @@ const SignedUser = {
   Gender: "",
 };
 
-app.get("/SignedUser", (req, res) => {
-  res.json(SignedUser);
+app.get("/SignedUser", async (req, res) => {
+  try {
+    if (!SignedUser || !SignedUser.id) {
+      return res.status(400).json({ error: "No signed user found" });
+    }
+
+    const userId = SignedUser.id;
+
+    const accessQuery = `
+      SELECT * 
+      FROM ACCESS_Actions 
+      WHERE E_ID = $1
+    `;
+
+    const accessResult = await db.query(accessQuery, [userId]);
+
+    if (accessResult.rows.length === 0) {
+      return res.status(404).json({ error: "Access data not found for user" });
+    }
+
+    const userAccess = accessResult.rows[0];
+
+    const responseData = {
+      user: SignedUser,
+      access: userAccess,
+    };
+
+    res.json(responseData);
+  } catch (err) {
+    console.error("Error fetching signed user access data:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
+
 
 app.get("/allUsers", async (req, res) => {
   const result = await db.query("SELECT * FROM EMPLOYEE");

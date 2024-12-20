@@ -59,21 +59,23 @@ const AddnewUser = () => {
   };
   return (
     <div>
-      <Button
-        style={{
-          marginBottom: "16px",
-          backgroundColor: "#389e0d",
-          marginLeft: "auto",
-          display: "flex",
-          alignItems: "center",
-        }}
-        type="primary"
-        onClick={handlenewModalOpen}
-        icon={<UserAddOutlined />}
-        iconPosition="start"
-      >
-        Add User
-      </Button>
+      {userAccess.users_add && (
+        <Button
+          style={{
+            marginBottom: "16px",
+            backgroundColor: "#389e0d",
+            marginLeft: "auto",
+            display: "flex",
+            alignItems: "center",
+          }}
+          type="primary"
+          onClick={handlenewModalOpen}
+          icon={<UserAddOutlined />}
+          iconPosition="start"
+        >
+          Add User
+        </Button>
+      )}
       <Modal
         title="Add New Employee"
         centered

@@ -1,6 +1,6 @@
 import { Modal, Row, Col, Button } from "antd";
 import { useState, useEffect } from "react";
-import UpdateProduct from './updateProduct';
+import UpdateProduct from "./updateProduct";
 import { Form } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -15,6 +15,7 @@ const ProductDetails = ({ handleSaveData, editedData, seteditedData }) => {
   const dispatch = useDispatch();
   const { selectedProduct, detailProductModalVisible, editedSelectedProduct } =
     useSelector((state) => state.Products);
+  const { userAccess } = useSelector((state) => state.auth);
   const handleModalClose = () => {
     dispatch(setdetailProductModalVisible(false));
     dispatch(setSelecteditem(null));
@@ -28,12 +29,10 @@ const ProductDetails = ({ handleSaveData, editedData, seteditedData }) => {
     console.log("Update Product");
     dispatch(setdetailProductModalVisible(false));
     dispatch(setupdateProductModalVisible(true));
-  }
-  
+  };
 
   return (
     <>
-      {" "}
       {selectedProduct && (
         <Modal
           title="Product Details"
@@ -44,17 +43,25 @@ const ProductDetails = ({ handleSaveData, editedData, seteditedData }) => {
             <Button key="close" onClick={handleModalClose}>
               Close
             </Button>,
-            <Button
-              key="Delete Supplier"
-              onClick={() => handleDelete(selectedProduct.p_id)}
-              type="primary"
-              danger
-            >
-              Delete Product
-            </Button>,
-            <Button key="Update Supplier" onClick={handleUpdate} type="primary">
-              Update Product
-            </Button>,
+            userAccess.products_delete && (
+              <Button
+                key="Delete Product"
+                onClick={() => handleDelete(selectedProduct.p_id)}
+                type="primary"
+                danger
+              >
+                Delete Product
+              </Button>
+            ),
+            userAccess.products_edit && (
+              <Button
+                key="Update Product"
+                onClick={handleUpdate}
+                type="primary"
+              >
+                Update Product
+              </Button>
+            ),
           ]}
           width={800}
         >
@@ -118,7 +125,7 @@ const ProductDetails = ({ handleSaveData, editedData, seteditedData }) => {
               </Row>
             </div>
           )}
-          <UpdateProduct/>
+          <UpdateProduct />
         </Modal>
       )}
     </>

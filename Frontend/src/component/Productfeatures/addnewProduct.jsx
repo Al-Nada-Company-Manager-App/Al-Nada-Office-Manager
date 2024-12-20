@@ -122,7 +122,7 @@ const AddnewProduct = () => {
                 labelCol={{ span: 11 }}
                 wrapperCol={{ span: 16 }}
                 valuePropName="fileList" // Maps the Upload's file list to the form field
-                getValueFromEvent={(e) => e && e.fileList} // Extracts file list from event
+                getValueFromEvent={(e) => e && e.fileList}
               >
                 <Upload
                   beforeUpload={() => false}

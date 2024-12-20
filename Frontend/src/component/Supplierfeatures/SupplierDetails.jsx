@@ -97,6 +97,7 @@ const SupplierDetails = () => {
     supplierPurchasesData,
     PurchaseLoading,
   } = useSelector((state) => state.Suppliers);
+  const {userAccess} = useSelector((state) => state.user);
 
   useEffect(() => {
     if (selectedSupplier) dispatch(fetchPurchaseHistory(selectedSupplier.s_id));
@@ -128,6 +129,7 @@ const SupplierDetails = () => {
             <Button key="close" onClick={handleModalClose}>
               Close
             </Button>,
+            userAccess.supplier_delete &&
             <Button
               key="Delete Supplier"
               onClick={() => handleDelete(selectedSupplier.s_id)}
@@ -136,6 +138,7 @@ const SupplierDetails = () => {
             >
               Delete Supplier
             </Button>,
+            userAccess.supplier_edit &&
             <Button key="Update Supplier" onClick={handleUpdate} type="primary">
               Update Supplier
             </Button>,

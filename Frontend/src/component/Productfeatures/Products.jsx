@@ -19,6 +19,7 @@ const Products = () => {
   const { productsData, productLoading, deleteProductModalVisible } =
     useSelector((state) => state.Products);
 
+    const { userAccess } = useSelector((state) => state.auth);
   const spareParts = productsData.filter(
     (product) => product.p_category === "Spare Part"
   );
@@ -254,7 +255,7 @@ const Products = () => {
       {/* section of table */}
       <h2 style={{ textAlign: "left", fontWeight: "500" }}>Products</h2>
 
-      <AddnewProduct />
+      {userAccess.products_add && <AddnewProduct />}
       <div>
         {/* Measuring & Controllers Table */}
         <div className="table-heading">
@@ -267,6 +268,12 @@ const Products = () => {
           columns={columns.filter((col) => col.title !== "Expire Date")}
           loading={productLoading}
           pagination={{ pageSize: 10 }}
+          onRow={(record, rowIndex) => {
+            return {
+              onClick: () => handleRowClick(record),
+            };
+          }
+          }
         />
         {/* Laboratory Equipment Table */}
         <div className="table-heading">
@@ -279,6 +286,12 @@ const Products = () => {
           columns={columns.filter((col) => col.title !== "Expire Date")}
           loading={productLoading}
           pagination={{ pageSize: 10 }}
+          onRow={(record, rowIndex) => {
+            return {
+              onClick: () => handleRowClick(record),
+            };
+          }
+          }
         />
         {/* Chemical Table with Expire Date */}
         <div className="table-heading">
@@ -291,6 +304,12 @@ const Products = () => {
           columns={columns}
           loading={productLoading}
           pagination={{ pageSize: 10 }}
+          onRow={(record, rowIndex) => {
+            return {
+              onClick: () => handleRowClick(record),
+            };
+          }
+          }
         />
         {/* Spare Parts Table */}
         <div className="table-heading">
@@ -303,6 +322,12 @@ const Products = () => {
           columns={columns.filter((col) => col.title !== "Expire Date")}
           loading={productLoading}
           pagination={{ pageSize: 10 }}
+          onRow={(record, rowIndex) => {
+            return {
+              onClick: () => handleRowClick(record),
+            };
+          }
+          }
         />
 
         {/* Other Products Table */}
@@ -316,6 +341,12 @@ const Products = () => {
           columns={columns.filter((col) => col.title !== "Expire Date")}
           loading={productLoading}
           pagination={{ pageSize: 10 }}
+          onRow={(record, rowIndex) => {
+            return {
+              onClick: () => handleRowClick(record),
+            };
+          }
+          }
         />
       </div>
       <ProductDetails />

@@ -10,6 +10,7 @@ import { convertTimestampToDate } from "../../utils/ConvertDate";
 import UpdateDebtModal from "./updateDebt";
 const DebtDetails = () => {
   const dispatch = useDispatch();
+  const {userAccess} = useSelector((state) => state.auth);
   const { selectedDebt, DebtModalVisible } = useSelector(
     (state) => state.Debts
   );
@@ -31,9 +32,16 @@ const DebtDetails = () => {
           <Button key="close" onClick={handleModalClose}>
             Close
           </Button>,
-          <Button key="set status" onClick={handleActivateDebt} type="primary">
-            Update Debt
-          </Button>,
+          userAccess.debts_delete && (
+            <Button
+              key="delete"
+              onClick={() => handleDeleteDebt(selectedDebt.d_id)}
+              type="primary"
+              danger
+            >
+              Delete Debt
+            </Button>
+          ),
         ]}
         width={800}
       >
