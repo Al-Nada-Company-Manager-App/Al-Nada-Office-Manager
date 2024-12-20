@@ -17,10 +17,25 @@ const RepairStatusChart = () => {
     data,
     angleField: "status_count",
     colorField: "p_status",
-    legend: { position: "bottom" },
+    radius: 1,
+    innerRadius: 0,
+    legend: { position: "button" },
   };
 
-  return <Pie {...config} />;
+  return ( 
+  <div
+  style={{
+    width: "50%",
+    height: "350px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    margin: "0 auto",
+  }}
+>
+  <Pie {...config} />
+</div>
+);
 };
 
 export default RepairStatusChart;

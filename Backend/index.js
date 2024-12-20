@@ -1327,6 +1327,15 @@ app.get("/api/total-spare-parts", async (req, res) => {
 });
 
 //PENDING
+app.get("/api/total-pending", async (req, res) => {
+  try {
+    const result = await db.query("SELECT COUNT(P_STATUS) FROM STOCK WHERE P_STATUS = 'Pending'");
+
+    res.json({ totalpending: result.rows[0].count});
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
 
 // Start server
 const PORT = 4000;

@@ -18,7 +18,16 @@ const SparePartsLowStock = () => {
     { title: "Available Quantity", dataIndex: "p_quantity", key: "p_quantity" },
   ];
 
-  return <Table dataSource={data} columns={columns} rowKey="p_name" />;
+  return (
+    <>
+    <div style={{height: "300px"}}>
+  <Table 
+  dataSource={data} 
+  columns={columns} 
+  rowKey="p_name" />
+  </div>
+  </>
+  );
 };
 
 export default SparePartsLowStock;

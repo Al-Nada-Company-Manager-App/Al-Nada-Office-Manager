@@ -14,6 +14,7 @@ const TechDashboard = () => {
   const [TotalRepairs , setTotalRepairs] = useState([]);
   const [TotalDUM, setTotalDUM] = useState([]);
   const [TotalSpareParts, setTotalSpareParts] = useState([]);
+  const [TotalPending, setTotalPending] = useState([]);
 
   useEffect(() => {
 
@@ -31,6 +32,10 @@ const TechDashboard = () => {
       .then((res) => setTotalSpareParts(res.data.totalSpare))
       .catch((err) => console.error("Error fetching total spare part:", err));
       
+
+      axios.get("http://localhost:4000/api/total-pending")
+      .then((res) => setTotalPending(res.data.totalpending))
+      .catch((err) => console.error("Error fetching total pending:", err));
   }, []);
 
 
@@ -74,7 +79,7 @@ const TechDashboard = () => {
             <Statistic 
             title="Pending" 
             prefix= {<StopOutlined />}
-            value="le7d ma tegy" 
+            value={TotalPending}
             valueStyle={{ color: "red" }} />
           </Card>
         </Col>
@@ -82,7 +87,7 @@ const TechDashboard = () => {
 
 
       <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
-        <Col span={12}>
+        <Col span={24}>
           <Card
             title="Repair Process Overview"
             bordered
@@ -91,8 +96,11 @@ const TechDashboard = () => {
             <RepairsOverTimeChart />
           </Card>
         </Col>
+    </Row>
 
-        {/* Category Distribution */}
+      <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
+
+
         <Col span={12}>
           <Card
             title="Spare Parts Usage"
@@ -100,20 +108,6 @@ const TechDashboard = () => {
             className="card-chart"
           >
             <SparePartsChart />
-          </Card>
-        </Col>
-      </Row>
-
-      <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
-
-
-        <Col span={24}>
-          <Card
-            title="Repair Status Overview"
-            bordered
-            className="card-chart"
-            >
-            <RepairStatusChart />
           </Card>
         </Col>
         <Col span={12}>
@@ -125,6 +119,18 @@ const TechDashboard = () => {
           <SparePartsLowStock />
             </Card>
           </Col>
+      </Row>
+
+      <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
+        <Col span={12}>
+          <Card
+            title="Repair Status Overview"
+            bordered
+            className="card-chart"
+            >
+            <RepairStatusChart />
+          </Card>
+        </Col>
       </Row>
 
     </div>
