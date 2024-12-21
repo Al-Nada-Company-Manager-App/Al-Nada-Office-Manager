@@ -1693,41 +1693,15 @@ app.post("/updatesproductphoto", upload.single("photo"), async (req, res) => {
 });
 
 app.get("/allPriceQuotation", async (req, res) => {
-  try {
-    // Fetch price quotations along with customer details
-    const result = await db.query(`
-      SELECT 
-      pq.PQ_ID, 
-      pq.PQ_DISCOUNT, 
-      pq.PQ_CURRENCY, 
-      pq.PQ_DURATION, 
-      pq.PQ_TOTAL,
-      c.C_NAME , 
-      c.C_PHOTO 
-FROM 
-    PRICE_QUOTATION pq
-JOIN 
-    OFFER o 
-ON 
-    pq.PQ_ID = o.PQ_ID
-LEFT JOIN 
-    CUSTOMER c 
-ON 
-    o.C_ID = c.C_ID;
-    `);
-
-    const rows = result.rows;
-    res.json(rows);
-  } catch (error) {
-    console.error("Database query failed:", error);
-    res.status(500).json({ error: "Failed to fetch price quotations" });
-  }
+  const result = await db.query("SELECT  PRICE_QUOTATION.*, CUSTOMER.C_NAME,p_name FROM  PRICE_QUOTATION ,offer,customer,stock where offer.c_id=customer.c_id and offer.pq_id=price_quotation.pq_id and offer.p_id=stock.p_id");
+  const rows = result.rows;
+  res.json(rows);
 });
 
 app.post("/deletepq", async (req, res) => {
   const id = req.body.id;
   await db.query("DELETE FROM PRICE_QUOTATION WHERE pq_id = $1", [id]);
-  await db.query("DELETE FROM OFFER WHERE pq_id = $1", [id]);
+  //await db.query("DELETE FROM OFFER WHERE pq_id = $1", [id]);
   res.json({ success: true });
 });
 

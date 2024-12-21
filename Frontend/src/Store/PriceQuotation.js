@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../Utils/axiosInstance";
+import { message, notification } from 'antd';
 
 // Async thunk for fetching price quotations
 export const fetchPriceQuotations = createAsyncThunk(
@@ -16,18 +17,22 @@ export const deletePriceQuotation = createAsyncThunk("priceQuotations/deletepq",
   try {
     console.log("Deleting Price Quotation with ID:", id);
     const response = await axiosInstance.post("/deletepq", { id });
+    message.success("Price Quotation deleted successfully");
     return response.data;
   } catch (error) {
     console.error("Error deleting price quotations:", error);
+    message.error("Error deleting price quotation");
   }
 });
 
 export const addPriceQuotation = createAsyncThunk("priceQuotations/addpq", async (values) => {
   try {
     const response = await axiosInstance.post("/addpq", values);
+    message.success("Price Quotation added successfully");
     return response.data;
   } catch (error) {
     console.error("Error adding price qoutation:", error);
+    message.error("Error adding price quotation");
   }
 });
 
