@@ -16,7 +16,7 @@ import Customer from "./Customerfeatures/Customer";
 import PriceQuotation from "./PriceQoutationfeatures/PriceQuotation";
 import Supplier from "./Supplierfeatures/Supplier";
 import Purchase from "./Purchasefeachers/Purchase";
-import Dashboard from "./Dashboardfeatures/accDashboard";
+import AccDashboard from "./Dashboardfeatures/accDashboard";
 import { useSelector, useDispatch } from "react-redux";
 import { handleLogout } from "../Store/authSlice";
 import UserProfile from "./UserProfilefeatures/UserProfile";
@@ -31,7 +31,7 @@ const HomePage = () => {
   const { SignedUser } = useSelector((state) => state.auth);
   React.useEffect(() => {console.log(SignedUser)},[SignedUser]);
   const dashboards={
-    "Manager":"ManagerDashboard",
+    "Manager":<TechDashboard />,
     "Technical Support":<TechDashboard />,
     "SalesMan":<DashBoardSM />,
     "Secartary":"SecartaryDashboard",

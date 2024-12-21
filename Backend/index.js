@@ -368,16 +368,15 @@ app.post("/addUser", async (req, res) => {
             supplier_page, supplier_add, supplier_edit, supplier_delete, supplier_view
         ) VALUES (
             $1, 
-            False, False, False, False, False, 
             False, False, False, False, False,
-            False, False, False, False, False, 
+            False, False, False, False, False,
             False, False, False, False, False, False,
             True, False, True, False, True, 
-            True, True, True, False, True, 
+            True, True, True, False, True,
             True, True, True, False, True, 
             True, True, True, False, True, 
             False, False, False, False, False, 
-            True, True, True, False, True  
+            True, True, True, False, True   
         )`,
         [result.rows[0].e_id]
       );
