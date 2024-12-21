@@ -26,7 +26,20 @@ const StockCategoryChart = () => {
         title: { visible: true, text: 'Stock Category Distribution' },
     };
 
-    return <Pie {...config} />;
+    return ( 
+        <div
+        style={{
+          width: "50%",
+          height: "350px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          margin: "0 auto",
+        }}
+      >
+        <Pie {...config} />
+      </div>
+      );
 };
 
 export default StockCategoryChart;

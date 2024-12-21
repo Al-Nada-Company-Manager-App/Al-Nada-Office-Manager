@@ -3,6 +3,8 @@ import {ToolOutlined, StopOutlined, RiseOutlined, PlusCircleOutlined} from '@ant
 import {useState, useEffect} from "react";
 import StockCategoryChart from './StockCategoryChart';
 import axios from "axios";
+import CustomerProductChart from './CustomerProductChart';
+import SupplierProductChart from "./SupplierProductChart";
 
 const ManagerDashboard = () => {
 
@@ -73,8 +75,28 @@ const ManagerDashboard = () => {
               <StockCategoryChart />
             </Card>
           </Col>
+          <Col span={12}>
+            <Card
+              title="Supplier Products"
+              bordered
+              className="card-chart"
+              >
+              <SupplierProductChart />
+            </Card>
+          </Col>
         </Row>
   
+        <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
+          <Col span={12}>
+            <Card
+              title="Customer Products"
+              bordered
+              className="card-chart"
+              >
+              <CustomerProductChart />
+            </Card>
+          </Col>
+        </Row>
       </div>
       </>
       );

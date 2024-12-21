@@ -2068,6 +2068,45 @@ app.get('/api/total-stock', async (req, res) => {
   }
 });
 
+/// get suppliers product purchase count
+app.get('/api/suppliersproducts', (req, res) => {
+  const query = `
+      SELECT 
+          S.S_ID AS SupplierID,
+          S.S_NAME AS SupplierName,
+          COUNT(PI.P_ID) AS ProductCount
+      FROM SUPPLIER S
+      LEFT JOIN PURCHASE P ON S.S_ID = P.S_ID
+      LEFT JOIN PURCHASE_ITEMS PI ON P.PCH_ID = PI.PCH_ID
+      GROUP BY S.S_ID, S.S_NAME;
+  `;
+  db.query(query, (err, results) => {
+      if (err) throw err;
+      res.json(results.rows);
+      console.log(results.rows);
+  });
+});
+
+/// for customer
+app.get('/api/customersproducts', (req, res) => {
+  const query = `
+      SELECT 
+          C.C_ID AS CustomerID,
+          C.C_NAME AS CustomerName,
+          COUNT(SI.P_ID) AS ProductCount
+      FROM CUSTOMER C
+      LEFT JOIN SALES SL ON C.C_ID = SL.C_ID
+      LEFT JOIN SELL_ITEMS SI ON SL.SL_ID = SI.SL_ID
+      GROUP BY C.C_ID, C.C_NAME;
+  `;
+  db.query(query, (err, results) => {
+      if (err) throw err;
+      res.json(results.rows);
+      console.log(results.rows);
+  });
+});
+
+
 
 app.get("/session", (req, res) => {
   if (req.isAuthenticated()) {
