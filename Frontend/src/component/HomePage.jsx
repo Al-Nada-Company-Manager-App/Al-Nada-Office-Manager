@@ -20,7 +20,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { handleLogout } from "../Store/authSlice";
 import UserProfile from "./UserProfilefeatures/UserProfile";
 import { Dash } from "react-bootstrap-icons";
-import DashBoardSM from "./dashboardSalesMan/DashBoardSM";
+import DashBoardSM from "./Dashboardfeatures/DashBoardSM";
 import { use } from "react";
 const { Sider, Content } = Layout;
 
@@ -33,7 +33,7 @@ const HomePage = () => {
   const dashboards={
     "Manager":"ManagerDashboard",
     "Technical Support":<TechDashboard />,
-    "Sales":<DashBoardSM />,
+    "SalesMan":<DashBoardSM />,
     "Secartary":"SecartaryDashboard",
     "Accountant":"AccountantDashboard",
   };

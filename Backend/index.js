@@ -24,7 +24,6 @@ const db = new pg.Client({
 //     rejectUnauthorized: false,
 //   },
 // });
-db.connect();
 
 db.connect((err) => {
   if (err) {
