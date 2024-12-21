@@ -9,21 +9,21 @@ import pg from "pg";
 import multer from "multer";
 import path from "path";
 
-// const db = new pg.Client({
-//   user: "postgres",
-//   host: "localhost",
-//   database: "Al Nada",
-//   password: "NEW@22wntg",
-//   port: 5432,
-// });
 const db = new pg.Client({
-
-  connectionString:
-    "postgresql://neondb_owner:Z50JaCBQWOMr@ep-nameless-darkness-a5mhhisx.us-east-2.aws.neon.tech/neondb?sslmode=require",
-  ssl: {
-    rejectUnauthorized: false,
-  },
+  user: "postgres",
+  host: "localhost",
+  database: "Al Nada",
+  password: "NEW@22wntg",
+  port: 5432,
 });
+// const db = new pg.Client({
+
+//   connectionString:
+//     "postgresql://neondb_owner:Z50JaCBQWOMr@ep-nameless-darkness-a5mhhisx.us-east-2.aws.neon.tech/neondb?sslmode=require",
+//   ssl: {
+//     rejectUnauthorized: false,
+//   },
+// });
 
 db.connect((err) => {
   if (err) {
@@ -1387,12 +1387,13 @@ app.post("/AddDUM", async (req, res) => {
   try {
     const SERIALNUMBER = req.body.serialnumber;
     const PNAME = req.body.productname;
-    //const CATEGORY = req.body.category;
+    const CATEGORY = 'Device Under Maintenance'; 
     const PSTATUS = req.body.maintenanceStatus;
 
+    console.log(PSTATUS);
     await db.query(
-      "INSERT INTO STOCK (P_NAME, P_CATEGORY, SERIAL_NUMBER, P_STATUS) VALUES ($1, 'Device Under Maintenance', $2, $3)",
-      [PNAME, SERIALNUMBER, PSTATUS]
+      "INSERT INTO STOCK (P_NAME, P_CATEGORY, SERIAL_NUMBER, P_STATUS) VALUES ($1, $2, $3, $4)",
+      [PNAME, CATEGORY, SERIALNUMBER, PSTATUS]
     );
 
     res.json({
@@ -3597,6 +3598,74 @@ app.get("/gettotaldebts", async (req, res) => {
 
 
 
+
+
+
+//summary of the stock
+app.get('/api/stocks/summary', async (req, res) => {
+  try {
+    const result = await db.query(`
+        SELECT P_CATEGORY, COUNT(*) AS TOTAL_PRODUCTS, SUM(P_QUANTITY) AS TOTAL_QUANTITY
+        FROM STOCK
+        GROUP BY P_CATEGORY
+    `);
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+// total products in stock
+app.get('/api/total-stock', async (req, res) => {
+  try {
+    const result = await db.query(`
+        SELECT SUM(P_QUANTITY)
+        FROM STOCK
+    `);
+    console.log(result.rows[0].sum);
+    res.json(result.rows[0].sum);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+/// get suppliers product purchase count
+app.get('/api/suppliersproducts', (req, res) => {
+  const query = `
+      SELECT 
+          S.S_ID AS SupplierID,
+          S.S_NAME AS SupplierName,
+          COUNT(PI.P_ID) AS ProductCount
+      FROM SUPPLIER S
+      LEFT JOIN PURCHASE P ON S.S_ID = P.S_ID
+      LEFT JOIN PURCHASE_ITEMS PI ON P.PCH_ID = PI.PCH_ID
+      GROUP BY S.S_ID, S.S_NAME;
+  `;
+  db.query(query, (err, results) => {
+      if (err) throw err;
+      res.json(results.rows);
+      console.log(results.rows);
+  });
+});
+
+/// for customer
+app.get('/api/customersproducts', (req, res) => {
+  const query = `
+      SELECT 
+          C.C_ID AS CustomerID,
+          C.C_NAME AS CustomerName,
+          COUNT(SI.P_ID) AS ProductCount
+      FROM CUSTOMER C
+      LEFT JOIN SALES SL ON C.C_ID = SL.C_ID
+      LEFT JOIN SELL_ITEMS SI ON SL.SL_ID = SI.SL_ID
+      GROUP BY C.C_ID, C.C_NAME;
+  `;
+  db.query(query, (err, results) => {
+      if (err) throw err;
+      res.json(results.rows);
+      console.log(results.rows);
+  });
+});
 
 
 

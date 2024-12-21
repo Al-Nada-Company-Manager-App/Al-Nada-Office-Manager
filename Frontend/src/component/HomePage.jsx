@@ -15,14 +15,13 @@ import Customer from "./Customerfeatures/Customer";
 import PriceQuotation from "./PriceQoutationfeatures/PriceQuotation";
 import Supplier from "./Supplierfeatures/Supplier";
 import Purchase from "./Purchasefeachers/Purchase";
-import AccDashboard from "./Dashboardfeatures/accDashboard";
+import DashboardACT from "./Dashboardfeatures/DashboardACT";
 import { useSelector, useDispatch } from "react-redux";
-import { handleLogout } from "../Store/authSlice";
+import DashboardMG from './Dashboardfeatures/DashboardMG';
 import UserProfile from "./UserProfilefeatures/UserProfile";
 import DashBoardSM from "./Dashboardfeatures/DashBoardSM";
-import TechDashboard from "./Dashboardfeatures/techDashboard";
+import DashboardTCH from "./Dashboardfeatures/DashboardTCH";
 import DashBoardSC from "./Dashboardfeatures/DashBoardSC";
-import DashboardWrapper from "./Dashboardfeatures/DashboardWrapper";
 const { Sider, Content } = Layout;
 
 
@@ -31,11 +30,11 @@ const HomePage = () => {
   const { SignedUser } = useSelector((state) => state.auth);
   React.useEffect(() => {console.log(SignedUser)},[SignedUser]);
   const dashboards={
-    "Manager":<DashBoardSC />,
-    "Technical Support":<TechDashboard />,
+    "Manager":<DashboardMG />,
+    "Technical Support":<DashboardTCH />,
     "SalesMan":<DashBoardSM />,
     "Secartary": <DashBoardSC />, 
-    "Accountant":<AccDashboard/>,
+    "Accountant":<DashboardACT/>,
   };
   const contents = {
     1: (SignedUser && dashboards[SignedUser.Role]) || "DefaultDashboard",
