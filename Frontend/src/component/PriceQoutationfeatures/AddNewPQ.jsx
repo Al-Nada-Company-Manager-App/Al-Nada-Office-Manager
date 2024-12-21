@@ -29,6 +29,9 @@ import {
 import ProductModal from "../Salesfeatures/ProductModal";
 
 const currencies = ["USD", "EUR", "EGP"];
+
+
+
 const AddNewPriceQuotation = () => {
   const { selectedCustomer } = useSelector((state) => state.Customers);
   const { selectedProducts } = useSelector((state) => state.Products);
@@ -211,9 +214,9 @@ const AddNewPriceQuotation = () => {
             </Col>
           </Row>
         </Form>
+      <ProductModal />
       </Modal>
       <CustomerModal />
-      <ProductModal />
     </div>
   );
 };

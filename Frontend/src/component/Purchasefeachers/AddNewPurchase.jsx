@@ -10,7 +10,6 @@ import {
   InputNumber,
   Select,
 } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
 import SupplierModal from "./SupplierModal";
 import ProductModal from "./ProductModal";
 import axios from "axios";
@@ -51,7 +50,6 @@ const AddNewPurchase = () => {
   // Modal visibility states
   const [isSupplierModalVisible, setIsSupplierModalVisible] = useState(false); ////
 
-  const openParchaseModal = () => dispatch(setaddPurchaseModalVisible(true));
   const closeSParchaseModal = () => dispatch(setaddPurchaseModalVisible(false));
 
   //const onSaleTypeChange = (value) => setPurchaseType(value);/// what mean
@@ -84,22 +82,6 @@ const AddNewPurchase = () => {
 
   return (
     <div>
-      {userAccess.purchase_add && (
-        <Button
-          type="primary"
-          onClick={openParchaseModal}
-          style={{
-            marginBottom: "16px",
-            backgroundColor: "#389e0d",
-            marginLeft: "auto",
-            display: "flex",
-            alignItems: "center",
-          }}
-          icon={<PlusOutlined />}
-        >
-          Add Purchase
-        </Button>
-      )}
       <Modal
         title="Add New Purchase"
         open={addPurchaseModalVisible}
@@ -355,13 +337,13 @@ const AddNewPurchase = () => {
             </Col>
           </Row>
         </Form>
+      <ProductModal />
       </Modal>
 
       {/* Customer Modal */}
       <SupplierModal />
 
       {/* Product Modal */}
-      <ProductModal />
     </div>
   );
 };

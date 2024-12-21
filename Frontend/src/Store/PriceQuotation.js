@@ -24,6 +24,7 @@ export const deletePriceQuotation = createAsyncThunk("priceQuotations/deletepq",
 
 export const addPriceQuotation = createAsyncThunk("priceQuotations/addpq", async (values) => {
   try {
+    console.log("Adding Price Quotation:", values);
     const response = await axiosInstance.post("/addpq", values);
     return response.data;
   } catch (error) {

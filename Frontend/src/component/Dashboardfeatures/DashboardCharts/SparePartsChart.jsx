@@ -16,9 +16,9 @@ const SparePartsChart = () => {
 
   const config = {
     data,
-    xField: "total_used",
-    yField: "spare_part_name",
-    seriesField: "spare_part_name",
+    xField: "spare_part_name",
+    yField: "total_used",
+    seriesField: "total_used",
     color: "#1890ff",
     barWidthRatio: 0.4,
     minBarWidth: 10,

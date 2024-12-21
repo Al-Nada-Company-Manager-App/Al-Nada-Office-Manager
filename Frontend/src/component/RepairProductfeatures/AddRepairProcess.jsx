@@ -42,7 +42,7 @@ const AddRepairProcess = ({ handleFinish, devices, spareParts, fetchSpareParts, 
 
     const payload = {
       ...values,
-      rep_date: selectedDeviceStatus === "Completed" ? values.rep_date.format("YYYY-MM-DD") : null, // Only set the date if p_status is "Completed"
+      rep_date: selectedDeviceStatus === "Completed" ? values.rep_date : null, 
       spare_parts: selectedSpareParts.filter((part) => part.sp_id || part.sp_quantity > 0),
     };
 
