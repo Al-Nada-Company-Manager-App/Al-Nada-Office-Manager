@@ -9,10 +9,12 @@ import {
   setSelectedUser,
   setUserModalVisible,
 } from "../../Store/Users";
-import {convertTimestampToDate} from '../../utils/ConvertDate';
-
+import { convertTimestampToDate } from "../../utils/ConvertDate";
+import AccessRulesModal from "./EditPermissions";
+import {seteditaccessModalVisible} from "../../Store/Users";
 const UserDetails = () => {
   const dispatch = useDispatch();
+  const { userAccess } = useSelector((state) => state.auth);
   const { selectedUser, userModalVisible } = useSelector(
     (state) => state.Users
   );
@@ -37,6 +39,9 @@ const UserDetails = () => {
     dispatch(fetchUsers());
     handleModalClose();
   };
+  const handleedit = () => {
+    dispatch(seteditaccessModalVisible(true));
+  };
   return (
     <>
       {" "}
@@ -50,6 +55,48 @@ const UserDetails = () => {
             <Button key="close" onClick={handleModalClose}>
               Close
             </Button>,
+            userAccess.users_edit && (
+              <Button
+                className="user-actions-btn"
+                key="editPermisions"
+                onClick={handleedit}
+                type="primary"
+              >
+                Edit Permissions
+              </Button>
+            ),
+            userAccess.users_edit &&
+              (
+              selectedUser.e_active === true ? (
+                <Button
+                  className="user-actions-btn"
+                  key="deactivateUser"
+                  onClick={handledeactivateUser(selectedUser.e_id)}
+                  danger
+                >
+                  Deactivate User
+                </Button>
+              ) : (
+                <Button
+                  className="user-actions-btn"
+                  key="activateUser"
+                  onClick={handleactivateUser(selectedUser.e_id)}
+                  type="primary"
+                >
+                  Activate User
+                </Button>
+              )),
+              userAccess.users_delete && (
+                <Button
+                  className="user-actions-btn"
+                  key="deleteUser"
+                  onClick={handleDeleteUser(selectedUser.e_id)}
+                  type="primary"
+                  danger
+                >
+                  Delete User
+                </Button>
+              ),
           ]}
           width={800} // Increased modal width
         >
@@ -59,8 +106,11 @@ const UserDetails = () => {
                 {/* Employee Image on the left */}
                 <Col span={8}>
                   <img
-                    src={selectedUser.e_photo ? "./Users/" + selectedUser.e_photo : "https://via.placeholder.com/150"}
-
+                    src={
+                      selectedUser.e_photo
+                        ? "./Users/" + selectedUser.e_photo
+                        : "https://via.placeholder.com/150"
+                    }
                     alt={`${selectedUser.f_name} ${selectedUser.l_name}`}
                     style={{
                       width: "100%",
@@ -71,36 +121,6 @@ const UserDetails = () => {
                       marginBottom: "16px",
                     }}
                   />
-                  <div className="user-actions">
-                    <Button
-                      className="user-actions-btn"
-                      key="deleteUser"
-                      onClick={handleDeleteUser(selectedUser.e_id)}
-                      type="primary"
-                      danger
-                    >
-                      Delete User
-                    </Button>
-                    {selectedUser.e_active === true ? (
-                      <Button
-                        className="user-actions-btn"
-                        key="deactivateUser"
-                        onClick={handledeactivateUser(selectedUser.e_id)}
-                        danger
-                      >
-                        Deactivate User
-                      </Button>
-                    ) : (
-                      <Button
-                        className="user-actions-btn"
-                        key="activateUser"
-                        onClick={handleactivateUser(selectedUser.e_id)}
-                        type="primary"
-                      >
-                        Activate User
-                      </Button>
-                    )}
-                  </div>
                 </Col>
 
                 {/* Employee Details on the right */}
@@ -113,7 +133,8 @@ const UserDetails = () => {
                       <strong>Last Name:</strong> {selectedUser.l_name}
                     </p>
                     <p>
-                      <strong>Birth Date:</strong> {convertTimestampToDate(selectedUser.birth_date)}
+                      <strong>Birth Date:</strong>{" "}
+                      {convertTimestampToDate(selectedUser.birth_date)}
                     </p>
                     <p>
                       <strong>Salary:</strong> ${selectedUser.salary}
@@ -154,6 +175,9 @@ const UserDetails = () => {
           )}
         </Modal>
       )}
+      <AccessRulesModal />
+
+
     </>
   );
 };

@@ -6,6 +6,7 @@ import AddSparepart from "./AddSparepart";
 import axios from "axios";
 import moment from "moment";
 import { EditOutlined, PlusOutlined } from "@ant-design/icons";
+import { useDispatch, useSelector } from "react-redux";
 // eslint-disable-next-line react/prop-types, no-unused-vars
 const RepairDetails = ({
   selectedRepair,
@@ -22,6 +23,7 @@ const RepairDetails = ({
   const [selectedPart, setSelectedPart] = useState(null);
   const [isSpareDetails, setisSpareDetails] = useState(false);
   const [iseditstatusModal, setiseditstatusModal] = useState(false);
+  const { userAccess } = useSelector((state) => state.auth);
 
   const fetchUpdatedStatus = async (p_id) => {
     try {
@@ -38,8 +40,6 @@ const RepairDetails = ({
       console.error("Error fetching updated status:", error);
     }
   };
-
-  //console.log("selected repair", selectedRepair.p_id);
 
   useEffect(() => {
     if (selectedRepair && selectedRepair.spare_parts) {
@@ -104,7 +104,6 @@ const RepairDetails = ({
 
   return (
     <>
-      {" "}
       {selectedRepair && (
         <Modal
           title="Repair Process Details"
@@ -115,15 +114,17 @@ const RepairDetails = ({
           }}
           footer={[
             <>
-              <Button
-                key="Delete"
-                onClick={() => {
-                  handleDeleteRepairProcess(selectedRepair.rep_id);
-                }}
-                danger
-              >
-                Delete
-              </Button>
+              {userAccess.repaire_delete && (
+                <Button
+                  key="Delete"
+                  onClick={() => {
+                    handleDeleteRepairProcess(selectedRepair.rep_id);
+                  }}
+                  danger
+                >
+                  Delete
+                </Button>
+              )}
               <Button
                 key="close"
                 onClick={() => {
@@ -142,7 +143,6 @@ const RepairDetails = ({
               <Row gutter={16}>
                 <Col span={8}></Col>
 
-                {/* Product Details on the right */}
                 <Col span={12}>
                   <div className="product-details">
                     <p>
@@ -175,38 +175,41 @@ const RepairDetails = ({
                   padding: "10px 0",
                 }}
               >
-                <Button
-                  style={{
-                    flex: 1,
-                    height: "50px",
-                    zIndex: 10,
-                  }}
-                  key="editstatus"
-                  color="primary"
-                  variant="outlined"
-                  icon={<EditOutlined />}
-                  onClick={handleeditstatusOpen}
-                >
-                  Edit Remarks & Status
-                </Button>
-                <Button
-                  style={{
-                    flex: 1,
-                    height: "50px",
-                    zIndex: 10,
-                  }}
-                  color="primary"
-                  variant="outlined"
-                  icon={<PlusOutlined />}
-                  onClick={() => setShowAddModal(true)}
-                >
-                  Add Spare Part
-                </Button>
+                {userAccess.repaire_edit && (
+                  <Button
+                    style={{
+                      flex: 1,
+                      height: "50px",
+                      zIndex: 10,
+                    }}
+                    key="editstatus"
+                    color="primary"
+                    variant="outlined"
+                    icon={<EditOutlined />}
+                    onClick={handleeditstatusOpen}
+                  >
+                    Edit Remarks & Status
+                  </Button>
+                )}
+                {userAccess.repaire_edit && (
+                  <Button
+                    style={{
+                      flex: 1,
+                      height: "50px",
+                      zIndex: 10,
+                    }}
+                    color="primary"
+                    variant="outlined"
+                    icon={<PlusOutlined />}
+                    onClick={() => setShowAddModal(true)}
+                  >
+                    Add Spare Part
+                  </Button>
+                )}
               </div>
               <Row gutter={16} style={{ marginTop: "50px" }}>
                 <Col span={24}>
                   <h3>Used Spare Parts</h3>
-
                   <AddSparepart
                     visible={showAddModal}
                     rep_id={selectedRepair.rep_id}
@@ -230,17 +233,19 @@ const RepairDetails = ({
                       onClick: () => handleRowClick(record),
                     })}
                   />
-                  <SparepartDetails
-                    repId={selectedRepair.rep_id}
-                    selectedSparePart={selectedPart}
-                    handleisSpareDetailsClose={handleisSpareDetailsClose}
-                    isSpareDetails={isSpareDetails}
-                    fetchAllDUM={fetchAllDUM}
-                    setSpareParts={setSpareParts}
-                    fetchSpareParts={fetchSpareParts}
-                    tablespareParts={spareParts}
-                    setUpdatedSpareParts={setSpareParts}
-                  />
+                  {userAccess.repaire_edit && (
+                    <SparepartDetails
+                      repId={selectedRepair.rep_id}
+                      selectedSparePart={selectedPart}
+                      handleisSpareDetailsClose={handleisSpareDetailsClose}
+                      isSpareDetails={isSpareDetails}
+                      fetchAllDUM={fetchAllDUM}
+                      setSpareParts={setSpareParts}
+                      fetchSpareParts={fetchSpareParts}
+                      tablespareParts={spareParts}
+                      setUpdatedSpareParts={setSpareParts}
+                    />
+                  )}
                 </Col>
               </Row>
             </div>

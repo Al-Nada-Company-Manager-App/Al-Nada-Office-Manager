@@ -24,6 +24,7 @@ import {convertTimestampToDate} from '../../utils/ConvertDate';
 const Sales = () => {
   const dispatch = useDispatch();
   const { salesData, salesLoading } = useSelector((state) => state.Sales);
+  const { userAccess } = useSelector((state) => state.auth);
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef(null);
@@ -247,6 +248,7 @@ const Sales = () => {
 
   return (
     <>
+     {userAccess.sales_add && (
       <Button
         type="primary"
         onClick={openSaleModal}
@@ -261,6 +263,7 @@ const Sales = () => {
       >
         Add Sale
       </Button>
+      )}
       <AddNewSale />
       <div
         style={{

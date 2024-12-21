@@ -9,6 +9,7 @@ import {
   fetchUsers,
   setSelectedUser,
   setUserModalVisible,
+  getAccessRules,
 } from "../../Store/Users";
 
 const columns = [
@@ -69,8 +70,9 @@ const Users = () => {
     dispatch(fetchUsers());
   }, []);
 
-  const handleRowClick = (record) => {
+  const handleRowClick = async(record) => {
     dispatch(setSelectedUser(record));
+    await dispatch(getAccessRules(record.e_id));
     dispatch(setUserModalVisible(true));
   };
 

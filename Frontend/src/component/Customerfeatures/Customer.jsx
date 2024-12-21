@@ -29,6 +29,7 @@ const Customer = () => {
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef(null);
+  const { userAccess } = useSelector((state) => state.auth);
   const handleRowClick = (record) => {
     dispatch(setCustomerModalVisible(true)); 
     dispatch(setSelectedCustomer(record));
@@ -214,7 +215,7 @@ const Customer = () => {
       title: "Action",
       render: (_, record) => (
         <>
-          <Button
+          {userAccess.customer_edit && (<Button
             type="link"
             className="update-btn"
             onClick={(e) => {
@@ -224,7 +225,8 @@ const Customer = () => {
           >
             Update
           </Button>
-          <Button
+        )}
+          {userAccess.customer_delete && (<Button
             type="link"
             className="delete-btn"
             onClick={(e) => {
@@ -234,6 +236,7 @@ const Customer = () => {
           >
             Delete
           </Button>
+        )}
         </>
       ),
     },
@@ -258,13 +261,14 @@ const Customer = () => {
 
   return (
     <div>
-      <Button
+      {userAccess.customer_add && (<Button
         type="primary"
         onClick={() => handleaddClick()}
         style={{ marginRight: 16 }}
       >
         Add Customer
       </Button>
+    )}
       <Button type="primary" onClick={exportToPDF} style={{ marginBottom: 16 }}>
         Export to PDF
       </Button>

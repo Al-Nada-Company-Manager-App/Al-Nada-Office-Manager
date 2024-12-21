@@ -62,13 +62,39 @@ export const addUsers = createAsyncThunk(
     }
   }
 );
-
+export const getAccessRules = createAsyncThunk(
+  "Users/getAccessRules",
+  async (id, thunkAPI) => {
+    try {
+      console.log(id);  
+      const response = await axiosInstance.get("/getUserAccess", { params: { id } }); 
+      return response.data;
+    } catch (error) {
+      console.error("Get access rules failed:", error);
+      return thunkAPI.rejectWithValue(null);
+    }
+  }
+);
+export const updateAccessRules = createAsyncThunk(
+  "Users/updateAccessRules",
+  async (values, thunkAPI) => {
+    try {
+      const response = await axiosInstance.post("/updateUserAccess", values);
+      return response.data;
+    } catch (error) {
+      console.error("Update access rules failed:", error);
+      return thunkAPI.rejectWithValue(null);
+    }
+  }
+);
 
 // Initial state
 const initialState = {
   selectedUser: null,
+  selectedUserAccess: null,
   userModalVisible: false,
   adduserModalVisible: false,
+  editaccessModalVisible: false,
   approvedUsers: [],
   usersData: [],
   file: null,
@@ -91,6 +117,9 @@ const userSlice = createSlice({
     },
     setFile: (state, action) => {
       state.file = action.payload;
+    },
+    seteditaccessModalVisible: (state, action) => {
+      state.editaccessModalVisible = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -117,6 +146,12 @@ const userSlice = createSlice({
       state.selectedUser = action.payload;
       console.log;
     });
+    builder.addCase(getAccessRules.fulfilled, (state, action) => {
+      state.selectedUserAccess = action
+        ? action.payload
+        : null;
+    }
+    );
   },
 });
 
@@ -125,5 +160,6 @@ export const {
   setUserModalVisible,
   setFile,
   setadduserModalVisible,
+  seteditaccessModalVisible,
 } = userSlice.actions;
 export default userSlice.reducer;

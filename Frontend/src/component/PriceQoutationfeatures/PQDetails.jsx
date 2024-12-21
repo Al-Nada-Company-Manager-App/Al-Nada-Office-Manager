@@ -6,6 +6,7 @@ import {  fetchPriceQuotations,deletePriceQuotation,setpqDetailVisible, setSelec
 const PriceQuotationDetails = () => {
     const dispatch = useDispatch();
     const { selectedPQ, pqDetailVisible } = useSelector((state) => state.PriceQuotations);
+    const { userAccess } = useSelector((state) => state.auth);
 
     const handleModalClose = () => {
         dispatch(setpqDetailVisible(false));
@@ -35,9 +36,11 @@ const PriceQuotationDetails = () => {
                     Close
                 </Button>,
                 selectedPQ ? (
+                    userAccess.price_delete && (
                     <Button key="delete" onClick={handleDeletePQ(selectedPQ.pq_id)} type="primary" danger>
                         Delete Price Quotation
                     </Button>
+                    )
                 ) : null,
                 // <Button key="set status" onClick={() => handleSetStatus(selectedPQ.pq_id)} type="primary">
                 //     Set Status

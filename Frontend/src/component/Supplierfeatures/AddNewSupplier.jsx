@@ -18,6 +18,7 @@ const AddNewSupplier = ({ handleFinish }) => {
   );
   const dispatch = useDispatch();
   const [form] = Form.useForm();
+  const { userAccess } = useSelector((state) => state.auth);
 
   const closeSupplierModal = () => {
     dispatch(setaddSupplierModalVisible(false));
@@ -31,16 +32,16 @@ const AddNewSupplier = ({ handleFinish }) => {
     Object.entries(values).forEach(
       ([key, value]) => (SupplierData[key] = value)
     );
-    const response =await dispatch(addSupplier(SupplierData));
-    if(response.payload.success){
-            if(file){
-                const photoData ={};
-                photoData.S_ID=response.payload.s_id;
-                photoData.photo=file;
-                photoData.S_NAME=SupplierData.S_NAME;
-                await dispatch(updateSupplierPhoto(photoData));
-            }
-        }
+    const response = await dispatch(addSupplier(SupplierData));
+    if (response.payload.success) {
+      if (file) {
+        const photoData = {};
+        photoData.S_ID = response.payload.s_id;
+        photoData.photo = file;
+        photoData.S_NAME = SupplierData.S_NAME;
+        await dispatch(updateSupplierPhoto(photoData));
+      }
+    }
     dispatch(fetchSuppliers());
     closeSupplierModal();
   };
@@ -49,20 +50,22 @@ const AddNewSupplier = ({ handleFinish }) => {
   };
   return (
     <div>
-      <Button
-        type="primary"
-        onClick={openSupplierModal}
-        style={{
-          marginBottom: "16px",
-          backgroundColor: "#389e0d",
-          marginLeft: "auto",
-          display: "flex",
-          alignItems: "center",
-        }}
-        icon={<PlusOutlined />}
-      >
-        Add Supplier
-      </Button>
+      {userAccess.supplier_add && (
+        <Button
+          type="primary"
+          onClick={openSupplierModal}
+          style={{
+            marginBottom: "16px",
+            backgroundColor: "#389e0d",
+            marginLeft: "auto",
+            display: "flex",
+            alignItems: "center",
+          }}
+          icon={<PlusOutlined />}
+        >
+          Add Supplier
+        </Button>
+      )}
       <Modal
         title="Add New Supllier"
         open={addsupplierModalVisible}

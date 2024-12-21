@@ -113,9 +113,92 @@ const SignedUser = {
   Gender: "",
 };
 
-app.get("/SignedUser", (req, res) => {
-  res.json(SignedUser);
+app.get("/SignedUser", async (req, res) => {
+  try {
+    if (!SignedUser || !SignedUser.id) {
+      return res.status(400).json({ error: "No signed user found" });
+    }
+
+    const userId = SignedUser.id;
+
+    const accessQuery = `
+      SELECT * 
+      FROM ACCESS_Actions 
+      WHERE E_ID = $1
+    `;
+
+    const accessResult = await db.query(accessQuery, [userId]);
+
+    if (accessResult.rows.length === 0) {
+      return res.status(404).json({ error: "Access data not found for user" });
+    }
+
+    const userAccess = accessResult.rows[0];
+
+    const responseData = {
+      user: SignedUser,
+      access: userAccess,
+    };
+
+    res.json(responseData);
+  } catch (err) {
+    console.error("Error fetching signed user access data:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
+app.get("/getUserAccess", async (req, res) => {
+  try {
+    const userId = req.query.id;
+
+    const accessQuery = `
+      SELECT * 
+      FROM ACCESS_Actions 
+      WHERE E_ID = $1
+    `;
+
+    const accessResult = await db.query(accessQuery, [userId]);
+    if (accessResult.rows.length === 0) {
+      return res.status(404).json({ error: "Access data not found for user" });
+    }
+
+    const userAccess = accessResult.rows[0];
+    res.json(userAccess);
+  } catch (err) {
+    console.error("Error fetching user access data:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+app.post("/updateUserAccess", async (req, res) => {
+  try {
+     const { id, ...access } = req.body;
+     console.log(req.body);
+      
+    if (!id) {
+      return res.status(400).json({ error: "E_ID is required" });
+    }
+
+    const keys = Object.keys(access);
+    if (keys.length === 0) {
+      return res.status(400).json({ error: "No access fields provided for update" });
+    }
+    console.log(keys);
+    const setClause = keys.map((key, index) => `${key} = $${index + 1}`).join(", ");
+    const values = Object.values(access).map((value) => value !== undefined ? value : false); // Replace undefined with false
+    values.push(id);
+
+    const query = `UPDATE ACCESS_Actions SET ${setClause} WHERE E_ID = $${values.length}`;
+
+    console.log("Query:", query); // Debugging query
+    console.log("Values:", values); // Debugging values
+
+    await db.query(query, [...values]);
+    res.json({ success: true, message: "User access updated successfully" });
+  } catch (err) {
+    console.error("Error updating user access data:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 
 app.get("/allUsers", async (req, res) => {
   const result = await db.query("SELECT * FROM EMPLOYEE");

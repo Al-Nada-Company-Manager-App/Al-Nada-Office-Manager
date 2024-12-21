@@ -7,6 +7,7 @@ import Highlighter from 'react-highlight-words';
 import { SearchOutlined } from '@ant-design/icons';
 import RepairDetails from './RepairDetails';
 import AddnewUnderMaintenance from './AddnewUnderMaintenance';
+import { useDispatch, useSelector } from "react-redux";
 
 const RepairProducts = () => {
   
@@ -16,6 +17,7 @@ const RepairProducts = () => {
   const [loading, setLoading] = useState(false);
   const [selectedRepair, setSelectedRepair] = useState(null);
   const [detailRepairModalVisible, setdetailRepairModalVisible] = useState(false);
+  const { userAccess } = useSelector((state) => state.auth);
 
       // search for spacific element
     const [searchText, setSearchText] = useState('');
@@ -387,13 +389,13 @@ const RepairProducts = () => {
     <div>
       <h2 style = {{textAlign: "left", fontWeight: "500"}}>Repair Process</h2>
 
-      <AddRepairProcess
+      {userAccess.repaire_add && (<AddRepairProcess
         handleFinish={handleAddRepairProcess}
         devices={devices}
         spareParts={spareParts}
         fetchSpareParts={fetchSpareParts}
         fetchDevices={fetchDevices}
-      />
+      />)}
 
 
          <div className = "table-container">
@@ -414,9 +416,9 @@ const RepairProducts = () => {
 
               <div className="div" style={{position: "relative"}}>
            <h2 style = {{textAlign: "left", fontWeight: "500"}}>Device Under Maintenance</h2>
-             <AddnewUnderMaintenance 
+           {userAccess.repaire_add && (<AddnewUnderMaintenance 
               handleFinish= {handleFinish}
-             />
+             />)}
 
          <div className = "table-container" style={{}}>
              <Table

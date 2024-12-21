@@ -18,6 +18,66 @@ CREATE TABLE
         E_GENDER VARCHAR(50),
         E_ACTIVE BOOLEAN DEFAULT False
     );
+CREATE TABLE ACCESS_Actions (
+    E_ID INT,
+    users_page BOOLEAN DEFAULT False,
+    users_add BOOLEAN DEFAULT False,
+    users_edit BOOLEAN DEFAULT False,
+    users_delete BOOLEAN DEFAULT False,
+    users_view BOOLEAN DEFAULT False,
+
+    products_page BOOLEAN DEFAULT False,
+    products_add BOOLEAN DEFAULT False,
+    products_edit BOOLEAN DEFAULT False,
+    products_delete BOOLEAN DEFAULT False,
+    products_view BOOLEAN DEFAULT False,
+
+    repaire_page BOOLEAN DEFAULT False,
+    repaire_add BOOLEAN DEFAULT False,
+    repaire_edit BOOLEAN DEFAULT False,
+    repaire_delete BOOLEAN DEFAULT False,
+    repaire_view BOOLEAN DEFAULT False,
+    repaire_adddum BOOLEAN DEFAULT False,
+
+    sales_page BOOLEAN DEFAULT False,
+    sales_add BOOLEAN DEFAULT False,
+    sales_edit BOOLEAN DEFAULT False,
+    sales_delete BOOLEAN DEFAULT False,
+    sales_view BOOLEAN DEFAULT False,
+
+    price_page BOOLEAN DEFAULT False,
+    price_add BOOLEAN DEFAULT False,
+    price_edit BOOLEAN DEFAULT False,
+    price_delete BOOLEAN DEFAULT False,
+    price_view BOOLEAN DEFAULT False,
+
+    debts_page BOOLEAN DEFAULT False,
+    debts_add BOOLEAN DEFAULT False,
+    debts_edit BOOLEAN DEFAULT False,
+    debts_delete BOOLEAN DEFAULT False,
+    debts_view BOOLEAN DEFAULT False,
+
+    purchase_page BOOLEAN DEFAULT False,
+    purchase_add BOOLEAN DEFAULT False,
+    purchase_edit BOOLEAN DEFAULT False,
+    purchase_delete BOOLEAN DEFAULT False,
+    purchase_view BOOLEAN DEFAULT False,
+
+    customer_page BOOLEAN DEFAULT False,
+    customer_add BOOLEAN DEFAULT False,
+    customer_edit BOOLEAN DEFAULT False,
+    customer_delete BOOLEAN DEFAULT False,
+    customer_view BOOLEAN DEFAULT False,
+
+    supplier_page BOOLEAN DEFAULT False,
+    supplier_add BOOLEAN DEFAULT False,
+    supplier_edit BOOLEAN DEFAULT False,
+    supplier_delete BOOLEAN DEFAULT False,
+    supplier_view BOOLEAN DEFAULT False,
+
+    FOREIGN KEY (E_ID) REFERENCES EMPLOYEE (E_ID) ON DELETE CASCADE ON UPDATE CASCADE,
+    PRIMARY KEY (E_ID)
+);
 
 CREATE TABLE
     CUSTOMER (
@@ -142,12 +202,13 @@ CREATE TABLE
     );
 
 CREATE TABLE
-    MARKEETING (
+    MARKETING (
+        M_ID SERIAL PRIMARY KEY,
+        M_DATE DATE,
         E_ID INT,
         C_ID INT,
         FOREIGN KEY (E_ID) REFERENCES EMPLOYEE (E_ID) ON DELETE CASCADE ON UPDATE CASCADE,
         FOREIGN KEY (C_ID) REFERENCES CUSTOMER (C_ID) ON DELETE CASCADE ON UPDATE CASCADE,
-        PRIMARY KEY (E_ID, C_ID)
     );
 
 CREATE TABLE
@@ -646,3 +707,129 @@ INSERT INTO
 VALUES
     (1, 2, 15, 'Category A', 750),
     (2, 2, 10, 'Category B', 750);
+
+
+    -- 1. Manager: Full access to all pages and actions
+INSERT INTO ACCESS_Actions (
+    E_ID, 
+    users_page, users_add, users_edit, users_delete, users_view,
+    products_page, products_add, products_edit, products_delete, products_view,
+    repaire_page, repaire_add, repaire_edit, repaire_delete, repaire_view, repaire_adddum,
+    sales_page, sales_add, sales_edit, sales_delete, sales_view,
+    price_page, price_add, price_edit, price_delete, price_view,
+    debts_page, debts_add, debts_edit, debts_delete, debts_view,
+    purchase_page, purchase_add, purchase_edit, purchase_delete, purchase_view,
+    customer_page, customer_add, customer_edit, customer_delete, customer_view,
+    supplier_page, supplier_add, supplier_edit, supplier_delete, supplier_view
+) VALUES (
+    1, -- Manager ID
+    True, True, True, True, True, -- users
+    True, True, True, True, True, -- products
+    True, True, True, True, True, True, -- repaire
+    True, True, True, True, True, -- sales
+    True, True, True, True, True, -- Price
+    True, True, True, True, True, -- Debts
+    True, True, True, True, True, -- Purchase
+    True, True, True, True, True, -- Customer
+    True, True, True, True, True  -- Supplier
+);
+
+-- 2. Technical Support: Limited access to repair and products
+INSERT INTO ACCESS_Actions (
+    E_ID,
+    users_page, users_add, users_edit, users_delete, users_view,
+    products_page, products_add, products_edit, products_delete, products_view,
+    repaire_page, repaire_add, repaire_edit, repaire_delete, repaire_view, repaire_adddum,
+    sales_page, sales_add, sales_edit, sales_delete, sales_view,
+    price_page, price_add, price_edit, price_delete, price_view,
+    debts_page, debts_add, debts_edit, debts_delete, debts_view,
+    purchase_page, purchase_add, purchase_edit, purchase_delete, purchase_view,
+    customer_page, customer_add, customer_edit, customer_delete, customer_view,
+    supplier_page, supplier_add, supplier_edit, supplier_delete, supplier_view
+) VALUES (
+    2, -- Technical Support ID
+    False, False, False, False, False, -- users
+    True, True, True, False, True, -- products
+    True, True, True, False, True, True, -- repaire
+    False, False, False, False, False, -- sales
+    False, False, False, False, False, -- Price
+    False, False, False, False, False, -- Debts
+    False, False, False, False, False, -- Purchase
+    False, False, False, False, False, -- Customer
+    False, False, False, False, False  -- Supplier
+);
+
+-- 3. salesman: Limited access to sales and customers
+INSERT INTO ACCESS_Actions (
+    E_ID,
+    users_page, users_add, users_edit, users_delete, users_view,
+    products_page, products_add, products_edit, products_delete, products_view,
+    repaire_page, repaire_add, repaire_edit, repaire_delete, repaire_view, repaire_adddum,
+    sales_page, sales_add, sales_edit, sales_delete, sales_view,
+    price_page, price_add, price_edit, price_delete, price_view,
+    debts_page, debts_add, debts_edit, debts_delete, debts_view,
+    purchase_page, purchase_add, purchase_edit, purchase_delete, purchase_view,
+    customer_page, customer_add, customer_edit, customer_delete, customer_view,
+    supplier_page, supplier_add, supplier_edit, supplier_delete, supplier_view
+) VALUES (
+    3, -- salesman ID
+    False, False, False, False, False, -- users
+    False, False, False, False, False, -- products
+    False, False, False, False, False, False, -- repaire
+    True, True, True, False, True, -- sales
+    True, True, True, False, True, -- Price
+    True, True, True, False, True, -- Debts
+    False, False, False, False, False, -- Purchase
+    True, True, True, False, True, -- Customer
+    False, False, False, False, False  -- Supplier
+);
+
+-- 4. Accountant: Limited access to purchases, sales, and supplier management
+INSERT INTO ACCESS_Actions (
+    E_ID,
+    users_page, users_add, users_edit, users_delete, users_view,
+    products_page, products_add, products_edit, products_delete, products_view,
+    repaire_page, repaire_add, repaire_edit, repaire_delete, repaire_view, repaire_adddum,
+    sales_page, sales_add, sales_edit, sales_delete, sales_view,
+    price_page, price_add, price_edit, price_delete, price_view,
+    debts_page, debts_add, debts_edit, debts_delete, debts_view,
+    purchase_page, purchase_add, purchase_edit, purchase_delete, purchase_view,
+    customer_page, customer_add, customer_edit, customer_delete, customer_view,
+    supplier_page, supplier_add, supplier_edit, supplier_delete, supplier_view
+) VALUES (
+    4, -- Accountant ID
+    False, False, False, False, False, -- users
+    False, False, False, False, False, -- products
+    False, False, False, False, False, False, -- repaire
+    True, False, True, False, True, -- sales
+    True, True, True, False, True, -- Price
+    True, True, True, False, True, -- Debts
+    True, True, True, False, True, -- Purchase
+    False, False, False, False, False, -- Customer
+    True, True, True, False, True  -- Supplier
+);
+
+-- 5. Secretary: View-only access to most pages
+INSERT INTO ACCESS_Actions (
+   E_ID,
+    users_page, users_add, users_edit, users_delete, users_view,
+    products_page, products_add, products_edit, products_delete, products_view,
+    repaire_page, repaire_add, repaire_edit, repaire_delete, repaire_view, repaire_adddum,
+    sales_page, sales_add, sales_edit, sales_delete, sales_view,
+    price_page, price_add, price_edit, price_delete, price_view,
+    debts_page, debts_add, debts_edit, debts_delete, debts_view,
+    purchase_page, purchase_add, purchase_edit, purchase_delete, purchase_view,
+    customer_page, customer_add, customer_edit, customer_delete, customer_view,
+    supplier_page, supplier_add, supplier_edit, supplier_delete, supplier_view
+) VALUES (
+    5, -- Secretary ID
+    True, False, False, False, True, -- users
+    True, False, False, False, True, -- products
+    True, False, False, False, True, False, -- repaire
+    True, False, False, False, True, -- sales
+    True, False, False, False, True, -- Price
+    True, False, False, False, True, -- Debts
+    True, False, False, False, True, -- Purchase
+    True, False, False, False, True, -- Customer
+    True, False, False, False, True  -- Supplier
+);

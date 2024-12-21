@@ -24,6 +24,7 @@ import { updateuserphoto } from "../../Store/UserProfile";
 const AddnewUser = () => {
   const dispatch = useDispatch();
   const { adduserModalVisible, file } = useSelector((state) => state.Users);
+  const { userAccess } = useSelector((state) => state.auth);
 
   const handleUploadChange = (info) => {
     if (info.fileList.length > 0) {
@@ -59,21 +60,23 @@ const AddnewUser = () => {
   };
   return (
     <div>
-      <Button
-        style={{
-          marginBottom: "16px",
-          backgroundColor: "#389e0d",
-          marginLeft: "auto",
-          display: "flex",
-          alignItems: "center",
-        }}
-        type="primary"
-        onClick={handlenewModalOpen}
-        icon={<UserAddOutlined />}
-        iconPosition="start"
-      >
-        Add User
-      </Button>
+      {userAccess.users_add && (
+        <Button
+          style={{
+            marginBottom: "16px",
+            backgroundColor: "#389e0d",
+            marginLeft: "auto",
+            display: "flex",
+            alignItems: "center",
+          }}
+          type="primary"
+          onClick={handlenewModalOpen}
+          icon={<UserAddOutlined />}
+          iconPosition="start"
+        >
+          Add User
+        </Button>
+      )}
       <Modal
         title="Add New Employee"
         centered

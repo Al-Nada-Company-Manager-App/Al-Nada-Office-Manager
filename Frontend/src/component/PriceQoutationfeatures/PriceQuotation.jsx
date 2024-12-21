@@ -15,6 +15,7 @@ const PriceQuotations = () => {
   const [searchText, setSearchText] = useState('');
   const [searchedColumn, setSearchedColumn] = useState('');
   const searchInput = useRef(null);
+  
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();

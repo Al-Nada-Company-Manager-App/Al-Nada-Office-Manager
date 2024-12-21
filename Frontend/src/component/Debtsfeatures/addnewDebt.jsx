@@ -13,6 +13,7 @@ import SaleModal from "./SalesModal";
 const AddnewDebt = () => {
   const { addDebtModalVisible } = useSelector((state) => state.Debts);
   const { selectedSale } = useSelector((state) => state.Sales);
+  const { userAccess } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   const handleAddDebt = async (values) => {
@@ -42,20 +43,22 @@ const AddnewDebt = () => {
 
   return (
     <div>
-      <Button
-        type="primary"
-        onClick={openAddModal}
-        style={{
-          marginBottom: "16px",
-          backgroundColor: "#389e0d",
-          marginLeft: "auto",
-          display: "flex",
-          alignItems: "center",
-        }}
-        icon={<PlusOutlined />}
-      >
-        Add Debts
-      </Button>
+      {userAccess.debts_add && (
+        <Button
+          type="primary"
+          onClick={openAddModal}
+          style={{
+            marginBottom: "16px",
+            backgroundColor: "#389e0d",
+            marginLeft: "auto",
+            display: "flex",
+            alignItems: "center",
+          }}
+          icon={<PlusOutlined />}
+        >
+          Add Debts
+        </Button>
+      )}
       <Modal
         title="Add Debt"
         open={addDebtModalVisible}

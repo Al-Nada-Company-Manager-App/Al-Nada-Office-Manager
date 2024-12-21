@@ -102,6 +102,7 @@ const CustomerDetails = () => {
     customerSalesData,
     SalesLoading,
   } = useSelector((state) => state.Customers);
+  const { userAccess } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   useEffect(() => {

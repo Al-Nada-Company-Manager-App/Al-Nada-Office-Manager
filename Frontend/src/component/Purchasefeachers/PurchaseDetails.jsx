@@ -5,7 +5,8 @@ import {fetchPurchases,setupdatePurchaseModalVisible ,deletePurchase,setSelected
 import UpdatePurchaseModal from "./UpadatePurchase";
 const PurchaseDetails = () => {
    const dispatch = useDispatch();
-   const {selectedpurchase,PurchaseModalVisible} = useSelector(state => state.Purchases)
+   const {selectedpurchase,PurchaseModalVisible} = useSelector(state => state.Purchases);
+   const {userAccess} = useSelector(state => state.auth);
 
    const handleModalClose= () => {
     dispatch(setPurchaseModalVisible(false));
@@ -32,9 +33,11 @@ const PurchaseDetails = () => {
               <Button key="close" onClick={handleModalClose}>
                   Close
               </Button>,
+              userAccess.purchases_delete && 
               <Button key="Delete Purchase" onClick={() => handleDeletePurchase(selectedpurchase.pch_id)  } type="primary" danger >
                   Delete Purchase
               </Button>,
+              userAccess.purchases_edit &&
               <Button key='Update Purchase' onClick={() =>handleUpdatePurchase()}  type="primary">
                   Update Purchase
               </Button>,
