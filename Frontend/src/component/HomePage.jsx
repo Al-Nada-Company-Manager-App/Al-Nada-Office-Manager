@@ -9,7 +9,6 @@ import ApproveUser from "./Usersfeatures/ApproveUser";
 import Products from "./Productfeatures/Products";
 import Debts from "./Debtsfeatures/Debts";
 import RepairProducts from "./RepairProductfeatures/RepairProducts";
-import TechDashboard from "./Dashboardfeatures/techDashboard";
 import axios from "axios";
 import "../Styles/HomePage.css";
 import Customer from "./Customerfeatures/Customer";
@@ -20,9 +19,10 @@ import AccDashboard from "./Dashboardfeatures/accDashboard";
 import { useSelector, useDispatch } from "react-redux";
 import { handleLogout } from "../Store/authSlice";
 import UserProfile from "./UserProfilefeatures/UserProfile";
-import { Dash } from "react-bootstrap-icons";
 import DashBoardSM from "./Dashboardfeatures/DashBoardSM";
-import { use } from "react";
+import TechDashboard from "./Dashboardfeatures/techDashboard";
+import DashBoardSC from "./Dashboardfeatures/DashBoardSC";
+import DashboardWrapper from "./Dashboardfeatures/DashboardWrapper";
 const { Sider, Content } = Layout;
 
 
@@ -31,10 +31,10 @@ const HomePage = () => {
   const { SignedUser } = useSelector((state) => state.auth);
   React.useEffect(() => {console.log(SignedUser)},[SignedUser]);
   const dashboards={
-    "Manager":<TechDashboard />,
+    "Manager":<DashBoardSC />,
     "Technical Support":<TechDashboard />,
     "SalesMan":<DashBoardSM />,
-    "Secartary":"SecartaryDashboard",
+    "Secartary": <DashBoardSC />, 
     "Accountant":<AccDashboard/>,
   };
   const contents = {

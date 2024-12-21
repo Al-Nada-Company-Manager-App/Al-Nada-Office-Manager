@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../Utils/axiosInstance";
-import Customer from './../component/Customerfeatures/Customer';
 import { message, notification } from 'antd';
 
 export const fetchCustomers = createAsyncThunk(
@@ -85,7 +84,7 @@ export const updateCustomer = createAsyncThunk(
     }
   }
 );
-// Example of addMarkiting action creator
+
 export const addMarkiting = (data) => async (dispatch) => {
   try {
       const response = await axiosInstance.post('/addMarketing', data);  // Post data to the server
@@ -114,7 +113,6 @@ export const deleteAllMarkitings = () => async (dispatch) => {
       message.error('Error deleting marketings');
   }
 };
-
 // Initial state
 const initialState = {
   customersData: [],

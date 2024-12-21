@@ -9,21 +9,21 @@ import pg from "pg";
 import multer from "multer";
 import path from "path";
 
-const db = new pg.Client({
-  user: "postgres",
-  host: "localhost",
-  database: "Al Nada",
-  password: "NEW@22wntg",
-  port: 5432,
-});
 // const db = new pg.Client({
-
-//   connectionString:
-//     "postgresql://neondb_owner:Z50JaCBQWOMr@ep-nameless-darkness-a5mhhisx.us-east-2.aws.neon.tech/neondb?sslmode=require",
-//   ssl: {
-//     rejectUnauthorized: false,
-//   },
+//   user: "postgres",
+//   host: "localhost",
+//   database: "Al Nada",
+//   password: "NEW@22wntg",
+//   port: 5432,
 // });
+const db = new pg.Client({
+
+  connectionString:
+    "postgresql://neondb_owner:Z50JaCBQWOMr@ep-nameless-darkness-a5mhhisx.us-east-2.aws.neon.tech/neondb?sslmode=require",
+  ssl: {
+    rejectUnauthorized: false,
+  },
+});
 
 db.connect((err) => {
   if (err) {
@@ -3385,6 +3385,220 @@ app.get("/logout", (req, res, next) => {
     });
   });
 });
+app.get("/getcustomersales", async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT 
+          CUSTOMER.C_NAME AS c_name,
+          COUNT(SALES.SL_ID) AS salescount
+      FROM 
+          CUSTOMER
+      JOIN 
+          SALES ON CUSTOMER.C_ID = SALES.C_ID
+      GROUP BY 
+          CUSTOMER.c_id
+      ORDER BY 
+          salescount DESC
+    `);
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Database query failed:", error);
+    res.status(500).json({ error: "Database query failed" });
+  }
+});
+
+app.get("/getcustomermarkets", async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT 
+          CUSTOMER.C_NAME AS c_name,
+          COUNT(MARKETING.E_ID) AS marketing_count
+      FROM 
+          CUSTOMER
+      JOIN 
+          MARKETING ON CUSTOMER.C_ID = MARKETING.C_ID
+      GROUP BY 
+          CUSTOMER.c_id
+      ORDER BY 
+          marketing_count DESC
+    `);
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Database query failed:", error);
+    res.status(500).json({ error: "Database query failed" });
+  }
+});
+
+
+
+app.post("/deleteAllMarkitings", async (req, res) => {
+  await db.query("DELETE FROM MARKETING");
+  res.json({ success: true });
+});
+app.post("/addMarketing", async (req, res) => {
+  const { c_id, e_id } = req.body;
+
+  // Check if c_id and e_id are valid
+  if (!c_id || !e_id) {
+    return res.status(400).json({
+      success: false,
+      message: "Missing required fields: c_id or e_id",
+    });
+  }
+
+
+  try {
+    // Execute the query to insert into the database
+    const result = await db.query(
+      "INSERT INTO MARKETING (C_ID, E_ID) VALUES ($1, $2)",
+      [c_id, e_id]
+    );
+
+    // Check if the query was successful
+    if (result.rowCount > 0) {
+      res.json({ success: true, message: "Marketing added successfully!" });
+    } else {
+      res.status(500).json({ success: false, message: "Failed to add Marketing!" });
+    }
+  } catch (error) {
+    console.error("Error adding marketing:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to add Marketing due to internal error.",
+      error: error.message,
+    });
+  }
+});
+app.get("/getcustomerscount", async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT 
+          COUNT(C_ID) 
+      FROM 
+          CUSTOMER
+    `);
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Database query failed:", error);
+    res.status(500).json({ error: "Database query failed" });
+  }
+});
+
+app.get("/getsupplierscount", async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT 
+          COUNT(S_ID) 
+      FROM 
+          SUPPLIER
+    `);
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Database query failed:", error);
+    res.status(500).json({ error: "Database query failed" });
+  }
+});
+
+app.get("/gettopcustomers", async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT 
+          CUSTOMER.C_NAME AS c_name,
+          SUM(SALES.SL_TOTAL) AS total_paid
+      FROM 
+          CUSTOMER
+      JOIN 
+          SALES ON CUSTOMER.C_ID = SALES.C_ID
+      GROUP BY 
+          CUSTOMER.c_id
+      ORDER BY 
+          total_paid desc
+      LIMIT 10
+    `);
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Database query failed:", error);
+    res.status(500).json({ error: "Database query failed" });
+  }
+});
+
+app.get("/getproductscount", async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT 
+          COUNT(P_ID) 
+      FROM 
+          STOCK
+    `);
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Database query failed:", error);
+    res.status(500).json({ error: "Database query failed" });
+  }
+});
+app.get("/gettoprepairedproducts", async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT 
+          STOCK.P_NAME AS p_name,
+          COUNT(REPAIR.P_ID) AS repair_count
+      FROM 
+          STOCK
+      JOIN 
+          REPAIR ON STOCK.P_ID = REPAIR.P_ID
+      GROUP BY 
+          STOCK.P_ID
+      ORDER BY 
+          repair_count DESC
+      LIMIT 10
+    `);
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Database query failed:", error);
+    res.status(500).json({ error: "Database query failed" });
+  }
+});
+app.get("/gettopsoldproducts", async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT 
+          STOCK.P_NAME AS p_name,
+          COUNT(SELL_ITEMS.P_ID) AS sales_count
+      FROM 
+          STOCK
+      JOIN 
+          SELL_ITEMS ON STOCK.P_ID = SELL_ITEMS.P_ID
+      GROUP BY 
+          STOCK.P_ID
+      ORDER BY 
+          sales_count DESC
+      LIMIT 10
+    `);
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Database query failed:", error);
+    res.status(500).json({ error: "Database query failed" });
+  }
+});
+app.get("/gettotaldebts", async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT 
+          SUM(D_AMOUNT) 
+      FROM 
+          DEBTS
+    `);
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Database query failed:", error);
+    res.status(500).json({ error: "Database query failed" });
+  }
+});
+
+
+
+
+
 
 app.get("/session", (req, res) => {
   if (req.isAuthenticated()) {
