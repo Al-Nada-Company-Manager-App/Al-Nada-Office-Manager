@@ -1,0 +1,104 @@
+.dashboardsm {
+    padding: 20px; /* Add padding around the dashboard */
+    background-color: #f9f9f9; /* Light background for the dashboard */
+    border-radius: 8px; /* Add rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  }
+  
+  .dashboardsm h3 {
+    text-align: center; /* Center-align the chart titles */
+    color: #333; /* Darker color for better readability */
+    margin: 20px 0 10px; /* Add spacing around titles */
+  }
+  
+  .dashboardsm .ant-card {
+    text-align: center; /* Center-align card content */
+    background-color: #ffffff; /* White background for cards */
+    border-radius: 8px; /* Rounded corners for cards */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for cards */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for hover effect */
+  }
+  
+  /* Hover effect for cards */
+  .dashboardsm .ant-card:hover {
+    transform: translateY(-5px); /* Slight lift on hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Deeper shadow on hover */
+  }
+  
+  .dashboardsm .ant-card p {
+    font-size: 24px; /* Larger font for numbers */
+    font-weight: bold; /* Make the numbers bold */
+    color: #1890ff; /* Use a primary color for emphasis */
+  }
+  
+  .dashboardsm .ant-row {
+    margin-bottom: 20px; /* Add spacing between rows */
+  }
+  
+  @media (max-width: 768px) {
+    .dashboardsm {
+      padding: 10px; /* Reduce padding for smaller screens */
+    }
+  
+    .dashboardsm .ant-card {
+      margin-bottom: 10px; /* Add spacing between cards on smaller screens */
+    }
+  }
+  .customer-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .customer-item {
+    background-color: #ffffff;
+    border: 1px solid #f0f0f0;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .customer-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .customer-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .customer-name {
+    font-size: 18px;
+    font-weight: bold;
+    color: #1890ff;
+  }
+  
+  .customer-sales,
+  .customer-marketing,
+  .customer-difference {
+    font-size: 16px;
+    margin-top: 8px;
+    color: #333;
+  }
+  
+  .customer-sales {
+    color: #52c41a; /* Green for sales */
+  }
+  
+  .customer-marketing {
+    color: #fa8c16; /* Orange for marketing */
+  }
+  
+  .customer-difference {
+    font-weight: bold;
+    color: #ff4d4f; /* Red for difference */
+  }
+  
+  .customer-item:last-child {
+    margin-bottom: 0;
+  }
+    

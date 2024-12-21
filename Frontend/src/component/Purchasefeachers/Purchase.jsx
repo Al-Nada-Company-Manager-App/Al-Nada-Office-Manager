@@ -9,8 +9,8 @@ import "../../Styles/Purchase.css";
 import PurchaseDetails from "./PurchaseDetails";
 import AddNewPurchase from "./AddNewPurchase";
 import {useDispatch,useSelector} from "react-redux";
-import {fetchPurchases ,setSelectedPurchase ,setPurchaseModalVisible } from "../../Store/Purchase";
-
+import {fetchPurchases ,setSelectedPurchase ,setPurchaseModalVisible,setaddPurchaseModalVisible } from "../../Store/Purchase";
+import { PlusOutlined } from "@ant-design/icons";
 
 const purchase = () => {
   const dispatch = useDispatch();
@@ -18,6 +18,7 @@ const purchase = () => {
   const [searchText, setSearchText] = React.useState("");
   const [searchedColumn, setSearchedColumn] = React.useState("");
   const searchInput = useRef(null);
+  const {userAccess} =useSelector((state) => state.auth);
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
     setSearchText(selectedKeys[0]);
@@ -241,9 +242,26 @@ const purchase = () => {
       onFilter: (value, record) => record.sl_currency.indexOf(value) === 0,
     },
   ];
+  const openParchaseModal = () => dispatch(setaddPurchaseModalVisible(true));
 
   return (
     <>
+    {userAccess.purchase_add && (
+        <Button
+          type="primary"
+          onClick={openParchaseModal}
+          style={{
+            marginBottom: "16px",
+            backgroundColor: "#389e0d",
+            marginLeft: "auto",
+            display: "flex",
+            alignItems: "center",
+          }}
+          icon={<PlusOutlined />}
+        >
+          Add Purchase
+        </Button>
+      )}
       <AddNewPurchase />
       <div
         style={{

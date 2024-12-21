@@ -11,6 +11,7 @@ import {
   Row,
 } from "antd";
 import { useSelector, useDispatch } from "react-redux";
+import ProductModal from "./ProductModal";
 import {
   fetchPurchases,
   updatePurchase,
@@ -178,6 +179,7 @@ const UpdatePurchaseModal = () => {
             </Form.Item>
           </Col>
         </Form>
+        <ProductModal />
       </Modal>
     </div>
   );

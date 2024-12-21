@@ -25,6 +25,14 @@ export const updateDebt = createAsyncThunk("Debts/updateDebt", async (debt) => {
     console.error("Error updating debt:", error);
   }
 });
+export const deleteDebt = createAsyncThunk("Debts/deleteDebt", async (debt) => {
+  try {
+    const response = await axiosInstance.post("/deleteDebt", {debt});
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting debt:", error);
+  }
+});
 
 // Initial state
 const initialState = {

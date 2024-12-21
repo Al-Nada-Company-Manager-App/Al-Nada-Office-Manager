@@ -9,7 +9,7 @@ import SparePartsLowStock from "./DashboardCharts/SparePartsLowStock";
 import {ToolOutlined, StopOutlined, RiseOutlined, PlusCircleOutlined} from '@ant-design/icons';
 
 
-const TechDashboard = () => {
+const DashboardTCH = () => {
 
   const [TotalRepairs , setTotalRepairs] = useState([]);
   const [TotalDUM, setTotalDUM] = useState([]);
@@ -138,5 +138,6 @@ const TechDashboard = () => {
   );
 };
 
-export default TechDashboard;
+export default DashboardTCH
+;
 

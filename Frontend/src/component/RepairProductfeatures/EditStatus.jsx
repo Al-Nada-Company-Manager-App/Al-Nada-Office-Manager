@@ -101,6 +101,7 @@ const EditStatus = ({repId, handleeditstatusClose, iseditstatusModal, p_id}) => 
                             <Select placeholder="Select a status" defaultValue={defaultData.p_status}>
                                 <Select.Option value="Completed">Completed</Select.Option>
                                 <Select.Option value="Repairing">Repairing</Select.Option>
+                                <Select.Option value="Pending">Pending</Select.Option>
                             </Select>
                         </Form.Item>
 

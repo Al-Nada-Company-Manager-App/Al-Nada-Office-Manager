@@ -15,33 +15,41 @@ import Customer from "./Customerfeatures/Customer";
 import PriceQuotation from "./PriceQoutationfeatures/PriceQuotation";
 import Supplier from "./Supplierfeatures/Supplier";
 import Purchase from "./Purchasefeachers/Purchase";
+import DashboardACT from "./Dashboardfeatures/DashboardACT";
 import { useSelector, useDispatch } from "react-redux";
-import { handleLogout } from "../Store/authSlice";
+import DashboardMG from './Dashboardfeatures/DashboardMG';
 import UserProfile from "./UserProfilefeatures/UserProfile";
-import TechDashboard from "./Dashboardfeatures/techDashboard";
 import DashBoardSM from "./Dashboardfeatures/DashBoardSM";
+import DashboardTCH from "./Dashboardfeatures/DashboardTCH";
 import DashBoardSC from "./Dashboardfeatures/DashBoardSC";
-import DashboardWrapper from "./Dashboardfeatures/DashboardWrapper";
 const { Sider, Content } = Layout;
-const contents = {
-  1: DashboardWrapper,
-  3: <Users />,
-  4: <ApproveUser />,
-  6: <Products />,
-  7: <RepairProducts />,
-  8: <Customer />,
-  10: <Sales />,
-  11: <PriceQuotation />,
-  12: <Debts />,
-  13: <Supplier />,
-  14: <Purchase />,
-  20: <UserProfile />,
-  
-};
+
 
 const HomePage = () => {
   const { collapsed, currentContent } = useSelector((state) => state.homeMenu);
-
+  const { SignedUser } = useSelector((state) => state.auth);
+  React.useEffect(() => {console.log(SignedUser)},[SignedUser]);
+  const dashboards={
+    "Manager":<DashboardMG />,
+    "Technical Support":<DashboardTCH />,
+    "SalesMan":<DashBoardSM />,
+    "Secartary": <DashBoardSC />, 
+    "Accountant":<DashboardACT/>,
+  };
+  const contents = {
+    1: (SignedUser && dashboards[SignedUser.Role]) || "DefaultDashboard",
+    3: <Users />,
+    4: <ApproveUser />,
+    6: <Products />,
+    7: <RepairProducts />,
+    8: <Customer />,
+    10: <Sales />,
+    11: <PriceQuotation />,
+    12: <Debts />,
+    13: <Supplier />,
+    14: <Purchase />,
+    20: <UserProfile />,
+  };
   const {
     token: { colorBgContainer, borderRadiusLG, contentBg },
   } = theme.useToken();

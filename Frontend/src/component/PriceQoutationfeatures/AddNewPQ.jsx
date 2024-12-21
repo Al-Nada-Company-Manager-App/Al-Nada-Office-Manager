@@ -29,6 +29,8 @@ import {
 import ProductModal from "../Salesfeatures/ProductModal";
 
 const currencies = ["USD", "EUR", "EGP"];
+
+
 const AddNewPriceQuotation = () => {
   const { selectedCustomer } = useSelector((state) => state.Customers);
   const { selectedProducts } = useSelector((state) => state.Products);
@@ -65,7 +67,7 @@ const AddNewPriceQuotation = () => {
       setTotal(tota);
     };
     calculateTotal();
-  }, [selectedProducts, discount]);
+  }, [selectedProducts,discount]);
   const dispatch = useDispatch();
   const { addPQModalVisible } = useSelector((state) => state.PriceQuotations);
 
@@ -211,9 +213,9 @@ const AddNewPriceQuotation = () => {
             </Col>
           </Row>
         </Form>
+      <ProductModal />
       </Modal>
       <CustomerModal />
-      <ProductModal />
     </div>
   );
 };

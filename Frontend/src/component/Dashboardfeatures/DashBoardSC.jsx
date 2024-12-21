@@ -4,7 +4,7 @@ import { Card, Row, Col } from "antd";
 import axiosInstance from "../../Utils/axiosInstance";
 import "../../Styles/dashboardSM.css";
 
-const DashBoardSecretary = () => {
+const DashBoardSC = () => {
   const [totalCustomers, setTotalCustomers] = useState(0);
   const [totalSuppliers, setTotalSuppliers] = useState(0);
   const [topPayingCustomers, setTopPayingCustomers] = useState([]);
@@ -164,4 +164,4 @@ const DashBoardSecretary = () => {
   );
 };
 
-export default DashBoardSecretary
+export default DashBoardSC

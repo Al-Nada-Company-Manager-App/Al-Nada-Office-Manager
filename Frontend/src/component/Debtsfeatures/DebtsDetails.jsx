@@ -5,18 +5,25 @@ import {
   setDebtModalVisible,
   setselectedDebt,
   setupdateDebtModalVisible,
+  deleteDebt,
+  fetchDebts,
 } from "../../Store/Debts";
 import { convertTimestampToDate } from "../../utils/ConvertDate";
 import UpdateDebtModal from "./updateDebt";
 const DebtDetails = () => {
   const dispatch = useDispatch();
-  const {userAccess} = useSelector((state) => state.auth);
+  const { userAccess } = useSelector((state) => state.auth);
   const { selectedDebt, DebtModalVisible } = useSelector(
     (state) => state.Debts
   );
   const handleModalClose = () => {
     dispatch(setDebtModalVisible(false));
     dispatch(setselectedDebt(null));
+  };
+  const handleDelete = async () => {
+    await dispatch(deleteDebt(selectedDebt.d_id));
+    dispatch(fetchDebts());
+    handleModalClose();
   };
   const handleActivateDebt = () => {
     dispatch(setupdateDebtModalVisible(true));
@@ -35,7 +42,7 @@ const DebtDetails = () => {
           userAccess.debts_delete && (
             <Button
               key="delete"
-              onClick={() => handleDeleteDebt(selectedDebt.d_id)}
+              onClick={handleDelete}
               type="primary"
               danger
             >
