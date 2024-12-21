@@ -120,7 +120,46 @@ const AddnewUser = () => {
               >
                 <Input />
               </Form.Item>
+              <Form.Item
+                label="Last Name"
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+                name="lName"
+                rules={[{ required: true, message: "Last name is required!" }]}
+              >
+                <Input />
+              </Form.Item>
 
+              <Form.Item
+                label="Gender"
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+                name="gender"
+                rules={[{ required: true, message: "Gender is required!" }]}
+              >
+                <Radio.Group>
+                  <Radio value="male">Male</Radio>
+                  <Radio value="female">Female</Radio>
+                </Radio.Group>
+              </Form.Item>
+              <Form.Item
+                name="birth_date"
+                label="Birth Date"
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+                rules={[{ required: true, message: "BirthDate is required!" }]}
+              >
+                <DatePicker format="YYYY-MM-DD" />
+              </Form.Item>
+              <Form.Item
+                label="Salary"
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+                name="salary"
+                rules={[{ required: true, message: "Salary is required!" }]}
+              >
+                <InputNumber style={{ width: "100%" }} />
+              </Form.Item>
               <Form.Item
                 label="Gender"
                 labelCol={{ span: 8 }}
@@ -168,7 +207,66 @@ const AddnewUser = () => {
                 </Radio.Group>
               </Form.Item>
             </Col>
+              <Form.Item
+                label="Role"
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+                name="role"
+                rules={[{ required: true, message: "Role is required!" }]}
+              >
+                <Radio.Group>
+                  <Radio value="Manager">Manager</Radio>
+                  <Radio value="SalesMan">SalesMan</Radio>
+                  <Radio value="Accountant">Accountant</Radio>
+                  <Radio value="Technical Support">Technical Support</Radio>
+                  <Radio value="Secretary">Secretary</Radio>
+                </Radio.Group>
+              </Form.Item>
+            </Col>
 
+            {/* Right Column */}
+            <Col span={12}>
+              <Form.Item
+                name="address"
+                label="Address"
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                name="city"
+                label="City"
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                name="country"
+                label="Country"
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                name="zipcode"
+                label="Zip Code"
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                label="Username"
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+                name="username"
+                rules={[{ required: true, message: "Username is required!" }]}
+              >
+                <Input />
+              </Form.Item>
             {/* Right Column */}
             <Col span={12}>
               <Form.Item
@@ -270,6 +368,22 @@ const AddnewUser = () => {
             </Col>
           </Row>
 
+          {/* Submit Button */}
+          <Row>
+            <Col span={24} style={{ textAlign: "right" }}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                className="submit-button"
+              >
+                Add Employee
+              </Button>
+            </Col>
+          </Row>
+        </Form>
+      </Modal>
+    </div>
+  );
           {/* Submit Button */}
           <Row>
             <Col span={24} style={{ textAlign: "right" }}>

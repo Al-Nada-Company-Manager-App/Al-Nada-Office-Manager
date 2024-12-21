@@ -31,7 +31,7 @@ const HomePage = () => {
   React.useEffect(() => {console.log(SignedUser)},[SignedUser]);
   const dashboards={
     "Manager":"ManagerDashboard",
-    "Technical Support":"TechDashboard",
+    "Technical Support":<TechDashboard />,
     "Sales":"SalesDashboard",
     "Secartary":"SecartaryDashboard",
     "Accountant":"AccountantDashboard",
