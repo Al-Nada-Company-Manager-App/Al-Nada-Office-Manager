@@ -72,7 +72,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Line, Bar } from '@ant-design/plots';
 
-const AccDashboard = () => {
+const DashboardACT = () => {
   const [salesData, setSalesData] = useState([]);
   const [purchasesData, setPurchasesData] = useState([]);
   const [debtsData, setDebtsData] = useState([]);
@@ -171,6 +171,6 @@ const AccDashboard = () => {
   );
 };
 
-export default AccDashboard;
+export default DashboardACT;
 
 

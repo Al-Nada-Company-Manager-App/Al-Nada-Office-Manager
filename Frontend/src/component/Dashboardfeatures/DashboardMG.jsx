@@ -1,12 +1,12 @@
 import { Row, Col, Card, Statistic } from "antd";
-import {ToolOutlined, StopOutlined, RiseOutlined, PlusCircleOutlined} from '@ant-design/icons';
+import {StopOutlined} from '@ant-design/icons';
 import {useState, useEffect} from "react";
-import StockCategoryChart from './StockCategoryChart';
+import StockCategoryChart from './DashboardCharts/StockCategoryChart';
 import axios from "axios";
-import CustomerProductChart from './CustomerProductChart';
-import SupplierProductChart from "./SupplierProductChart";
+import CustomerProductChart from './DashboardCharts/CustomerProductChart';
+import SupplierProductChart from "./DashboardCharts/SupplierProductChart";
 
-const ManagerDashboard = () => {
+const DashboardMG = () => {
 
     const [TotalStock , setTotalStock] = useState([]);
   
@@ -101,6 +101,6 @@ const ManagerDashboard = () => {
       </>
       );
 };
-export default ManagerDashboard;
+export default DashboardMG;
 
 
