@@ -33,11 +33,11 @@ const PurchaseDetails = () => {
               <Button key="close" onClick={handleModalClose}>
                   Close
               </Button>,
-              userAccess.purchases_delete && 
+              userAccess.purchase_delete && 
               <Button key="Delete Purchase" onClick={() => handleDeletePurchase(selectedpurchase.pch_id)  } type="primary" danger >
                   Delete Purchase
               </Button>,
-              userAccess.purchases_edit &&
+              userAccess.purchase_edit &&
               <Button key='Update Purchase' onClick={() =>handleUpdatePurchase()}  type="primary">
                   Update Purchase
               </Button>,

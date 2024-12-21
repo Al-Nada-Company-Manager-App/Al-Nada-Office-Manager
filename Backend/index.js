@@ -170,20 +170,26 @@ app.get("/getUserAccess", async (req, res) => {
 });
 app.post("/updateUserAccess", async (req, res) => {
   try {
-     const { id, ...access } = req.body;
-     console.log(req.body);
-      
+    const { id, ...access } = req.body;
+    console.log(req.body);
+
     if (!id) {
       return res.status(400).json({ error: "E_ID is required" });
     }
 
     const keys = Object.keys(access);
     if (keys.length === 0) {
-      return res.status(400).json({ error: "No access fields provided for update" });
+      return res
+        .status(400)
+        .json({ error: "No access fields provided for update" });
     }
     console.log(keys);
-    const setClause = keys.map((key, index) => `${key} = $${index + 1}`).join(", ");
-    const values = Object.values(access).map((value) => value !== undefined ? value : false); // Replace undefined with false
+    const setClause = keys
+      .map((key, index) => `${key} = $${index + 1}`)
+      .join(", ");
+    const values = Object.values(access).map((value) =>
+      value !== undefined ? value : false
+    ); // Replace undefined with false
     values.push(id);
 
     const query = `UPDATE ACCESS_Actions SET ${setClause} WHERE E_ID = $${values.length}`;
@@ -198,7 +204,6 @@ app.post("/updateUserAccess", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
 
 app.get("/allUsers", async (req, res) => {
   const result = await db.query("SELECT * FROM EMPLOYEE");
@@ -263,6 +268,148 @@ app.post("/addUser", async (req, res) => {
         gender,
       ]
     );
+
+    if (role == "Manager") {
+      await db.query(
+        `INSERT INTO ACCESS_Actions (
+            E_ID, 
+            users_page, users_add, users_edit, users_delete, users_view,
+            products_page, products_add, products_edit, products_delete, products_view,
+            repaire_page, repaire_add, repaire_edit, repaire_delete, repaire_view, repaire_adddum,
+            sales_page, sales_add, sales_edit, sales_delete, sales_view,
+            price_page, price_add, price_edit, price_delete, price_view,
+            debts_page, debts_add, debts_edit, debts_delete, debts_view,
+            purchase_page, purchase_add, purchase_edit, purchase_delete, purchase_view,
+            customer_page, customer_add, customer_edit, customer_delete, customer_view,
+            supplier_page, supplier_add, supplier_edit, supplier_delete, supplier_view
+        ) VALUES (
+            $1, 
+            True, True, True, True, True, 
+            True, True, True, True, True, 
+            True, True, True, True, True, True, 
+            True, True, True, True, True, 
+            True, True, True, True, True, 
+            True, True, True, True, True, 
+            True, True, True, True, True, 
+            True, True, True, True, True, 
+            True, True, True, True, True  
+        )`,
+        [result.rows[0].e_id]
+      );
+    }
+    if (role == "Technical Support") {
+      await db.query(
+        `INSERT INTO ACCESS_Actions (
+            E_ID, 
+            users_page, users_add, users_edit, users_delete, users_view,
+            products_page, products_add, products_edit, products_delete, products_view,
+            repaire_page, repaire_add, repaire_edit, repaire_delete, repaire_view, repaire_adddum,
+            sales_page, sales_add, sales_edit, sales_delete, sales_view,
+            price_page, price_add, price_edit, price_delete, price_view,
+            debts_page, debts_add, debts_edit, debts_delete, debts_view,
+            purchase_page, purchase_add, purchase_edit, purchase_delete, purchase_view,
+            customer_page, customer_add, customer_edit, customer_delete, customer_view,
+            supplier_page, supplier_add, supplier_edit, supplier_delete, supplier_view
+        ) VALUES (
+            $1, 
+            False, False, False, False, False, 
+            True, True, True, False, True, 
+            True, True, True, False, True, True,
+            False, False, False, False, False, 
+            False, False, False, False, False, 
+            False, False, False, False, False,
+            False, False, False, False, False,
+            False, False, False, False, False, 
+            False, False, False, False, False  
+        )`,
+        [result.rows[0].e_id]
+      );
+    }
+    if (role == "SalesMan") {
+      await db.query(
+        `INSERT INTO ACCESS_Actions (
+            E_ID, 
+            users_page, users_add, users_edit, users_delete, users_view,
+            products_page, products_add, products_edit, products_delete, products_view,
+            repaire_page, repaire_add, repaire_edit, repaire_delete, repaire_view, repaire_adddum,
+            sales_page, sales_add, sales_edit, sales_delete, sales_view,
+            price_page, price_add, price_edit, price_delete, price_view,
+            debts_page, debts_add, debts_edit, debts_delete, debts_view,
+            purchase_page, purchase_add, purchase_edit, purchase_delete, purchase_view,
+            customer_page, customer_add, customer_edit, customer_delete, customer_view,
+            supplier_page, supplier_add, supplier_edit, supplier_delete, supplier_view
+        ) VALUES (
+            $1, 
+            False, False, False, False, False, 
+            False, False, False, False, False, 
+            False, False, False, False, False, False, 
+            True, True, True, False, True, 
+            True, True, True, False, True, 
+            True, True, True, False, True, 
+            False, False, False, False, False, 
+            True, True, True, False, True, 
+            False, False, False, False, False   
+        )`,
+        [result.rows[0].e_id]
+      );
+    }
+    if (role == "Accountant") {
+      await db.query(
+        `INSERT INTO ACCESS_Actions (
+            E_ID, 
+            users_page, users_add, users_edit, users_delete, users_view,
+            products_page, products_add, products_edit, products_delete, products_view,
+            repaire_page, repaire_add, repaire_edit, repaire_delete, repaire_view, repaire_adddum,
+            sales_page, sales_add, sales_edit, sales_delete, sales_view,
+            price_page, price_add, price_edit, price_delete, price_view,
+            debts_page, debts_add, debts_edit, debts_delete, debts_view,
+            purchase_page, purchase_add, purchase_edit, purchase_delete, purchase_view,
+            customer_page, customer_add, customer_edit, customer_delete, customer_view,
+            supplier_page, supplier_add, supplier_edit, supplier_delete, supplier_view
+        ) VALUES (
+            $1, 
+            False, False, False, False, False, 
+            False, False, False, False, False,
+            False, False, False, False, False, 
+            False, False, False, False, False, False,
+            True, False, True, False, True, 
+            True, True, True, False, True, 
+            True, True, True, False, True, 
+            True, True, True, False, True, 
+            False, False, False, False, False, 
+            True, True, True, False, True  
+        )`,
+        [result.rows[0].e_id]
+      );
+    }
+    if (role == "Secretary") {
+      await db.query(
+        `INSERT INTO ACCESS_Actions (
+            E_ID, 
+            users_page, users_add, users_edit, users_delete, users_view,
+            products_page, products_add, products_edit, products_delete, products_view,
+            repaire_page, repaire_add, repaire_edit, repaire_delete, repaire_view, repaire_adddum,
+            sales_page, sales_add, sales_edit, sales_delete, sales_view,
+            price_page, price_add, price_edit, price_delete, price_view,
+            debts_page, debts_add, debts_edit, debts_delete, debts_view,
+            purchase_page, purchase_add, purchase_edit, purchase_delete, purchase_view,
+            customer_page, customer_add, customer_edit, customer_delete, customer_view,
+            supplier_page, supplier_add, supplier_edit, supplier_delete, supplier_view
+        ) VALUES (
+            $1, 
+            True, False, False, False, True, 
+            True, False, False, False, True, 
+            True, False, False, False, True, False,
+            True, False, False, False, True, 
+            True, False, False, False, True, 
+            True, False, False, False, True, 
+            True, False, False, False, True, 
+            True, False, False, False, True, 
+            True, False, False, False, True 
+        )`,
+        [result.rows[0].e_id]
+      );
+    }
 
     res.json({
       success: true,
@@ -1241,7 +1388,7 @@ app.post("/AddDUM", async (req, res) => {
   try {
     const SERIALNUMBER = req.body.serialnumber;
     const PNAME = req.body.productname;
-    //const CATEGORY = req.body.category; 
+    //const CATEGORY = req.body.category;
     const PSTATUS = req.body.maintenanceStatus;
 
     await db.query(
@@ -1778,7 +1925,7 @@ app.post("/addpq", async (req, res) => {
 });
 
 // Edit Product
-app.post("/updateProduct",async (req, res) => {
+app.post("/updateProduct", async (req, res) => {
   const {
     P_ID,
     p_name,
