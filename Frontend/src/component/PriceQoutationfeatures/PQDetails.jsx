@@ -51,14 +51,7 @@ const PriceQuotationDetails = () => {
             {selectedPQ && (
                 <div>
                     <Row gutter={16}>
-                        <Col span={8}>
-                            {/* Placeholder for PQ Image */}
-                            <img
-                                src={selectedPQ.PQ_Image || 'https://via.placeholder.com/150'}
-                                alt="Price Quotation"
-                                style={{ width: '100%', height: 'auto', borderRadius: '8px' }}
-                            />
-                        </Col>
+                        
                         <Col span={16}>
                             <div>
                                 <p><strong>Price Quotation ID:</strong> {selectedPQ.pq_id}</p>
