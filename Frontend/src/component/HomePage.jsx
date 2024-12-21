@@ -14,13 +14,14 @@ import Customer from "./Customerfeatures/Customer";
 import PriceQuotation from "./PriceQoutationfeatures/PriceQuotation";
 import Supplier from "./Supplierfeatures/Supplier";
 import Purchase from "./Purchasefeachers/Purchase";
+import Dashboard from "./Dashboard/DashBoard";
 import { useSelector, useDispatch } from "react-redux";
 import { handleLogout } from "../Store/authSlice";
 import UserProfile from "./UserProfilefeatures/UserProfile";
 const { Sider, Content } = Layout;
 
 const contents = {
-  1: "Dashboard",
+  1: <Dashboard/>,
   3: <Users />,
   4: <ApproveUser />,
   6: <Products />,

@@ -13,7 +13,7 @@ const db = new pg.Client({
   user: "postgres",
   host: "localhost",
   database: "Al Nada",
-  password: "NEW@22wntg",
+  password: "10122003",
   port: 5432,
 });
 // const db = new pg.Client({
@@ -1219,6 +1219,127 @@ app.post("/updateDebt", async (req, res) => {
     });
   }
 });
+
+
+app.get('/salesoverview', async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT 
+        TO_CHAR(SL_DATE, 'YYYY-MM-DD') AS month, 
+        SUM(SL_TOTAL) AS total_sales
+      FROM SALES
+      GROUP BY TO_CHAR(SL_DATE, 'YYYY-MM-DD')
+      ORDER BY month;
+    `);
+
+    console.log('Query Result:', result.rows);
+
+    res.json({
+      success: true,
+      data: result.rows,
+      message: 'Sales data retrieved successfully.',
+    });
+  } catch (err) {
+    console.error('Error fetching sales data:', err);
+    res.status(500).json({
+      success: false,
+      error: 'Internal Server Error',
+    });
+  }
+});
+
+
+
+
+
+
+app.get('/purchasesoverview', async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT 
+        TO_CHAR(PCH_DATE, 'YYYY-MM-DD') AS month, 
+        SUM(PCH_TOTAL) AS total_purchases
+      FROM PURCHASE
+      GROUP BY TO_CHAR(PCH_DATE, 'YYYY-MM-DD')
+      ORDER BY month;
+    `);
+
+    console.log('Purchases Query Result:', result.rows);
+
+    res.json({
+      success: true,
+      data: result.rows, 
+      message: 'Purchases data retrieved successfully.',
+    });
+  } catch (err) {
+    console.error('Error fetching purchases data:', err);
+    res.status(500).json({
+      success: false,
+      error: 'Internal Server Error',
+    });
+  }
+});
+// GET /debtsoverview - Get debts summarized by type
+app.get('/debtsoverview', async (req, res) => {
+  try {
+    // Query to get the total debt amount grouped by debt type
+    const result = await db.query(`
+      SELECT 
+        D_TYPE, 
+        SUM(D_AMOUNT) AS total_debt
+      FROM DEBTS
+      GROUP BY D_TYPE
+      ORDER BY D_TYPE;
+    `);
+
+    // Logging the query result for debugging
+    console.log('Debts Overview:', result.rows);
+
+    // Respond with a successful result containing the summarized debts
+    res.json({
+      success: true,
+      data: result.rows,
+      message: 'Debts by type retrieved successfully.',
+    });
+  } catch (err) {
+    // Error handling
+    console.error('Error fetching debts by type:', err);
+    res.status(500).json({
+      success: false,
+      error: 'Internal Server Error',
+    });
+  }
+});
+
+app.get('/topproducts', async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT 
+        P.P_NAME, 
+        SUM(SI.SI_QUANTITY) AS total_sale
+      FROM SELL_ITEMS SI
+      JOIN STOCK P ON SI.P_ID = P.P_ID
+      GROUP BY P.P_NAME
+      ORDER BY total_sale DESC
+      LIMIT 5;
+    `);
+
+    console.log('Top Products:', result.rows);
+
+    res.json({
+      success: true,
+      data: result.rows,
+      message: 'Top products fetched successfully.',
+    });
+  } catch (err) {
+    console.error('Error fetching top products:', err);
+    res.status(500).json({
+      success: false,
+      error: 'Internal Server Error',
+    });
+  }
+});
+
 //changepassword
 app.post("/changepassword", async (req, res) => {
   const { username, newPassword } = req.body;
@@ -1403,8 +1524,13 @@ app.get("/session", (req, res) => {
   }
 });
 
+
+
+
+
 // Start server
 const PORT = 4000;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
