@@ -2637,6 +2637,217 @@ app.post("/AddProduct", upload.single("photo"), async (req, res) => {
   }
 });
 
+app.get("/allPriceQuotation", async (req, res) => {
+  try {
+    // Fetch price quotations along with customer details
+    const result = await db.query(`
+      SELECT 
+      pq.PQ_ID, 
+      pq.PQ_DISCOUNT, 
+      pq.PQ_CURRENCY, 
+      pq.PQ_DURATION, 
+      pq.PQ_TOTAL,
+      c.C_NAME , 
+      c.C_PHOTO 
+FROM 
+    PRICE_QUOTATION pq
+JOIN 
+    OFFER o 
+ON 
+    pq.PQ_ID = o.PQ_ID
+LEFT JOIN 
+    CUSTOMER c 
+ON 
+    o.C_ID = c.C_ID;
+    `);
+
+    const rows = result.rows;
+    res.json(rows);
+  } catch (error) {
+    console.error("Database query failed:", error);
+    res.status(500).json({ error: "Failed to fetch price quotations" });
+  }
+});
+app.get("/getcustomersales", async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT 
+          CUSTOMER.C_NAME AS c_name,
+          COUNT(SALES.SL_ID) AS salescount
+      FROM 
+          CUSTOMER
+      JOIN 
+          SALES ON CUSTOMER.C_ID = SALES.C_ID
+      GROUP BY 
+          CUSTOMER.c_id
+      ORDER BY 
+          salescount DESC
+    `);
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Database query failed:", error);
+    res.status(500).json({ error: "Database query failed" });
+  }
+});
+
+app.get("/getcustomermarkets", async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT 
+          CUSTOMER.C_NAME AS c_name,
+          COUNT(MARKETING.E_ID) AS marketing_count
+      FROM 
+          CUSTOMER
+      JOIN 
+          MARKETING ON CUSTOMER.C_ID = MARKETING.C_ID
+      GROUP BY 
+          CUSTOMER.c_id
+      ORDER BY 
+          marketing_count DESC
+    `);
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Database query failed:", error);
+    res.status(500).json({ error: "Database query failed" });
+  }
+});
+
+
+
+
+app.post("/deletepq", async (req, res) => {
+  const id = req.body.id;
+  await db.query("DELETE FROM PRICE_QUOTATION WHERE pq_id = $1", [id]);
+  await db.query("DELETE FROM OFFER WHERE pq_id = $1", [id]);
+  res.json({ success: true });
+});
+app.post("/deleteAllMarkitings", async (req, res) => {
+  await db.query("DELETE FROM MARKETING");
+  res.json({ success: true });
+});
+app.post("/addMarketing", async (req, res) => {
+  const { c_id, e_id } = req.body;
+
+  // Check if c_id and e_id are valid
+  if (!c_id || !e_id) {
+    return res.status(400).json({
+      success: false,
+      message: "Missing required fields: c_id or e_id",
+    });
+  }
+
+
+  try {
+    // Execute the query to insert into the database
+    const result = await db.query(
+      "INSERT INTO MARKETING (C_ID, E_ID) VALUES ($1, $2)",
+      [c_id, e_id]
+    );
+
+    // Check if the query was successful
+    if (result.rowCount > 0) {
+      res.json({ success: true, message: "Marketing added successfully!" });
+    } else {
+      res.status(500).json({ success: false, message: "Failed to add Marketing!" });
+    }
+  } catch (error) {
+    console.error("Error adding marketing:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to add Marketing due to internal error.",
+      error: error.message,
+    });
+  }
+});
+
+app.post("/addpq", async (req, res) => {
+  try {
+    const {
+      customer,
+      products, // Array of product objects: [{ p_id, quantity }]
+      discount,
+      currency,
+      duration,
+      total,
+    } = req.body;
+    // Insert the pq into the SALES table
+    const pqresult = await db.query(
+      `INSERT INTO PRICE_QUOTATION (PQ_DISCOUNT,PQ_CURRENCY,PQ_DURATION,PQ_TOTAL) values ($1,$2,$3,$4) RETURNING PQ_ID`,
+      [
+        req.body.pq_discount,
+        req.body.pq_currency,
+        req.body.pq_duration,
+        req.body.total,
+      ]
+    );
+
+    const pqid = pqresult.rows[0].pq_id;
+
+    // Insert products into the SELL_ITEMS table
+    const productValues = products
+      .map((product) => `(${product.p_id}, ${pqid}, ${customer.c_id})`)
+      .join(", ");
+
+    await db.query(
+      `INSERT INTO offer (P_ID, PQ_ID,  C_ID) 
+         VALUES ${productValues}`
+    );
+    res.json({
+      success: true,
+      message: "Prica quotation and products added successfully!",
+    });
+  } catch (error) {
+    console.error("Error adding price quotation:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to add price quotation",
+      error: error.message,
+    });
+  }
+});
+
+app.post("/updateUserProfile", upload.single("photo"), async (req, res) => {
+  try {
+    const result = await db.query(
+      `UPDATE EMPLOYEE SET 
+        F_NAME = $1,
+        L_NAME = $2,
+        Birth_Date = $3,
+        SALARY = $4,
+        E_PHOTO = $5,
+        E_ADDRESS = $6,
+        E_EMAIL = $7,
+        E_PHONE = $8,
+        E_CITY = $9,
+        E_COUNTRY = $10,
+        E_ZIPCODE = $11,
+        E_USERNAME = $12,
+        E_PASSWORD = $13
+      WHERE E_ID = $14`,
+      [
+        req.body.fName,
+        req.body.lName,
+        req.body.BirthDate,
+        req.body.salary,
+        req.body.Photo,
+        req.body.Address,
+        req.body.email,
+        req.body.phone,
+        req.body.city,
+        req.body.country,
+        req.body.zipcode,
+        req.body.username,
+        req.body.password,
+        req.body.id,
+      ]
+    );
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Error updating user profile:", error);
+    res.status(500).json({ error: "Failed to update user profile" });
+  }
+});
 // Edit Product
 app.post("/updateProduct", upload.single("photo"), async (req, res) => {
   const {
@@ -2809,6 +3020,60 @@ app.get("/api/total-pending", async (req, res) => {
     res.json({ totalpending: result.rows[0].count });
   } catch (err) {
     res.status(500).send(err.message);
+  }
+});
+
+//changepassword
+app.post("/changepassword", async (req, res) => {
+  const { username, newPassword } = req.body;
+
+  if (!username || !newPassword) {
+    return res
+      .status(400)
+      .json({ message: "Username and new password are required." });
+  }
+
+  try {
+    // Check if the user exists
+    const userResult = await db.query(
+      "SELECT E_ID, F_NAME, L_NAME, E_ROLE FROM EMPLOYEE WHERE E_USERNAME = $1",
+      [username]
+    );
+
+    if (userResult.rowCount === 0) {
+      return res.status(404).json({ message: "Username does not exist." });
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    if (userResult.rows[0].e_role === "Manager") {
+      // Update the password and deactivate the user
+      await db.query(
+        "UPDATE EMPLOYEE SET E_PASSWORD = $1 WHERE E_USERNAME = $2",
+        [hashedPassword, username]
+      );
+    } else {
+      // Update the password and deactivate the user
+      await db.query(
+        "UPDATE EMPLOYEE SET E_PASSWORD = $1, E_ACTIVE = FALSE WHERE E_USERNAME = $2",
+        [hashedPassword, username]
+      );
+    }
+
+    // Return the user details along with success message
+    return res.status(200).json({
+      message:
+        "Password updated successfully. Wait for reactivation from the manager.",
+      E_ID: userResult.rows[0].e_id,
+      F_NAME: userResult.rows[0].f_name,
+      L_NAME: userResult.rows[0].l_name,
+      E_ROLE: userResult.rows[0].e_role,
+    });
+  } catch (err) {
+    console.error("Error updating password:", err);
+    return res
+      .status(500)
+      .json({ message: "Server error. Please try again later." });
   }
 });
 

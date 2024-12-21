@@ -1,5 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../Utils/axiosInstance";
+import Customer from './../component/Customerfeatures/Customer';
+import { message, notification } from 'antd';
 
 export const fetchCustomers = createAsyncThunk(
   "Customers/fetchCustomers",
@@ -31,9 +33,11 @@ export const addCustomer = createAsyncThunk(
   async (customer) => {
     try {
       const response = await axiosInstance.post("/addcustomer", customer);
+      message.success("Customer added successfully");
       return response.data;
     } catch (error) {
       console.error("Error adding customer:", error);
+      message.error("Error adding customer");
     }
   }
 );
@@ -59,10 +63,12 @@ export const handleDeleteCustomer = createAsyncThunk(
   "Customers/handleDeleteCustomer",
   async (id) => {
     try {
-      const response = await axiosInstance.post("/deletecustomer", { id });
+      const response = await axiosInstance.post ("/deletecustomer", {id});
+      message.success("Customer deleted successfully");
       return response.data;
     } catch (error) {
       console.error("Error deleting customer:", error);
+      message.error("Error deleting customer");
     }
   }
 );
@@ -71,12 +77,43 @@ export const updateCustomer = createAsyncThunk(
   async (customer) => {
     try {
       const response = await axiosInstance.post("/updatecustomer", customer);
+      message.success("Customer updated successfully");
       return response.data;
     } catch (error) {
       console.error("Error updating customer:", error);
+      message.error("Error updating customer");
     }
   }
 );
+// Example of addMarkiting action creator
+export const addMarkiting = (data) => async (dispatch) => {
+  try {
+      const response = await axiosInstance.post('/addMarketing', data);  // Post data to the server
+
+      message.success('Marketing added successfully');
+      
+  } catch (error) {
+      dispatch({
+          type: 'ADD_MARKETING_FAILURE',
+          payload: 'Error adding marketing',
+      });
+      message.error('Error adding marketing');
+  }
+};
+export const deleteAllMarkitings = () => async (dispatch) => {
+  try {
+      const response = await axiosInstance.post('/deleteAllMarkitings');  // Post data to the server
+
+      message.success('Marketings deleted successfully');
+      
+  } catch (error) {
+      dispatch({
+          type: 'DELETE_MARKITINGS_FAILURE',
+          payload: 'Error deleting marketings',
+      });
+      message.error('Error deleting marketings');
+  }
+};
 
 // Initial state
 const initialState = {

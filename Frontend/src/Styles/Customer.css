@@ -117,31 +117,48 @@
   .box + .box {
     margin-top: 20px;
   }
-  .update-btn,
+ /* Common button styles */
+.update-btn,
+.add-marketing-btn,
 .delete-btn {
-  font-size: 16px;                /* Set font size */
-  margin: 2px;
-  border-radius: 4px;             /* Rounded corners */
-  transition: all 0.3s ease;      /* Smooth transition */
-  cursor: pointer;               /* Pointer cursor on hover */
+  font-size: 16px; /* Set font size */
+  margin: 2px; /* Add spacing */
+  border-radius: 4px; /* Rounded corners */
+  padding: 8px 12px; /* Comfortable click area */
+  transition: all 0.3s ease; /* Smooth transition */
+  cursor: pointer; /* Pointer cursor on hover */
+  border: 1px solid #1890ff; /* Default border for both buttons */
+}
+.add-marketing-btn:hover{
+  background-color: #40a9ff; /* Lighter blue on hover */
+  color: #ffffff; /* Maintain white text */
+  border-color: #096dd9; /* Darker blue border on hover */
 }
 
+.add-marketing-btn{
+  background-color: #1890ff; /* Bright blue background */
+  color: #ffffff; /* White text */
+}
+/* Update button styles */
 .update-btn {
-  color: #1890ff;                 /* Blue color for 'Update' */
-  border: 1px solid #1890ff;      /* Border matching color */
+  background-color: #1890ff; /* Bright blue background */
+  color: #ffffff; /* White text */
 }
 
 .update-btn:hover {
-  background-color: #e6f7ff;      /* Light blue on hover */
-  color: #0050b3;                 /* Dark blue text on hover */
+  background-color: #40a9ff; /* Lighter blue on hover */
+  color: #ffffff; /* Maintain white text */
+  border-color: #096dd9; /* Darker blue border on hover */
 }
 
+/* Delete button styles */
 .delete-btn {
-  color: #ff4d4f;                 /* Red color for 'Delete' */
-  border: 1px solid #ff4d4f;      /* Red border */
+  background-color: #1890ff; /* Bright blue background */
+  color: #ffffff; /* White text */
 }
 
 .delete-btn:hover {
-  background-color: #fff1f0;      /* Light red on hover */
-  color: #d4380d;                 /* Darker red text on hover */
+  background-color: #40a9ff; /* Lighter blue on hover */
+  color: #ffffff; /* Maintain white text */
+  border-color: #096dd9; /* Darker blue border on hover */
 }

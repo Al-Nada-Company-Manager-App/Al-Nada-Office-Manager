@@ -14,24 +14,35 @@ import axios from "axios";
 import Highlighter from "react-highlight-words";
 import "../../Styles/Customer.css";
 import CustomerDetails from "./CustomerDetails";
-import AddnewCustomer from "./addnewCustomer";  
+import AddnewCustomer from "./addnewCustomer";
 import UpdateCustomerModal from "./updateCustomer";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-import { useSelector,useDispatch } from "react-redux";
-import { handleDeleteCustomer,fetchCustomers,setCustomerModalVisible,setSelectedCustomer,setaddCustomerModalVisible,setupdateCustomerModalVisible } from "../../Store/Customer";
-
-
+import { useSelector, useDispatch } from "react-redux";
+import {
+  handleDeleteCustomer,
+  addMarkiting,
+  deleteAllMarkitings,
+  fetchCustomers,
+  setCustomerModalVisible,
+  setSelectedCustomer,
+  setaddCustomerModalVisible,
+  setupdateCustomerModalVisible,
+} from "../../Store/Customer";
 
 const Customer = () => {
-  const { customersData, CustomersLoading} = useSelector((state) => state.Customers);
+  const { customersData, CustomersLoading } = useSelector(
+    (state) => state.Customers
+  );
+  const { SignedUser } = useSelector((state) => state.auth);
+
   const dispatch = useDispatch();
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef(null);
   const { userAccess } = useSelector((state) => state.auth);
   const handleRowClick = (record) => {
-    dispatch(setCustomerModalVisible(true)); 
+    dispatch(setCustomerModalVisible(true));
     dispatch(setSelectedCustomer(record));
   };
   useEffect(() => {
@@ -73,6 +84,14 @@ const Customer = () => {
   const handleReset = (clearFilters) => {
     clearFilters();
     setSearchText("");
+  };
+  const handleAddMarketing = (customerId) => {
+    const e_id = SignedUser.id;
+    const data = { e_id: e_id, c_id: customerId };
+    dispatch(addMarkiting(data));
+  };
+  const handDeleteMarkitings = () => {
+    dispatch(deleteAllMarkitings());
   };
 
   const getColumnSearchProps = (dataIndex) => ({
@@ -197,7 +216,12 @@ const Customer = () => {
               : "https://via.placeholder.com/150"
           }
           alt="Supplier"
-          style={{ width: "50px", height: "50px", objectFit: "cover", borderRadius: "5px" }}
+          style={{
+            width: "50px",
+            height: "50px",
+            objectFit: "cover",
+            borderRadius: "5px",
+          }}
         />
       ),
     },
@@ -215,62 +239,86 @@ const Customer = () => {
       title: "Action",
       render: (_, record) => (
         <>
-          {userAccess.customer_edit && (<Button
-            type="link"
-            className="update-btn"
-            onClick={(e) => {
-              e.stopPropagation(); 
-              handleEdit(record);
-            }}
-          >
-            Update
-          </Button>
-        )}
-          {userAccess.customer_delete && (<Button
-            type="link"
-            className="delete-btn"
-            onClick={(e) => {
-              e.stopPropagation(); 
-              handleDelete(record.c_id);
-            }}
-          >
-            Delete
-          </Button>
-        )}
+          {userAccess.customer_edit &&
+            ((
+              <Button
+                type="link"
+                className="update-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleEdit(record);
+                }}
+              >
+                Update
+              </Button>
+            ),
+            SignedUser.Role === "SalesMan" && (
+              <Button
+                type="link"
+                className="add-marketing-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleAddMarketing(record.c_id); // You can define this function
+                }}
+              >
+                Add Marketing
+              </Button>
+            ))}
+          {userAccess.customer_delete && (
+            <Button
+              type="link"
+              className="delete-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDelete(record.c_id);
+              }}
+            >
+              Delete
+            </Button>
+          )}
         </>
       ),
     },
   ];
 
-
   const handleDelete = async (id) => {
-     await dispatch(handleDeleteCustomer(id));
-     dispatch(fetchCustomers());
+    await dispatch(handleDeleteCustomer(id));
+    dispatch(fetchCustomers());
   };
 
   const handleEdit = (customer) => {
     dispatch(setSelectedCustomer(customer));
     dispatch(setupdateCustomerModalVisible(true));
-   };
-  
+  };
+
   const handleaddClick = () => {
     dispatch(setaddCustomerModalVisible(true));
-  }
-
-
+  };
 
   return (
     <div>
-      {userAccess.customer_add && (<Button
+      {userAccess.customer_add && (
+        <Button
+          type="primary"
+          onClick={() => handleaddClick()}
+          style={{ marginRight: 16 }}
+        >
+          Add Customer
+        </Button>
+      )}
+      <Button
         type="primary"
-        onClick={() => handleaddClick()}
+        onClick={exportToPDF}
+        style={{ marginBottom: 16, marginRight: 16 }}
+      >
+        Export to PDF
+      </Button>
+      <Button
+        type="primary"
+        onClick={() => handDeleteMarkitings()}
         style={{ marginRight: 16 }}
       >
-        Add Customer
-      </Button>
-    )}
-      <Button type="primary" onClick={exportToPDF} style={{ marginBottom: 16 }}>
-        Export to PDF
+        Delete All Markitings
       </Button>
       <Table
         columns={columns}
@@ -278,12 +326,12 @@ const Customer = () => {
         loading={CustomersLoading}
         rowKey="c_id"
         onRow={(record) => ({
-          onClick: () => handleRowClick(record), 
+          onClick: () => handleRowClick(record),
         })}
       />
-      <CustomerDetails/>
-      <AddnewCustomer/>
-      <UpdateCustomerModal/>
+      <CustomerDetails />
+      <AddnewCustomer />
+      <UpdateCustomerModal />
     </div>
   );
 };
