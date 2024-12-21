@@ -9,7 +9,6 @@ import ApproveUser from "./Usersfeatures/ApproveUser";
 import Products from "./Productfeatures/Products";
 import Debts from "./Debtsfeatures/Debts";
 import RepairProducts from "./RepairProductfeatures/RepairProducts";
-import TechDashboard from "./Dashboardfeatures/techDashboard";
 import axios from "axios";
 import "../Styles/HomePage.css";
 import Customer from "./Customerfeatures/Customer";
@@ -19,12 +18,13 @@ import Purchase from "./Purchasefeachers/Purchase";
 import { useSelector, useDispatch } from "react-redux";
 import { handleLogout } from "../Store/authSlice";
 import UserProfile from "./UserProfilefeatures/UserProfile";
+import TechDashboard from "./Dashboardfeatures/techDashboard";
 import DashBoardSM from "./Dashboardfeatures/DashBoardSM";
 import DashBoardSC from "./Dashboardfeatures/DashBoardSC";
+import DashboardWrapper from "./Dashboardfeatures/DashboardWrapper";
 const { Sider, Content } = Layout;
-
 const contents = {
-  1: <DashBoardSC />,
+  1: DashboardWrapper,
   3: <Users />,
   4: <ApproveUser />,
   6: <Products />,
