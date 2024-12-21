@@ -9,21 +9,21 @@ import pg from "pg";
 import multer from "multer";
 import path from "path";
 
-const db = new pg.Client({
-  user: "postgres",
-  host: "localhost",
-  database: "Al Nada",
-  password: "NEW@22wntg",
-  port: 5432,
-});
 // const db = new pg.Client({
-
-//   connectionString:
-//     "postgresql://neondb_owner:Z50JaCBQWOMr@ep-nameless-darkness-a5mhhisx.us-east-2.aws.neon.tech/neondb?sslmode=require",
-//   ssl: {
-//     rejectUnauthorized: false,
-//   },
+//   user: "postgres",
+//   host: "localhost",
+//   database: "Al Nada",
+//   password: "NEW@22wntg",
+//   port: 5432,
 // });
+const db = new pg.Client({
+
+  connectionString:
+    "postgresql://neondb_owner:Z50JaCBQWOMr@ep-nameless-darkness-a5mhhisx.us-east-2.aws.neon.tech/neondb?sslmode=require",
+  ssl: {
+    rejectUnauthorized: false,
+  },
+});
 
 db.connect((err) => {
   if (err) {

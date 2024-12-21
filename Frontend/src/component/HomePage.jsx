@@ -19,26 +19,37 @@ import Purchase from "./Purchasefeachers/Purchase";
 import { useSelector, useDispatch } from "react-redux";
 import { handleLogout } from "../Store/authSlice";
 import UserProfile from "./UserProfilefeatures/UserProfile";
+import { Dash } from "react-bootstrap-icons";
+import { use } from "react";
 const { Sider, Content } = Layout;
 
-const contents = {
-  1: <TechDashboard/>,
-  3: <Users />,
-  4: <ApproveUser />,
-  6: <Products />,
-  7: <RepairProducts />,
-  8: <Customer />,
-  10: <Sales />,
-  11: <PriceQuotation />,
-  12: <Debts />,
-  13: <Supplier />,
-  14: <Purchase />,
-  20: <UserProfile />,
-};
+
 
 const HomePage = () => {
   const { collapsed, currentContent } = useSelector((state) => state.homeMenu);
-
+  const { SignedUser } = useSelector((state) => state.auth);
+  React.useEffect(() => {console.log(SignedUser)},[SignedUser]);
+  const dashboards={
+    "Manager":"ManagerDashboard",
+    "Technical Support":"TechDashboard",
+    "Sales":"SalesDashboard",
+    "Secartary":"SecartaryDashboard",
+    "Accountant":"AccountantDashboard",
+  };
+  const contents = {
+    1: (SignedUser && dashboards[SignedUser.Role]) || "DefaultDashboard",
+    3: <Users />,
+    4: <ApproveUser />,
+    6: <Products />,
+    7: <RepairProducts />,
+    8: <Customer />,
+    10: <Sales />,
+    11: <PriceQuotation />,
+    12: <Debts />,
+    13: <Supplier />,
+    14: <Purchase />,
+    20: <UserProfile />,
+  };
   const {
     token: { colorBgContainer, borderRadiusLG, contentBg },
   } = theme.useToken();
