@@ -20,10 +20,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { handleLogout } from "../Store/authSlice";
 import UserProfile from "./UserProfilefeatures/UserProfile";
 import DashBoardSM from "./Dashboardfeatures/DashBoardSM";
+import DashBoardSC from "./Dashboardfeatures/DashBoardSC";
 const { Sider, Content } = Layout;
 
 const contents = {
-  1: <DashBoardSM />,
+  1: <DashBoardSC />,
   3: <Users />,
   4: <ApproveUser />,
   6: <Products />,

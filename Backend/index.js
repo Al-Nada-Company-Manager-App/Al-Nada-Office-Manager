@@ -2205,6 +2205,136 @@ app.post("/addMarketing", async (req, res) => {
     });
   }
 });
+app.get("/getcustomerscount", async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT 
+          COUNT(C_ID) 
+      FROM 
+          CUSTOMER
+    `);
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Database query failed:", error);
+    res.status(500).json({ error: "Database query failed" });
+  }
+});
+
+app.get("/getsupplierscount", async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT 
+          COUNT(S_ID) 
+      FROM 
+          SUPPLIER
+    `);
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Database query failed:", error);
+    res.status(500).json({ error: "Database query failed" });
+  }
+});
+
+app.get("/gettopcustomers", async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT 
+          CUSTOMER.C_NAME AS c_name,
+          SUM(SALES.SL_TOTAL) AS total_paid
+      FROM 
+          CUSTOMER
+      JOIN 
+          SALES ON CUSTOMER.C_ID = SALES.C_ID
+      GROUP BY 
+          CUSTOMER.c_id
+      ORDER BY 
+          total_paid desc
+      LIMIT 10
+    `);
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Database query failed:", error);
+    res.status(500).json({ error: "Database query failed" });
+  }
+});
+
+app.get("/getproductscount", async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT 
+          COUNT(P_ID) 
+      FROM 
+          STOCK
+    `);
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Database query failed:", error);
+    res.status(500).json({ error: "Database query failed" });
+  }
+});
+app.get("/gettoprepairedproducts", async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT 
+          STOCK.P_NAME AS p_name,
+          COUNT(REPAIR.P_ID) AS repair_count
+      FROM 
+          STOCK
+      JOIN 
+          REPAIR ON STOCK.P_ID = REPAIR.P_ID
+      GROUP BY 
+          STOCK.P_ID
+      ORDER BY 
+          repair_count DESC
+      LIMIT 10
+    `);
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Database query failed:", error);
+    res.status(500).json({ error: "Database query failed" });
+  }
+});
+app.get("/gettopsoldproducts", async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT 
+          STOCK.P_NAME AS p_name,
+          COUNT(SELL_ITEMS.P_ID) AS sales_count
+      FROM 
+          STOCK
+      JOIN 
+          SELL_ITEMS ON STOCK.P_ID = SELL_ITEMS.P_ID
+      GROUP BY 
+          STOCK.P_ID
+      ORDER BY 
+          sales_count DESC
+      LIMIT 10
+    `);
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Database query failed:", error);
+    res.status(500).json({ error: "Database query failed" });
+  }
+});
+app.get("/gettotaldebts", async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT 
+          SUM(D_AMOUNT) 
+      FROM 
+          DEBTS
+    `);
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Database query failed:", error);
+    res.status(500).json({ error: "Database query failed" });
+  }
+});
+
+
+
+
+
 
 app.get("/session", (req, res) => {
   if (req.isAuthenticated()) {
