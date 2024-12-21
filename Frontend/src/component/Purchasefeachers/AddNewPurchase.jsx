@@ -84,7 +84,7 @@ const AddNewPurchase = () => {
 
   return (
     <div>
-      {userAccess.purchases_add && (
+      {userAccess.purchase_add && (
         <Button
           type="primary"
           onClick={openParchaseModal}
