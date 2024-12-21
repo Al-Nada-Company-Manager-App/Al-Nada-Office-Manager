@@ -248,14 +248,14 @@ const Products = () => {
       key: "model_code",
       ...getColumnSearchProps("model_code"),
     },
-  ];
-
+  ];  
+  
   return (
     <>
       {/* section of table */}
       <h2 style={{ textAlign: "left", fontWeight: "500" }}>Products</h2>
 
-      {userAccess.products_add && <AddnewProduct />}
+      <AddnewProduct />
       <div>
         {/* Measuring & Controllers Table */}
         <div className="table-heading">

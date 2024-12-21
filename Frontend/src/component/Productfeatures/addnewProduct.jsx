@@ -27,6 +27,7 @@ const AddnewProduct = () => {
   const { file, addProductModalVisible } = useSelector(
     (state) => state.Products
   );
+  const { userAccess } = useSelector((state) => state.auth);
   const [selectedCategory, setSelectedCategory] = React.useState("");
   const [ischemical, setischemical] = React.useState(false);
   const [form] = Form.useForm();
@@ -78,19 +79,21 @@ const AddnewProduct = () => {
 
   return (
     <div>
-      <Button
-        style={{
-          position: "absolute",
-          right: "40px",
-          top: "130px",
-        }}
-        type="primary"
-        onClick={handlenewModalOpen}
-        icon={<PlusOutlined />}
-        iconPosition="start"
-      >
-        Add Product
-      </Button>
+      {userAccess.products_add && (
+        <Button
+          style={{
+            position: "absolute",
+            right: "40px",
+            top: "130px",
+          }}
+          type="primary"
+          onClick={handlenewModalOpen}
+          icon={<PlusOutlined />}
+          iconPosition="start"
+        >
+          Add Product
+        </Button>
+      )}
       <Modal
         title="Add New Poduct"
         centered
