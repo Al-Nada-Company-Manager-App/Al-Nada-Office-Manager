@@ -16,6 +16,7 @@ import Customer from "./Customerfeatures/Customer";
 import PriceQuotation from "./PriceQoutationfeatures/PriceQuotation";
 import Supplier from "./Supplierfeatures/Supplier";
 import Purchase from "./Purchasefeachers/Purchase";
+import Dashboard from "./Dashboardfeatures/accDashboard";
 import { useSelector, useDispatch } from "react-redux";
 import { handleLogout } from "../Store/authSlice";
 import UserProfile from "./UserProfilefeatures/UserProfile";
@@ -23,7 +24,6 @@ import { Dash } from "react-bootstrap-icons";
 import DashBoardSM from "./Dashboardfeatures/DashBoardSM";
 import { use } from "react";
 const { Sider, Content } = Layout;
-
 
 
 const HomePage = () => {
@@ -35,7 +35,7 @@ const HomePage = () => {
     "Technical Support":<TechDashboard />,
     "SalesMan":<DashBoardSM />,
     "Secartary":"SecartaryDashboard",
-    "Accountant":"AccountantDashboard",
+    "Accountant":<AccDashboard/>,
   };
   const contents = {
     1: (SignedUser && dashboards[SignedUser.Role]) || "DefaultDashboard",

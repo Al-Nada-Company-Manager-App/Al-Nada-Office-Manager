@@ -2805,46 +2805,235 @@ app.post("/addpq", async (req, res) => {
   }
 });
 
-app.post("/updateUserProfile", upload.single("photo"), async (req, res) => {
+// Edit Product
+
+// get allDebts
+app.get("/allDebts", async (req, res) => {
+  const result = await db.query(`
+    SELECT 
+    C.C_NAME ,
+    C.C_PHOTO ,
+    D.SL_ID ,
+    D.D_ID ,
+    D.D_DATE ,
+    D.D_TYPE ,
+    D.D_AMOUNT ,
+    D.D_CURRENCY
+    FROM 
+        DEBTS D
+    LEFT JOIN 
+        SALES S ON D.SL_ID = S.SL_ID
+    LEFT JOIN 
+        CUSTOMER C ON S.C_ID = C.C_ID;
+`);
+  const rows = result.rows;
+  res.json(rows);
+});
+
+// Add Debt
+app.post("/addDebt", async (req, res) => {
   try {
+    const { debtDate, debtType, debtAmount, currency, sl_id } = req.body;
     const result = await db.query(
-      `UPDATE EMPLOYEE SET 
-        F_NAME = $1,
-        L_NAME = $2,
-        Birth_Date = $3,
-        SALARY = $4,
-        E_PHOTO = $5,
-        E_ADDRESS = $6,
-        E_EMAIL = $7,
-        E_PHONE = $8,
-        E_CITY = $9,
-        E_COUNTRY = $10,
-        E_ZIPCODE = $11,
-        E_USERNAME = $12,
-        E_PASSWORD = $13
-      WHERE E_ID = $14`,
-      [
-        req.body.fName,
-        req.body.lName,
-        req.body.BirthDate,
-        req.body.salary,
-        req.body.Photo,
-        req.body.Address,
-        req.body.email,
-        req.body.phone,
-        req.body.city,
-        req.body.country,
-        req.body.zipcode,
-        req.body.username,
-        req.body.password,
-        req.body.id,
-      ]
+      `INSERT INTO DEBTS (D_DATE, D_TYPE, D_AMOUNT,D_CURRENCY,SL_ID) VALUES ($1, $2, $3, $4, $5)`,
+      [debtDate, debtType, debtAmount, currency, sl_id]
+    );
+    res.json({ success: true, message: "Debt added successfully!" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Failed to add Debt!" });
+  }
+});
+//update Debt
+app.post("/updateDebt", async (req, res) => {
+  try {
+    const SL_ID = req.body.SL_ID;
+    const D_ID = req.body.D_ID;
+    const D_TYPE = req.body.D_TYPE;
+    const D_AMOUNT = req.body.d_amount;
+    const D_DATE = req.body.d_date;
+    const saleResult = await db.query(
+      `SELECT SL_TOTAL 
+       FROM SALES 
+       WHERE SL_ID = $1`,
+      [SL_ID]
     );
 
-    res.json(result.rows[0]);
+    const { sl_total } = saleResult.rows[0];
+
+    // Update the SALES table based on D_TYPE
+    if (D_TYPE === "INSURANCE") {
+      await db.query(
+        `UPDATE SALES 
+         SET SL_INAMOUNT = $1 
+         WHERE SL_ID = $2`,
+        [-D_AMOUNT, SL_ID]
+      );
+      // Update the DEBTS table
+      await db.query(
+        `UPDATE DEBTS 
+       SET D_AMOUNT = $1, D_DATE = $2 
+       WHERE D_ID = $3 and D_TYPE = 'INSURANCE'`,
+        [D_AMOUNT, D_DATE, D_ID]
+      );
+    } else {
+      if (D_AMOUNT < 0) {
+        await db.query(
+          `UPDATE DEBTS 
+         SET D_AMOUNT = $1, D_DATE = $2, D_TYPE = 'DEBT_IN' 
+         WHERE D_ID = $3 and D_TYPE = 'DEBT_IN' or D_TYPE = 'DEBT_OUT'`,
+          [D_AMOUNT, D_DATE, D_ID]
+        );
+      } else if (D_AMOUNT > 0) {
+        await db.query(
+          `UPDATE DEBTS 
+         SET D_AMOUNT = $1, D_DATE = $2, D_TYPE = 'DEBT_OUT' 
+         WHERE D_ID = $3 and D_TYPE = 'DEBT_IN' or D_TYPE = 'DEBT_OUT'`,
+          [D_AMOUNT, D_DATE, D_ID]
+        );
+      }
+
+      await db.query(
+        `UPDATE SALES 
+         SET SL_PAYED = $1 
+         WHERE SL_ID = $2`,
+        [sl_total + D_AMOUNT, SL_ID]
+      );
+    }
+
+    // Commit transaction
+
+    res.json({
+      success: true,
+      message: "Debt and sale updated successfully!",
+    });
   } catch (error) {
-    console.error("Error updating user profile:", error);
-    res.status(500).json({ error: "Failed to update user profile" });
+    console.error("Error updating debt:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to update debt",
+      error: error.message,
+    });
+  }
+});
+
+
+app.get('/salesoverview', async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT 
+        TO_CHAR(SL_DATE, 'YYYY-MM-DD') AS month, 
+        SUM(SL_TOTAL) AS total_sales
+      FROM SALES
+      GROUP BY TO_CHAR(SL_DATE, 'YYYY-MM-DD')
+      ORDER BY month;
+    `);
+
+    console.log('Query Result:', result.rows);
+
+    res.json({
+      success: true,
+      data: result.rows,
+      message: 'Sales data retrieved successfully.',
+    });
+  } catch (err) {
+    console.error('Error fetching sales data:', err);
+    res.status(500).json({
+      success: false,
+      error: 'Internal Server Error',
+    });
+  }
+});
+
+
+
+
+
+
+app.get('/purchasesoverview', async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT 
+        TO_CHAR(PCH_DATE, 'YYYY-MM-DD') AS month, 
+        SUM(PCH_TOTAL) AS total_purchases
+      FROM PURCHASE
+      GROUP BY TO_CHAR(PCH_DATE, 'YYYY-MM-DD')
+      ORDER BY month;
+    `);
+
+    console.log('Purchases Query Result:', result.rows);
+
+    res.json({
+      success: true,
+      data: result.rows, 
+      message: 'Purchases data retrieved successfully.',
+    });
+  } catch (err) {
+    console.error('Error fetching purchases data:', err);
+    res.status(500).json({
+      success: false,
+      error: 'Internal Server Error',
+    });
+  }
+});
+// GET /debtsoverview - Get debts summarized by type
+app.get('/debtsoverview', async (req, res) => {
+  try {
+    // Query to get the total debt amount grouped by debt type
+    const result = await db.query(`
+      SELECT 
+        D_TYPE, 
+        SUM(D_AMOUNT) AS total_debt
+      FROM DEBTS
+      GROUP BY D_TYPE
+      ORDER BY D_TYPE;
+    `);
+
+    // Logging the query result for debugging
+    console.log('Debts Overview:', result.rows);
+
+    // Respond with a successful result containing the summarized debts
+    res.json({
+      success: true,
+      data: result.rows,
+      message: 'Debts by type retrieved successfully.',
+    });
+  } catch (err) {
+    // Error handling
+    console.error('Error fetching debts by type:', err);
+    res.status(500).json({
+      success: false,
+      error: 'Internal Server Error',
+    });
+  }
+});
+
+app.get('/topproducts', async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT 
+        P.P_NAME, 
+        SUM(SI.SI_QUANTITY) AS total_sale
+      FROM SELL_ITEMS SI
+      JOIN STOCK P ON SI.P_ID = P.P_ID
+      GROUP BY P.P_NAME
+      ORDER BY total_sale DESC
+      LIMIT 5;
+    `);
+
+    console.log('Top Products:', result.rows);
+
+    res.json({
+      success: true,
+      data: result.rows,
+      message: 'Top products fetched successfully.',
+    });
+  } catch (err) {
+    console.error('Error fetching top products:', err);
+    res.status(500).json({
+      success: false,
+      error: 'Internal Server Error',
+    });
   }
 });
 // Edit Product
@@ -3206,8 +3395,13 @@ app.get("/session", (req, res) => {
   }
 });
 
+
+
+
+
 // Start server
 const PORT = 4000;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
