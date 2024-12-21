@@ -1,6 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../Utils/axiosInstance";
 
+import Customer from './../component/Customerfeatures/Customer';
+import { message, notification } from 'antd';
+
 export const fetchCustomers = createAsyncThunk(
   "Customers/fetchCustomers",
   async () => {
@@ -77,7 +80,34 @@ export const updateCustomer = createAsyncThunk(
     }
   }
 );
+export const addMarkiting = (data) => async (dispatch) => {
+  try {
+      const response = await axiosInstance.post('/addMarketing', data);  // Post data to the server
 
+      message.success('Marketing added successfully');
+      
+  } catch (error) {
+      dispatch({
+          type: 'ADD_MARKETING_FAILURE',
+          payload: 'Error adding marketing',
+      });
+      message.error('Error adding marketing');
+  }
+};
+export const deleteAllMarkitings = () => async (dispatch) => {
+  try {
+      const response = await axiosInstance.post('/deleteAllMarkitings');  // Post data to the server
+
+      message.success('Marketings deleted successfully');
+      
+  } catch (error) {
+      dispatch({
+          type: 'DELETE_MARKITINGS_FAILURE',
+          payload: 'Error deleting marketings',
+      });
+      message.error('Error deleting marketings');
+  }
+};
 // Initial state
 const initialState = {
   customersData: [],

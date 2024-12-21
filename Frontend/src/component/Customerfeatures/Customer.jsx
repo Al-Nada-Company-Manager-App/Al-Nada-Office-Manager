@@ -19,13 +19,15 @@ import UpdateCustomerModal from "./updateCustomer";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { useSelector,useDispatch } from "react-redux";
-import { handleDeleteCustomer,fetchCustomers,setCustomerModalVisible,setSelectedCustomer,setaddCustomerModalVisible,setupdateCustomerModalVisible } from "../../Store/Customer";
+import { handleDeleteCustomer,addMarkiting,deleteAllMarkitings,fetchCustomers,setCustomerModalVisible,setSelectedCustomer,setaddCustomerModalVisible,setupdateCustomerModalVisible } from "../../Store/Customer";
 
 
 
 const Customer = () => {
   const { customersData, CustomersLoading} = useSelector((state) => state.Customers);
   const dispatch = useDispatch();
+  const { SignedUser } = useSelector((state) => state.auth);
+
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef(null);
@@ -74,7 +76,17 @@ const Customer = () => {
     clearFilters();
     setSearchText("");
   };
-
+  const handleAddMarketing = (customerId) => {
+    const e_id = SignedUser.id;
+    const data={e_id:e_id,c_id:customerId} 
+    dispatch(addMarkiting(data));
+    
+  };
+  const handDeleteMarkitings = () => {
+    dispatch(deleteAllMarkitings());
+    
+  };
+  
   const getColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({
       setSelectedKeys,
@@ -233,10 +245,25 @@ const Customer = () => {
               e.stopPropagation(); 
               handleDelete(record.c_id);
             }}
+            
           >
             Delete
           </Button>
         )}
+        {userAccess.customer_delete && (<Button
+            type="link"
+            className="add-marketing-btn"
+            onClick={(e) => {
+              e.stopPropagation(); 
+              handleAddMarketing(record.c_id); // You can define this function
+              
+            }}
+            
+          >
+            Add Marketing
+          </Button>
+        )}
+        
         </>
       ),
     },
@@ -269,8 +296,16 @@ const Customer = () => {
         Add Customer
       </Button>
     )}
-      <Button type="primary" onClick={exportToPDF} style={{ marginBottom: 16 }}>
+      <Button type="primary" onClick={exportToPDF} style={{ marginBottom: 16,
+        marginRight: 16
+       }}>
         Export to PDF
+      </Button>
+      <Button
+        type="primary"
+        onClick={() => handDeleteMarkitings()}
+      >
+        Delete All Markitings
       </Button>
       <Table
         columns={columns}

@@ -19,10 +19,11 @@ import Purchase from "./Purchasefeachers/Purchase";
 import { useSelector, useDispatch } from "react-redux";
 import { handleLogout } from "../Store/authSlice";
 import UserProfile from "./UserProfilefeatures/UserProfile";
+import DashBoardSM from "./Dashboardfeatures/DashBoardSM";
 const { Sider, Content } = Layout;
 
 const contents = {
-  1: <TechDashboard/>,
+  1: <DashBoardSM />,
   3: <Users />,
   4: <ApproveUser />,
   6: <Products />,
@@ -34,6 +35,7 @@ const contents = {
   13: <Supplier />,
   14: <Purchase />,
   20: <UserProfile />,
+  
 };
 
 const HomePage = () => {
