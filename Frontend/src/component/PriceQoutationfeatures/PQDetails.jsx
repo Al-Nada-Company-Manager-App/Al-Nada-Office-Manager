@@ -53,7 +53,11 @@ const PriceQuotationDetails = () => {
                         <Col span={8}>
                             {/* Placeholder for PQ Image */}
                             <img
-                                src={selectedPQ.PQ_Image || 'https://via.placeholder.com/150'}
+                                src={
+                                    selectedPQ.c_photo
+                                      ? "./Customers/" + selectedPQ.c_photo
+                                      : "https://via.placeholder.com/150"
+                                  }
                                 alt="Price Quotation"
                                 style={{ width: '100%', height: 'auto', borderRadius: '8px' }}
                             />

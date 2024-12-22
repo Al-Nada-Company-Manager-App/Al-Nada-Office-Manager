@@ -59,7 +59,9 @@ const DebtDetails = () => {
                 {/* Placeholder for Sale Image */}
                 <img
                   src={
-                    selectedDebt.c_photo || "https://via.placeholder.com/150"
+                    selectedDebt.c_photo
+                      ? "./Customers/" + selectedDebt.c_photo
+                      : "https://via.placeholder.com/150"
                   }
                   alt={selectedDebt.c_name}
                   style={{ width: "100%", height: "auto", borderRadius: "8px" }}

@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, Button, Row, Col,Table } from "antd";
+import { Modal, Button, Row, Col, Table } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import {
   fetchSales,
@@ -117,7 +117,9 @@ const SaleDetails = () => {
                 {/* Placeholder for Sale Image */}
                 <img
                   src={
-                    selectedSale.c_photo || "https://via.placeholder.com/150"
+                    selectedSale.c_photo
+                      ? "./Customers/" + selectedSale.c_photo
+                      : "https://via.placeholder.com/150"
                   }
                   alt={selectedSale.c_name}
                   style={{ width: "100%", height: "auto", borderRadius: "8px" }}

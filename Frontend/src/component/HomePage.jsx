@@ -29,7 +29,7 @@ const HomePage = () => {
   const { collapsed, currentContent } = useSelector((state) => state.homeMenu);
   const { SignedUser } = useSelector((state) => state.auth);
   const dashboards={
-    "Manager":<DashboardTCH />,
+    "Manager":<DashboardMG />,
     "Technical Support":<DashboardTCH />,
     "SalesMan":<DashBoardSM />,
     "Secartary": <DashBoardSC />, 

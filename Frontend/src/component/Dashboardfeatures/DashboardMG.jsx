@@ -108,27 +108,6 @@ const DashboardMG = () => {
             </Card>
           </Col>
         </Row>
-
-        <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
-          <Col span={12}>
-            <Card
-              title="Stock Categories"
-              bordered
-              className="card-chart"
-              >
-              <StockCategoryChart />
-            </Card>
-          </Col>
-          <Col span={12}>
-            <Card
-              title="Supplier Products"
-              bordered
-              className="card-chart"
-              >
-              <SupplierProductChart />
-            </Card>
-          </Col>
-        </Row>
         <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
           <Col span={12}>
             <Card
