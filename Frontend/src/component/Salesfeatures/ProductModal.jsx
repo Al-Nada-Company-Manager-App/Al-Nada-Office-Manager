@@ -197,7 +197,6 @@ const ProductModal = () => {
           columns={mainColumns}
           rowKey="p_id"
           loading={productLoading}
-          pagination={false}
         />
         {selectedProducts.length > 0 && (
           <>

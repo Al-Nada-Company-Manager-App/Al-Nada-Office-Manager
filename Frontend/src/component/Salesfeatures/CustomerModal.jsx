@@ -77,7 +77,6 @@ const CustomerModal = () => {
         columns={columns}
         rowKey="C_ID"
         loading={CustomersLoading}
-        pagination={false}
       />
     </Modal>
     <AddnewCustomer/>

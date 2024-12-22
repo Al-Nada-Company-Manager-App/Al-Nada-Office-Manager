@@ -474,13 +474,13 @@ const AddNewSale = () => {
             </Col>
           </Row>
         </Form>
+      <ProductModal />
       </Modal>
 
       {/* Customer Modal */}
       <CustomerModal />
 
       {/* Product Modal */}
-      <ProductModal />
     </div>
   );
 };

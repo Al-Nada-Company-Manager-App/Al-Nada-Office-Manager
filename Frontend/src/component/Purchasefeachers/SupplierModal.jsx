@@ -53,7 +53,6 @@ const SupplierModal = () => {
         dataSource={suppliersData}
         columns={columns}
         rowKey="S_ID"
-        pagination={false}
       />
     </Modal>
   );

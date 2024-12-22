@@ -193,7 +193,6 @@ const ProductModal = () => {
           dataSource={filteredProducts}
           columns={mainColumns}
           rowKey="p_id"
-          pagination={false}
         />
         {selectedProducts.length > 0 && (
           <>
@@ -202,7 +201,6 @@ const ProductModal = () => {
               dataSource={selectedProducts}
               columns={selectedColumns}
               rowKey="p_id"
-              pagination={false}
             />
           </>
         )}
