@@ -239,31 +239,30 @@ const Customer = () => {
       title: "Action",
       render: (_, record) => (
         <>
-          {userAccess.customer_edit &&
-            ((
-              <Button
-                type="link"
-                className="update-btn"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleEdit(record);
-                }}
-              >
-                Update
-              </Button>
-            ),
-            SignedUser.Role === "SalesMan" && (
-              <Button
-                type="link"
-                className="add-marketing-btn"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleAddMarketing(record.c_id); // You can define this function
-                }}
-              >
-                Add Marketing
-              </Button>
-            ))}
+          {userAccess.customer_edit && (
+          <Button
+            type="link"
+            className="update-btn"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleEdit(record);
+            }}
+          >
+            Update
+          </Button>
+          )},
+          {(userAccess.customer_edit && SignedUser.Role === "SalesMan") && 
+            <Button
+              type="link"
+              className="add-marketing-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleAddMarketing(record.c_id); 
+              }}
+            >
+              Add Marketing
+            </Button>
+          },
           {userAccess.customer_delete && (
             <Button
               type="link"
