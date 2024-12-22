@@ -8,6 +8,7 @@ import SupplierProductChart from "./DashboardCharts/SupplierProductChart";
 import TopProductChart from "./DashboardCharts/TopProduct";
 import SalesOverviewChart from "./DashboardCharts/SalesOverview";
 import PurchaseOverviewChart from "./DashboardCharts/PurshaseOverview";
+import DebtsOverviewChart from "./DashboardCharts/DebtOverview";
 const DashboardMG = () => {
 
     const [TotalStock , setTotalStock] = useState([]);
@@ -148,7 +149,46 @@ const DashboardMG = () => {
             </Card>
           </Col>
         </Row>
-       
+        <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
+          <Col span={12}>
+            <Card
+              title="Stock Categories"
+              bordered
+              className="card-chart"
+              >
+              <StockCategoryChart />
+            </Card>
+          </Col>
+          <Col span={12}>
+            <Card
+              title="Supplier Products"
+              bordered
+              className="card-chart"
+              >
+              <SupplierProductChart />
+            </Card>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
+          <Col span={12}>
+            <Card
+              title="Debts Overview"
+              bordered
+              className="card-chart"
+              >
+              <DebtsOverviewChart />
+            </Card>
+          </Col>
+          {/* <Col span={12}>
+            <Card
+              title="Customer Products"
+              bordered
+              className="card-chart"
+              >
+              <CustomerProductChart />
+            </Card>
+          </Col> */}
+        </Row>
         
 
       </div>

@@ -130,21 +130,34 @@ const DashBoardSC = () => {
         </Col>
       </Row>
 
-      <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
+      <Row 
+        gutter={[16, 16]} 
+        style={{ marginTop: "20px" }} 
+        className="hover"
+      >
         <Col span={24}>
+        <Card>
+
           <h3>Customers payment</h3>
           <Bar {...barConfigTopCustomers} />
+          </Card>
+
         </Col>
       </Row>
 
       <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
         <Col span={12}>
+        <Card>
           <h3>Products Repaired</h3>
           <Bar {...barConfigRepairedProducts} />
+          </Card>
         </Col>
         <Col span={12}>
+        <Card>
           <h3>Products Sold</h3>
           <Bar {...barConfigSoldProducts} />
+          </Card>
+
         </Col>
       </Row>
 

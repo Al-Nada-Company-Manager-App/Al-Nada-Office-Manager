@@ -136,12 +136,18 @@ const DashBoardSM = () => {
 
       <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
         <Col span={12}>
+        <Card>
           <h3>Sales Data (Top 10 - Bar Chart)</h3>
           <Bar {...barConfigSales} />
+          </Card>
+
         </Col>
         <Col span={12}>
+        <Card>
           <h3>Marketing Data (Top 10 - Bar Chart)</h3>
           <Bar {...barConfigMarketing} />
+          </Card>
+
         </Col>
       </Row>
 

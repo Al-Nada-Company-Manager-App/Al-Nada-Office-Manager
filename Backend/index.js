@@ -3005,6 +3005,39 @@ app.get('/debtsoverview', async (req, res) => {
   }
 });
 
+
+
+// app.get('/debtsoverview', async (req, res) => {
+//   try {
+//     const result = await db.query(`
+//       SELECT 
+//         D_TYPE, 
+//         SUM(CASE 
+//               WHEN D_TYPE IN ('DEBT_IN', 'INSURANCE') THEN ABS(D_AMOUNT)
+//               ELSE D_AMOUNT
+//             END) AS total_debt
+//       FROM DEBTS
+//       GROUP BY D_TYPE
+//       ORDER BY D_TYPE;
+//     `);
+
+//     console.log('Debts Overview:', result.rows);
+
+//     res.json({
+//       success: true,
+//       data: result.rows,
+//       message: 'Debts by type retrieved successfully.',
+//     });
+//   } catch (err) {
+//     console.error('Error fetching debts by type:', err);
+//     res.status(500).json({
+//       success: false,
+//       error: 'Internal Server Error',
+//     });
+//   }
+// });
+
+
 app.get('/topproducts', async (req, res) => {
   try {
     const result = await db.query(`
