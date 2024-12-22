@@ -5,15 +5,38 @@ import StockCategoryChart from './DashboardCharts/StockCategoryChart';
 import axios from "axios";
 import CustomerProductChart from './DashboardCharts/CustomerProductChart';
 import SupplierProductChart from "./DashboardCharts/SupplierProductChart";
-
+import TopProductChart from "./DashboardCharts/TopProduct";
+import SalesOverviewChart from "./DashboardCharts/SalesOverview";
+import PurchaseOverviewChart from "./DashboardCharts/PurshaseOverview";
 const DashboardMG = () => {
 
     const [TotalStock , setTotalStock] = useState([]);
+    const [TotalSales , setTotalSales] = useState([]);
+    const [TotalPurchase , setTotalPurchase] = useState([]);
+    const [TotalDebts , setTotalDebts] = useState([]);
+
   
     useEffect(() => {
   
       axios.get("http://localhost:4000/api/total-stock")
         .then((res) => setTotalStock(res.data))
+        .catch((err) => console.error("Error fetching total stock:", err));
+
+
+        axios.get("http://localhost:4000/api/total-purchase")
+        .then((res) => setTotalPurchase(res.data))
+        .catch((err) => console.error("Error fetching total stock:", err));
+
+
+
+        axios.get("http://localhost:4000/api/total-sales")
+        .then((res) => setTotalSales(res.data))
+        .catch((err) => console.error("Error fetching total stock:", err));
+
+
+
+        axios.get("http://localhost:4000/api/total-debts")
+        .then((res) => setTotalDebts(res.data))
         .catch((err) => console.error("Error fetching total stock:", err));
 
     }, []);
@@ -39,28 +62,48 @@ const DashboardMG = () => {
           <Col span={6}>
             <Card className="card-style" bordered>
               <Statistic 
-              title="" 
+              title="Total Sales" 
               //prefix= {<ToolOutlined />}
-              //value={TotalDUM} 
-              valueStyle={{ color: "#1677ff" }} />
+              value={TotalPurchase} 
+              valueStyle={{ color: "green" }} />
             </Card>
           </Col>
           <Col span={6}>
             <Card className="card-style" bordered >
               <Statistic 
-              title="" 
-              //value={TotalSpareParts} 
+              title="Total Parchase" 
+              value={TotalSales} 
               //prefix= {<PlusCircleOutlined />}
-              valueStyle={{ color: "#cf1322" }} />
+              valueStyle={{ color: "green" }} />
             </Card>
           </Col>
           <Col span={6}>
             <Card className="card-style" bordered >
               <Statistic 
-              title="" 
-              prefix= {<StopOutlined />}
-              //value={TotalPending}
-              valueStyle={{ color: "red" }} />
+              title="Total Debts" 
+              //prefix= {<StopOutlined />}
+              value={TotalDebts}
+              valueStyle={{ color: "green" }} />
+            </Card>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
+          <Col span={12}>
+            <Card
+              title="Sales Overview"
+              bordered
+              className="card-chart"
+              >
+              <SalesOverviewChart />
+            </Card>
+          </Col>
+          <Col span={12}>
+            <Card
+              title="Purchase Overview"
+              bordered
+              className="card-chart"
+              >
+              <PurchaseOverviewChart />
             </Card>
           </Col>
         </Row>
@@ -85,8 +128,16 @@ const DashboardMG = () => {
             </Card>
           </Col>
         </Row>
-  
         <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
+          <Col span={12}>
+            <Card
+              title="Top Products"
+              bordered
+              className="card-chart"
+              >
+              <TopProductChart />
+            </Card>
+          </Col>
           <Col span={12}>
             <Card
               title="Customer Products"
@@ -97,6 +148,9 @@ const DashboardMG = () => {
             </Card>
           </Col>
         </Row>
+       
+        
+
       </div>
       </>
       );
