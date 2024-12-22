@@ -66,7 +66,6 @@ export const getAccessRules = createAsyncThunk(
   "Users/getAccessRules",
   async (id, thunkAPI) => {
     try {
-      console.log(id);  
       const response = await axiosInstance.get("/getUserAccess", { params: { id } }); 
       return response.data;
     } catch (error) {
@@ -145,7 +144,6 @@ const userSlice = createSlice({
 
     builder.addCase(approveNotification.fulfilled, (state, action) => {
       state.selectedUser = action.payload;
-      console.log;
     });
     builder.addCase(getAccessRules.fulfilled, (state, action) => {
       state.selectedUserAccess = action

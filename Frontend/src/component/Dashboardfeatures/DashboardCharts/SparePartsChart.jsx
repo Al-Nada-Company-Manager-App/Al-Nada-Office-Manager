@@ -9,7 +9,6 @@ const SparePartsChart = () => {
     const fetchData = async () => {
       const response = await axios.get("http://localhost:4000/api/spare-parts-used");
       setData(response.data);
-      console.log(response.data);
     };
     fetchData();
   }, []);

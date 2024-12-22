@@ -22,7 +22,6 @@ const PriceQuotationDetails = () => {
 
     const handleSetStatus = (id) => {
         // Placeholder for setting the status of a Price Quotation
-        console.log(`Set status for Price Quotation ID: ${id}`);
     };
 
     return (

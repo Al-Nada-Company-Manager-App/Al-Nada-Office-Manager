@@ -26,7 +26,6 @@ const AddRepairProcess = ({ handleFinish, devices, spareParts, fetchSpareParts, 
 
   const handleDeviceChange = (deviceId) => {
     const selectedDevice = devices.find((device) => device.p_id === deviceId);
-    console.log("selected Device", selectedDevice);
     if (selectedDevice) {
       setSelectedDeviceStatus(selectedDevice.p_status);
     }
@@ -35,19 +34,11 @@ const AddRepairProcess = ({ handleFinish, devices, spareParts, fetchSpareParts, 
 
   const onFinish = async (values) => {
 
-    console.log("Form values before submission: ", values);
-
-
-    console.log("Selected spare parts: ", selectedSpareParts);
-
     const payload = {
       ...values,
       rep_date: selectedDeviceStatus === "Completed" ? values.rep_date : null, 
       spare_parts: selectedSpareParts.filter((part) => part.sp_id || part.sp_quantity > 0),
     };
-
-
-    console.log("Payload for submission: ", payload);
 
     const success = await handleFinish(payload);
     if (success) {
@@ -99,7 +90,6 @@ const AddRepairProcess = ({ handleFinish, devices, spareParts, fetchSpareParts, 
             rules={[{ required: true, message: "Please select a device!" }]}
           >
             <Select placeholder="Select a device"onChange={(value) => {
-              console.log(value);
               handleDeviceChange(value)}}>
               {devices.map((device) => (
                 <Option key={device.p_id} value={device.p_id} >

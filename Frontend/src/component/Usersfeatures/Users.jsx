@@ -65,12 +65,16 @@ const columns = [
 const Users = () => {
   const dispatch = useDispatch();
   const { usersData,userLoading } = useSelector((state) => state.Users);
+  const {SignedUser} = useSelector((state) => state.auth);
 
   React.useEffect(() => {
     dispatch(fetchUsers());
   }, []);
 
   const handleRowClick = async(record) => {
+    if (SignedUser.id === record.e_id) {
+      return;
+    }
     dispatch(setSelectedUser(record));
     await dispatch(getAccessRules(record.e_id));
     dispatch(setUserModalVisible(true));

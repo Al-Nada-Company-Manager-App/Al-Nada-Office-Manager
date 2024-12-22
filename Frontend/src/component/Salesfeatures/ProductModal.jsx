@@ -28,7 +28,6 @@ const ProductModal = () => {
   }, []);
 
   const handleSelect = (product) => {
-    console.log(product);
     if (selectedProducts.some((item) => item.p_id === product.p_id)) {
       // Deselect the product
       const updatedSelectedProducts = selectedProducts.filter(

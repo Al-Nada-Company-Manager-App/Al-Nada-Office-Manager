@@ -30,7 +30,6 @@ export const addSupplier = createAsyncThunk(
   "Suppliers/addSupplier",
   async (supplier) => {
     try {
-      console.log(supplier);
       const response = await axiosInstance.post("/addsupplier", supplier);
       return response.data;
     } catch (error) {

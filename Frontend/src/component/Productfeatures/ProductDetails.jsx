@@ -26,7 +26,6 @@ const ProductDetails = ({ handleSaveData, editedData, seteditedData }) => {
     dispatch(setdetailProductModalVisible(false));
   };
   const handleUpdate = () => {
-    console.log("Update Product");
     dispatch(setdetailProductModalVisible(false));
     dispatch(setupdateProductModalVisible(true));
   };

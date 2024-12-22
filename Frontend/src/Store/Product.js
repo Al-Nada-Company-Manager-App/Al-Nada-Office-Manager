@@ -26,7 +26,6 @@ export const handleAddProduct = createAsyncThunk(
 export const updatesproductphoto = createAsyncThunk(
   "Products/updatesproductphoto",
   async (product) => {
-    console.log(product);
 
     try {
       await axiosInstance.post("/updatesproductphoto", product, {

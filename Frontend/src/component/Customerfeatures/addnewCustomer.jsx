@@ -27,9 +27,7 @@ const handleAddCustomer = async (values) => {
     Object.entries(values).forEach(([key, value]) =>
           CutomerData[key] = value
     );
-    console.log(CutomerData);
     const response= await dispatch(addCustomer(CutomerData));
-    console.log(response);
     if(response.payload.success){
         if(file){
             const photoData ={};

@@ -44,7 +44,6 @@ export const updateCustomerPhoto = createAsyncThunk(
   "Customers/updateCustomerPhoto",
   async (customer) => {
     try {
-      console.log(customer);
       const response = await axiosInstance.post("/updatecustomerphoto", customer
         ,{
           headers: {

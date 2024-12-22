@@ -27,7 +27,6 @@ const AddNewSupplier = ({ handleFinish }) => {
   };
   const openSupplierModal = () => dispatch(setaddSupplierModalVisible(true));
   const handleSupplierFinish = async (values) => {
-    console.log(values);
     const SupplierData = {};
     Object.entries(values).forEach(
       ([key, value]) => (SupplierData[key] = value)

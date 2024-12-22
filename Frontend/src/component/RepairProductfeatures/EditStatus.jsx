@@ -19,7 +19,6 @@ const EditStatus = ({repId, handleeditstatusClose, iseditstatusModal, p_id}) => 
     };
 
     const onFinish = async(values) => {
-        console.log("ma7bosa hena");
         const payload = {
           REP_ID: repId,
           P_ID: p_id,
@@ -27,13 +26,10 @@ const EditStatus = ({repId, handleeditstatusClose, iseditstatusModal, p_id}) => 
           REMARKS: values.remarks,
           REP_DATE: values.repairdate,
         };
-    
-        console.log(payload);
 
 
         await axios.post("http://localhost:4000/api/updateRepair", payload)
           .then((response) => {
-            console.log("Success:", response.data);
             handleeditstatusClose();
           })
           .catch((error) => console.error("Error:", error));
@@ -41,13 +37,10 @@ const EditStatus = ({repId, handleeditstatusClose, iseditstatusModal, p_id}) => 
 
       const fetchRepairDetails = async (rep_id) => {
         try {
-            console.log("fetchRepair", rep_id);
           const response = await axios.get(`http://localhost:4000/api/getRepairProduct/${rep_id}`);
           const data = response.data;
           
-          console.log("response data:", data);
           setDefaultData(data);
-          console.log("Default Data: ", defaultData);
 
           form.setFieldsValue({
             maintenanceStatus: data.P_STATUS,
@@ -81,7 +74,6 @@ const EditStatus = ({repId, handleeditstatusClose, iseditstatusModal, p_id}) => 
             <Form
             form={form}
             onFinish={(values) => {
-                console.log("hi");
                 onFinish(values)}}
                 layout="horizontal"
                 onValuesChange={onValueChange}

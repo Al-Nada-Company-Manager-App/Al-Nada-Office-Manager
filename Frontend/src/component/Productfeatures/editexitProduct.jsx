@@ -24,12 +24,10 @@ const EditexitProduct = ({
   editingform,
 }) => {
   const { selectedProduct } = useSelector((state) => state.Products);
-  console.log(editedData);
 
   const [selectedCategory, setSelectedCategory] = React.useState("");
   const [ischemical, setischemical] = React.useState(false);
   const handleCategoryChange = (value) => {
-    console.log(value);
      setSelectedCategory(value);
      
      setischemical(value === "Chemical");

@@ -27,7 +27,6 @@ const RepairDetails = ({
 
   const fetchUpdatedStatus = async (p_id) => {
     try {
-      console.log("ma7bosa fe fetch updated status");
       const response = await axios.get(
         `http://localhost:4000/api/getProductStatus/${p_id}`
       );
@@ -35,7 +34,6 @@ const RepairDetails = ({
         ...prev,
         p_status: response.data.p_status, // Update the status field
       }));
-      console.log("fe al fetch al data ba2et", selectedRepair);
     } catch (error) {
       console.error("Error fetching updated status:", error);
     }
@@ -54,7 +52,6 @@ const RepairDetails = ({
   const handleRowClick = (record) => {
     setSelectedPart(record);
     setisSpareDetails(true);
-    console.log(selectedPart);
   };
 
   const handleeditstatusOpen = () => {
