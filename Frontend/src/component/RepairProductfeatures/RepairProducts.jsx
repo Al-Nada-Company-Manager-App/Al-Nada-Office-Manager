@@ -447,7 +447,9 @@ const RepairProducts = () => {
 
          </div>
 
-         {selectedDUM && (
+         {selectedDUM &&
+         userAccess.repaire_delete
+         && (
             <Modal
             title="Device Under Maintenance"
             centered
