@@ -11,10 +11,10 @@ import PurchaseOverviewChart from "./DashboardCharts/PurshaseOverview";
 import DebtsOverviewChart from "./DashboardCharts/DebtOverview";
 const DashboardMG = () => {
 
-    const [TotalStock , setTotalStock] = useState([]);
-    const [TotalSales , setTotalSales] = useState([]);
-    const [TotalPurchase , setTotalPurchase] = useState([]);
-    const [TotalDebts , setTotalDebts] = useState([]);
+    const [TotalStock , setTotalStock] = useState(0);
+    const [TotalSales , setTotalSales] = useState(0);
+    const [TotalPurchase , setTotalPurchase] = useState(0);
+    const [TotalDebts , setTotalDebts] = useState(0);
 
   
     useEffect(() => {
@@ -65,7 +65,7 @@ const DashboardMG = () => {
               <Statistic 
               title="Total Sales" 
               //prefix= {<ToolOutlined />}
-              value={TotalPurchase} 
+              value={TotalPurchase.toFixed(2)} 
               valueStyle={{ color: "green" }} />
             </Card>
           </Col>
@@ -73,7 +73,7 @@ const DashboardMG = () => {
             <Card className="card-style" bordered >
               <Statistic 
               title="Total Parchase" 
-              value={TotalSales} 
+              value={TotalSales.toFixed(2)} 
               //prefix= {<PlusCircleOutlined />}
               valueStyle={{ color: "green" }} />
             </Card>
@@ -83,7 +83,7 @@ const DashboardMG = () => {
               <Statistic 
               title="Total Debts" 
               //prefix= {<StopOutlined />}
-              value={TotalDebts}
+              value={TotalDebts.toFixed(2)}
               valueStyle={{ color: "green" }} />
             </Card>
           </Col>

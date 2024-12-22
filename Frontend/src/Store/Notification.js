@@ -78,6 +78,7 @@ export const addNotification = createAsyncThunk(
   "Notification/addNotification",
   async (data, thunkAPI) => {
     try {
+      console.log(data);
       const response = await axiosInstance.post("/sendNotification", data);
       return response.data;
     } catch (error) {

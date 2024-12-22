@@ -11,12 +11,15 @@ import {
   Upload,
   Row,
   Col,
+  message
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
-import { addUser } from "../../Store/authSlice";
+import { addUsers } from "../../Store/Users";
+import { updateuserphoto } from "../../Store/UserProfile";
 import { addNotification } from "../../Store/Notification";
+
 function SignUpForm() {
   const dispatch = useDispatch();
   const [state, setState] = React.useState({
@@ -34,25 +37,32 @@ function SignUpForm() {
     setIsnewModalVisible(true);
   };
   const handleFinish = async (values) => {
-    const formData = new FormData();
     values.birth_date = values.birth_date
       ? values.birth_date.format("YYYY-MM-DD")
       : null;
+    const userData = { ...values };
 
-    Object.keys(values).forEach((key) => {
-      formData.append(key, values[key]);
-    });
-    if (file) {
-      formData.append("photo", file);
+    const result = await dispatch(addUsers(userData));
+    if (result.payload.success) {
+      message.success("User added successfully");
+      console.log(result);
+      console.log(file);
+      if (file) {
+        const photoData = {};
+        photoData.E_ID = result.payload.id;
+        photoData.photo = file;
+        dispatch(updateuserphoto(photoData));
+      }
     }
-
-    await dispatch(addUser(formData));
-    const message =
-      result.data.fName + " " + result.data.lName + " need to be approved";
+    else{
+      message.error("Error Happens");
+    }
+    const nmessage =
+      result.payload.fName + " " + result.payload.lName + " need to be approved";
     const NotificationData = {
-      n_message: message,
+      n_message: nmessage,
       n_type: "APPROVEUSER",
-      n_E_ID: result.data.id,
+      n_E_ID: result.payload.id,
     };
     await dispatch(addNotification(NotificationData));
   };

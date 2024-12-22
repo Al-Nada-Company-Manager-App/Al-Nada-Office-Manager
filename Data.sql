@@ -369,7 +369,6 @@ UPDATE ON STOCK
 FOR EACH ROW WHEN (NEW.EXPIRE_DATE IS NOT NULL
                    AND NEW.EXPIRE_DATE <= CURRENT_DATE + INTERVAL '7 days') EXECUTE FUNCTION notify_expiring_products();
 
-
 CREATE OR REPLACE FUNCTION notify_device_under_maintenance() RETURNS TRIGGER AS $$
 DECLARE
     manager_technical_ids INT[];

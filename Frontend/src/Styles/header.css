@@ -86,45 +86,41 @@ header {
 /* Notification bell */
 /* Notification Bell */
 .notification-bell {
-	font-size: 24px; /* Larger icon for better visibility */
+	font-size: 24px; /* Larger icon */
 	color: #555;
 	cursor: pointer;
-	margin:25px;
-	background: linear-gradient(145deg, #f0f0f0, #dcdcdc); /* Subtle gradient */
+	margin: 25px;
+	background: linear-gradient(145deg, #f5f5f5, #e0e0e0); /* Soft gradient */
 	border: none;
-	padding: 2px;
-	border-radius: 50%; /* Circular button */
-	box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.1), -4px -4px 8px rgba(255, 255, 255, 0.7); /* Neumorphism effect */
-	transition: all 0.3s ease-in-out; /* Smooth hover effect */
+	padding: 10px;
+	border-radius: 50%; /* Circular shape */
+	box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.1), -4px -4px 8px rgba(255, 255, 255, 0.7); /* 3D effect */
+	transition: transform 0.3s ease, background 0.3s ease;
   }
   
   .notification-bell:hover {
-	background: linear-gradient(145deg, #e6e6e6, #cccccc); /* Slightly brighter hover state */
-	color: #007bff; /* Highlighted icon color */
-	transform: scale(1.1); /* Subtle zoom on hover */
+	background: linear-gradient(145deg, #e6e6e6, #d4d4d4); /* Slight hover effect */
+	transform: scale(1.1); /* Subtle zoom */
   }
   
   .notification-bell:focus {
 	outline: none;
-	box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5); /* Focus ring for accessibility */
+	box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5); /* Accessibility */
   }
   
   /* Dropdown Menu */
   .notification-dropdown {
 	position: absolute;
-	top: calc(100% + 12px);
+	top: calc(100% + 15px);
 	right: 0;
-	background: #fff;
-	border-radius: 12px; /* Softer corners */
-	padding: 16px; /* More spacious */
+	background: #ffffff;
+	border-radius: 12px; /* Rounded corners */
+	padding: 12px;
 	z-index: 100;
-	display: none; /* Hidden by default */
-	min-width: 280px; /* Ensures proper size for contents */
-	box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1); /* Elegant shadow */
-	animation: dropdownFadeIn 0.4s ease-out; /* Smooth fade-in effect */
-	font-family: 'Poppins', sans-serif; /* Modern font */
-	font-size: 14px;
-	color: #333;
+	display: none; /* Initially hidden */
+	min-width: 300px; /* Spacious for notifications */
+	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* Clean shadow */
+	animation: dropdownFadeIn 0.3s ease-out;
   }
   
   /* Show Dropdown */
@@ -136,7 +132,7 @@ header {
   @keyframes dropdownFadeIn {
 	from {
 	  opacity: 0;
-	  transform: translateY(-15px);
+	  transform: translateY(-10px);
 	}
 	to {
 	  opacity: 1;
@@ -149,53 +145,75 @@ header {
 	content: '';
 	position: absolute;
 	top: -10px;
-	right: 20px; /* Adjust to align with dropdown */
+	right: 20px; /* Align with dropdown */
 	border-width: 10px;
 	border-style: solid;
-	border-color: transparent transparent #fff transparent;
-	z-index: 101;
+	border-color: transparent transparent #ffffff transparent;
   }
   
   /* Notification Item */
   .notification-item {
 	display: flex;
 	align-items: center;
-	gap: 12px; /* Space between icon and text */
-	padding: 12px;
-	border-radius: 8px; /* Rounded corners */
-	background: linear-gradient(145deg, #f9f9f9, #e8e8e8); /* Soft background */
-	box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.05), -2px -2px 6px rgba(255, 255, 255, 0.8); /* Neumorphism */
-	transition: background 0.4s ease, box-shadow 0.3s ease;
+	padding: 10px 14px;
+	border-radius: 8px;
+	background-color: #f9f9f9; /* Neutral background */
+	margin-bottom: 8px; /* Space between notifications */
+	transition: background 0.3s ease, transform 0.2s ease;
   }
   
   .notification-item:hover {
-	background: linear-gradient(145deg, #e0e0e0, #f0f0f0); /* Slight hover effect */
-	box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.1), -4px -4px 10px rgba(255, 255, 255, 0.7); /* Enhanced shadow */
+	background-color: #f1f1f1;
+	transform: translateY(-2px); /* Hover lift */
   }
   
+  /* Notification Icon */
   .notification-item-icon {
 	font-size: 20px;
-	color: #007bff; /* Standout icon color */
+	color: #007bff; /* Highlighted icon color */
+	margin-right: 10px;
   }
   
+  /* Notification Text */
   .notification-item-text {
 	flex-grow: 1;
-	color: #444;
+	color: #333; /* Darker text for readability */
+	font-size: 14px;
+	line-height: 1.4;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
   }
   
-  /* Mobile-Friendly Adjustments */
+  /* Show More Button */
+  .show-more-btn {
+	display: block;
+	text-align: center;
+	background: none;
+	border: none;
+	color: #007bff; /* Accent color */
+	font-size: 14px;
+	cursor: pointer;
+	padding: 10px;
+  }
+  
+  .show-more-btn:hover {
+	text-decoration: underline;
+  }
+  
+  /* Mobile Adjustments */
   @media (max-width: 600px) {
-	.notification-bell {
-	  font-size: 20px;
+	.notification-dropdown {
+	  min-width: 250px;
 	  padding: 10px;
 	}
   
-	.notification-dropdown {
-	  min-width: 220px;
-	  padding: 12px;
+	.notification-item {
+	  padding: 8px;
+	}
+  
+	.notification-item-text {
+	  font-size: 13px;
 	}
   }
   
@@ -244,7 +262,7 @@ header {
 	display: block;
 	background: linear-gradient(145deg, #fafafa, #eaeaea); /* Subtle gradient for depth */
 	font-family: 'Poppins', sans-serif; /* Modern font */
-	font-size: 16px; /* Comfortable reading size */
+	font-size: 12px; /* Comfortable reading size */
 	border-radius: 8px; /* Smooth corners */
 	box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.05), -2px -2px 6px rgba(255, 255, 255, 0.7); /* Neumorphic effect */
 	transition: all 0.3s ease; /* Smooth transitions */

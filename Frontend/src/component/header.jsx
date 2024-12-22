@@ -34,10 +34,16 @@ function THeader() {
   const [showNotificationDropdown, setShowNotificationDropdown] =
     useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(5);
   const dispatch = useDispatch();
 
   const handletoggleCollapsed = () => {
     dispatch(toggleCollapsed());
+  };
+  const handleShowMore = () => {
+    setVisibleCount((prevCount) =>
+      Math.min(prevCount + 5, NotificationData.length)
+    );
   };
 
   const {
@@ -97,7 +103,7 @@ function THeader() {
       {/* Navigation Bar */}
       <div className="header-right">
         {/* Search Bar */}
-        <div className="box">
+        {/* <div className="box">
           <form name="search" className="d-flex">
             <input
               type="text"
@@ -108,7 +114,7 @@ function THeader() {
             />
             <FontAwesomeIcon icon={faSearch} className="search-icon" />
           </form>
-        </div>
+        </div> */}
 
         {/* Notification Bell */}
         <div style={{ position: "relative" }}>
@@ -125,15 +131,28 @@ function THeader() {
               style={{ position: "absolute", top: "100%" }}
             >
               {NotificationData.length > 0 ? (
-                NotificationData.map((notification, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handleNotification(notification)}
-                    className="dropdown-item"
-                  >
-                    {notification.n_message}
-                  </button>
-                ))
+                <>
+                  {NotificationData.slice(0, visibleCount).map(
+                    (notification, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handleNotification(notification)}
+                        className="dropdown-item"
+                      >
+                        {notification.n_message}
+                      </button>
+                    )
+                  )}
+                  {visibleCount < NotificationData.length && (
+                    <button
+                      onClick={handleShowMore}
+                      className="dropdown-item show-more-btn"
+                      style={{ textAlign: "center", color: "blue" }}
+                    >
+                      Show More
+                    </button>
+                  )}
+                </>
               ) : (
                 <button className="dropdown-item">No new notifications</button>
               )}
@@ -145,7 +164,8 @@ function THeader() {
         <div className="user-profile">
           <img
             src={
-              (SignedUser && SignedUser.Photo)? "./Users/" + SignedUser.Photo
+              SignedUser && SignedUser.Photo
+                ? "./Users/" + SignedUser.Photo
                 : "https://via.placeholder.com/150"
             }
             alt="User"
@@ -182,7 +202,5 @@ function THeader() {
     </Header>
   );
 }
-
-
 
 export default THeader;
