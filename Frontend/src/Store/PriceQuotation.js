@@ -14,7 +14,6 @@ export const fetchPriceQuotations = createAsyncThunk(
 );
 export const deletePriceQuotation = createAsyncThunk("priceQuotations/deletepq", async (id) => {
   try {
-    console.log("Deleting Price Quotation with ID:", id);
     const response = await axiosInstance.post("/deletepq", { id });
     return response.data;
   } catch (error) {

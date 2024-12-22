@@ -53,7 +53,6 @@ const AddnewUnderMaintenance = ({ handleFinish }) => {
           layout="horizontal"
           //className="employee-form"
           onFinish={(values) => {
-            console.log(values);
             if (handleFinish(values)) {
               handlenewModalClose();
             }

@@ -17,7 +17,6 @@ export const updateuserphoto = createAsyncThunk(
     "UserProfile/updateuserphoto",
     async (photo, { rejectWithValue }) => {
         try {
-            console.log(photo);
             const response = await axiosInstance.post("/updateuserphoto", photo
                 ,{
                     headers: {

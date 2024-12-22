@@ -47,7 +47,6 @@ const UpdateProduct = () => {
     Object.entries(values).forEach(
       ([key, value]) => (productData[key] = value)
     );
-    console.log(productData);
     await dispatch(updateProduct(productData));
     if (file) {
       const photoData = {};

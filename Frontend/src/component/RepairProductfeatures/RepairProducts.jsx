@@ -1,13 +1,14 @@
 
 import { useEffect, useState, useRef } from "react";
-import {Table, Space, Button, Input, message} from "antd";
+import {Table, Space, Button, Input, message, Modal} from "antd";
 import AddRepairProcess from "./AddRepairProcess";
 import axios from "axios";
 import Highlighter from 'react-highlight-words';
-import { SearchOutlined } from '@ant-design/icons';
+import { SearchOutlined, DeleteOutlined } from '@ant-design/icons';
 import RepairDetails from './RepairDetails';
 import AddnewUnderMaintenance from './AddnewUnderMaintenance';
 import { useDispatch, useSelector } from "react-redux";
+import { convertTimestampToDate } from "../../Utils/convertTimestampToDate";
 
 const RepairProducts = () => {
   
@@ -17,7 +18,18 @@ const RepairProducts = () => {
   const [loading, setLoading] = useState(false);
   const [selectedRepair, setSelectedRepair] = useState(null);
   const [detailRepairModalVisible, setdetailRepairModalVisible] = useState(false);
+  const [selectedDUM, setselectedDUM] = useState([]);
+  const [isDUM, setisDUM] = useState(false);
   const { userAccess } = useSelector((state) => state.auth);
+
+  const handleisDUMClick = (record) => {
+    setselectedDUM(record);
+    setisDUM(true);
+  };
+  const handleisDUMClose = () => {
+    setisDUM(false);
+    setselectedDUM(null);
+  };
 
       // search for spacific element
     const [searchText, setSearchText] = useState('');
@@ -255,6 +267,23 @@ const RepairProducts = () => {
       }
     };
 
+    const handleDelete = async () => {
+      try {
+        await axios.post("http://localhost:4000/DeleteProduct", {id : selectedDUM.p_id});
+        message.success("Device Under Maintenance Deleted!");
+        const updateddevice = devices.filter(
+          (device) => device.p_id !== selectedDUM.p_id
+        );
+        setDevices(updateddevice); 
+        console.log(updateddevice);
+        fetchAllDUM(); 
+        fetchDevices();
+        handleisDUMClose();
+      } catch (error) {
+        message.error("Failed to delete device under maintenance.");
+      }
+    };
+
 
     const handleRowClick = (record) => {
     setSelectedRepair(record);
@@ -318,6 +347,12 @@ const RepairProducts = () => {
       title: "Repair Date",
       dataIndex: "rep_date",
       key: "rep_date",
+      sorter: (a, b) => new Date(a.sl_date) - new Date(b.sl_date),
+      sortDirections: ["descend", "ascend"],
+      render: (date) => {
+        const formattedDate = convertTimestampToDate(date);
+        return <span>{formattedDate}</span>;
+      }
     },
     {
       title: "Serial Number",
@@ -401,6 +436,10 @@ const RepairProducts = () => {
                showSorterTooltip={{
                  target: 'sorter-icon',
                }}
+               rowKey={"p_id"} // Ensure rows have unique keys
+               onRow={(record) => ({
+                 onClick: () => handleisDUMClick(record),
+               })}
                columns={DUMColumns}
                pagination={{ pageSize: 5 }}
              />
@@ -408,6 +447,35 @@ const RepairProducts = () => {
 
          </div>
 
+         {selectedDUM && (
+            <Modal
+            title="Device Under Maintenance"
+            centered
+            open={isDUM}
+            onCancel={handleisDUMClose}
+            footer={[
+              <Button key="close" onClick={handleisDUMClose}>
+                  Close
+              </Button>,
+            ]}
+            width={800} 
+            >
+            {selectedDUM && (
+            <Space direction="vertical" style={{ width: "100%" }}>
+         
+                <Button style={{ width: "100%"
+                    }}
+                      key="deleteDUM"  type="primary"
+                      onClick={handleDelete}
+                      icon={<DeleteOutlined />} iconPosition='start' danger >
+                          Delete Device Under Maintenance
+            </Button>
+            </Space>
+              
+            )}
+          </Modal>
+          
+      )}
 
         <RepairDetails
         selectedRepair= {selectedRepair}

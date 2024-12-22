@@ -41,7 +41,6 @@ const AddnewUser = () => {
     const userData = { ...values };
 
     const response = await dispatch(addUsers(userData));
-    console.log(response);
     if (response.payload.success) {
       if (file) {
         const photoData = {};

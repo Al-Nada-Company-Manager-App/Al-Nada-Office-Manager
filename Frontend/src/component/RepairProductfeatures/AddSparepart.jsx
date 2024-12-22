@@ -11,13 +11,11 @@ const AddSparepart = ({ visible, rep_id, onClose, fetchAllDUM , fetchSpareParts,
   const [quantity, setQuantity] = useState(1); 
   const [loading, setLoading] = useState(false); 
 
-  console.log(rep_id);
   
   // Fetch available spare parts
   const fetchavailableSpareParts = async () => {
     try {
       const response = await axios.get(`http://localhost:4000/availableSpareParts?rep_id=${rep_id}`);
-      console.log(response.data);
       setSpareParts(response.data);
     } catch (error) {
       console.error('Error fetching spare parts:', error);
@@ -40,12 +38,10 @@ const AddSparepart = ({ visible, rep_id, onClose, fetchAllDUM , fetchSpareParts,
     try {
       setLoading(true);
       
-      console.log(selectedSparePart);
 
       const stockResponse = await axios.get(`http://localhost:4000/checkSparePartStock/${selectedSparePart}`);
       const availableStock = stockResponse.data.stock;
 
-      //console.log(availableStock);
       if (availableStock < quantity) {
         message.error(`Not enough stock. Available: ${availableStock}`);
         setLoading(false);
@@ -67,8 +63,6 @@ const AddSparepart = ({ visible, rep_id, onClose, fetchAllDUM , fetchSpareParts,
 
       const newSparePart = spareParts.find(sp => sp.p_id === selectedSparePart);
 
-      console.log("new Spare Part:",newSparePart);
-
       const updatedTableData = [
         ...tablespareParts,
         {
@@ -80,15 +74,11 @@ const AddSparepart = ({ visible, rep_id, onClose, fetchAllDUM , fetchSpareParts,
         },
       ];
 
-      console.log("Updated data Table", updatedTableData);
       setUpdatedSpareParts(updatedTableData);
-      console.log("ffffffffffffffffffffffffffffffffffff");
 
       message.success('Spare part added successfully.');
       fetchAllDUM(); 
-      console.log("Refreshing data");
       fetchSpareParts();
-      console.log("Fetching spare parts");
       onClose(); 
     } catch (error) {
       console.error('Error adding spare part:', error);

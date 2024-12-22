@@ -57,7 +57,6 @@ function SignUpForm() {
     await dispatch(addNotification(NotificationData));
   };
   const handleUploadChange = (info) => {
-    console.log(info.fileList);
     if (info.fileList.length > 0) {
       const filee = info.fileList[0].originFileObj;
       setFile(filee);

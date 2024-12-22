@@ -13,7 +13,6 @@ const SupplierProductChart = () => {
                 value: item.productcount,
             }));
             setData(formattedData);
-            console.log(formattedData);
         }
         fetchData();
     }, []);

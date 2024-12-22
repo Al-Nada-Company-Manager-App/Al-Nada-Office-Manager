@@ -25,7 +25,6 @@ const UpdateSupplierModal = () => {
   };
   const handleUpdateSupplier = async (values) => {
     const SupplierData = {};
-    console.log(selectedSupplier);
     SupplierData.S_ID = selectedSupplier.s_id;
 
     Object.entries(values).forEach(

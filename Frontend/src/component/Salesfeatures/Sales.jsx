@@ -14,11 +14,11 @@ import {
   setSelectedSale,
   setSaleModalVisible,
   setaddSaleModalVisible,
+  fetchProductsinSale,
 } from "../../Store/Sales";
 import { PlusOutlined } from "@ant-design/icons";
 import {convertTimestampToDate} from '../../utils/ConvertDate';
-
-
+import {addtodum,clearaddedDum} from "../../Store/Sales";
 
 
 const Sales = () => {
@@ -146,7 +146,8 @@ const Sales = () => {
     dispatch(fetchSales());
   }, []);
 
-  const handleRowClick = (record) => {
+  const handleRowClick = async(record) => {
+    await dispatch(fetchProductsinSale({ saleId: record.sl_id , saleType: record.sl_type }));
     dispatch(setSelectedSale(record));
     dispatch(setSaleModalVisible(true));
   };
@@ -213,6 +214,10 @@ const Sales = () => {
       onFilter: (value, record) => record.sl_currency.indexOf(value) === 0,
     },
     {
+        title: "Type",
+        dataIndex: "sl_type",
+    },
+    {
       title: "Status",
       dataIndex: "sl_status",
       filters: [
@@ -244,7 +249,10 @@ const Sales = () => {
       },
     },
   ];
-  const openSaleModal = () => dispatch(setaddSaleModalVisible(true));
+  const openSaleModal = () => {
+    dispatch(setaddSaleModalVisible(true));
+    dispatch(clearaddedDum());
+  }
 
   return (
     <>

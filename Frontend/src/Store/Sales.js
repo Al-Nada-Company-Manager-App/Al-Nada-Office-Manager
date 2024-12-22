@@ -27,22 +27,32 @@ export const addSale = createAsyncThunk("Sales/addSale", async (values) => {
 });
 export const updateSale = createAsyncThunk("Sales/updateSale", async (values) => {
   try {
-    console.log(values);
     const response = await axiosInstance.post("/updateSale", values);
     return response.data;
   } catch (error) {
     console.error("Error updating sale:", error);
   }
 });
+export const fetchProductsinSale = createAsyncThunk("Sales/fetchProductsinSale", async (data) => {
+  try {
+    const response = await axiosInstance.post("/fetchProductsinSale", data );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching products in sale:", error);
+  }
+}
+);
 
 // Initial state
 const initialState = {
   selectedSale: null,
   updateSale: null,
+  productSaleData: [],
   SaleModalVisible: false,
   addSaleModalVisible: false,
   selectedSalesModalVisible: false,
   updateSaleModalVisible: false,
+  addedDum: {},
   salesData: [],
   saleType: "",
   Total: 0,
@@ -74,6 +84,16 @@ const saleSlice = createSlice({
     },
     updateSale: (state, action) => {
       state.updateSale = action.payload;
+    },
+    addtodum: (state, action) => {
+      state.addedDum = { 
+        ...state.addedDum, 
+        [action.payload]: action.payload 
+      };
+    },
+    
+    clearaddedDum: (state) => {
+      state.addedDum = {};
     }
 
 
@@ -93,9 +113,14 @@ const saleSlice = createSlice({
       builder
       .addCase(deleteSale.fulfilled, (state) => {
         state.salesLoading = false;
-      })
+      });
+      builder
+      .addCase(fetchProductsinSale.fulfilled, (state, action) => {
+        state.productSaleData = action.payload;
+      });
+      
   },
 });
 
-export const { setupdateSaleModalVisible,setselectedSalesModalVisible,setSaleType,setaddSaleModalVisible,setSelectedProducts,setSelectedCustomer,setSelectedSale, setSaleModalVisible } = saleSlice.actions;
+export const { addtodum,clearaddedDum,setupdateSaleModalVisible,setselectedSalesModalVisible,setSaleType,setaddSaleModalVisible,setSelectedProducts,setSelectedCustomer,setSelectedSale, setSaleModalVisible } = saleSlice.actions;
 export default saleSlice.reducer;

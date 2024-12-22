@@ -53,7 +53,6 @@ const UserProfile = () => {
     form.setFieldsValue(formData); // Update form fields when formData changes
   }, [formData, form]);
   const handleUpdate = async () => {
-    console.log(formData);
     await dispatch(updateUserProfile(formData))
       .then(() => {
         message.success("User information updated successfully!");

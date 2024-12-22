@@ -9,8 +9,11 @@ import {
   DatePicker,
   InputNumber,
   Select,
+  message,
 } from "antd";
+import axios from "axios";
 import { PlusOutlined } from "@ant-design/icons";
+import {addtodum,clearaddedDum} from "../../Store/Sales";
 import CustomerModal from "./CustomerModal";
 import ProductModal from "./ProductModal";
 import { useSelector, useDispatch } from "react-redux";
@@ -39,6 +42,7 @@ const AddNewSale = () => {
   const { saleType, addSaleModalVisible } = useSelector((state) => state.Sales);
   const { selectedCustomer } = useSelector((state) => state.Customers);
   const { selectedProducts } = useSelector((state) => state.Products);
+  const { addedDum } = useSelector((state) => state.Sales);
   const [cost, setCost] = useState(0);
   const [discount, setDiscount] = useState(0);
   const [tax, setTax] = useState(0);
@@ -65,6 +69,7 @@ const AddNewSale = () => {
     dispatch(setSelectedCustomer(null));
     dispatch(setSelectedProduct([]));
     dispatch(setSaleType(""));
+    dispatch(clearaddedDum());
     setCost(0);
     setDiscount(0);
     setTax(0);
@@ -106,12 +111,17 @@ const AddNewSale = () => {
   }, [selectedProducts]);
 
   const handleSaleFinish = async (values) => {
-    const saleData = {
+    let saleData = {
       ...values,
       customer: selectedCustomer,
       products: selectedProducts,
       total: total,
+      addedDum: null,
     };
+    if(values.saleType === "REPAIR"){
+      saleData = {...saleData, addedDum: addedDum}
+    }
+
     await dispatch(addSale(saleData));
     dispatch(fetchSales());
     closeSaleModal();
@@ -119,7 +129,6 @@ const AddNewSale = () => {
 
   const handleaddDum = async (values) => {
     try {
-      console.log("DUM data:", values);
 
       const payload = {
         serialnumber: values.serialnumber,
@@ -128,7 +137,6 @@ const AddNewSale = () => {
         maintenanceStatus: values.maintenanceStatus,
       };
 
-      console.log("Constructed payload:", payload);
 
       const response = await axios.post(
         "http://localhost:4000/AddDUM",
@@ -136,18 +144,15 @@ const AddNewSale = () => {
       );
 
       if (response.data.success) {
-        console.log("Device Under Maintenance added successfully");
+        message.success("Device Under Maintenance Added Successfully!");
+        dispatch(addtodum(response.data.id));
       } else {
-        console.error(
-          "Error while adding Device Under Maintenance:",
-          response.data.message
-        );
+        message.error("Error while adding Device Under Maintenance!", response.data.message);
       }
 
       return true;
     } catch (error) {
       console.error("Error in handleDeviceUnderMaintenace:", error.message);
-      console.log("errrrrror");
       return false;
     }
   };
