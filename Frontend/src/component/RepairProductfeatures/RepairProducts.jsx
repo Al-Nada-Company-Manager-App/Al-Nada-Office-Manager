@@ -1,157 +1,165 @@
+
 import { useEffect, useState, useRef } from "react";
-import { Table, Space, Button, Input, message } from "antd";
+import {Table, Space, Button, Input, message, Modal} from "antd";
 import AddRepairProcess from "./AddRepairProcess";
 import axios from "axios";
-import Highlighter from "react-highlight-words";
-import { SearchOutlined } from "@ant-design/icons";
-import RepairDetails from "./RepairDetails";
-import AddnewUnderMaintenance from "./AddnewUnderMaintenance";
+import Highlighter from 'react-highlight-words';
+import { SearchOutlined, DeleteOutlined } from '@ant-design/icons';
+import RepairDetails from './RepairDetails';
+import AddnewUnderMaintenance from './AddnewUnderMaintenance';
 import { useDispatch, useSelector } from "react-redux";
+import { convertTimestampToDate } from "../../Utils/convertTimestampToDate";
 
 const RepairProducts = () => {
+  
   const [repairProcesses, setRepairProcesses] = useState([]);
   const [devices, setDevices] = useState([]); // Devices under maintenance
   const [spareParts, setSpareParts] = useState([]); // Available spare parts
   const [loading, setLoading] = useState(false);
   const [selectedRepair, setSelectedRepair] = useState(null);
-  const [detailRepairModalVisible, setdetailRepairModalVisible] =
-    useState(false);
+  const [detailRepairModalVisible, setdetailRepairModalVisible] = useState(false);
+  const [selectedDUM, setselectedDUM] = useState([]);
+  const [isDUM, setisDUM] = useState(false);
   const { userAccess } = useSelector((state) => state.auth);
 
-  // search for spacific element
-  const [searchText, setSearchText] = useState("");
-  const [searchedColumn, setSearchedColumn] = useState("");
-  const searchInput = useRef(null);
-  const handleSearch = (selectedKeys, confirm, dataIndex) => {
-    confirm();
-    setSearchText(selectedKeys[0]);
-    setSearchedColumn(dataIndex);
+  const handleisDUMClick = (record) => {
+    setselectedDUM(record);
+    setisDUM(true);
   };
-  const handleReset = (clearFilters) => {
-    clearFilters();
-    setSearchText("");
+  const handleisDUMClose = () => {
+    setisDUM(false);
+    setselectedDUM(null);
   };
-  const getColumnSearchProps = (dataIndex) => ({
-    filterDropdown: ({
-      setSelectedKeys,
-      selectedKeys,
-      confirm,
-      clearFilters,
-      close,
-    }) => (
-      <div
-        style={{
-          padding: 8,
-        }}
-        onKeyDown={(e) => e.stopPropagation()}
-      >
-        <Input
-          ref={searchInput}
-          placeholder={`Search ${dataIndex}`}
-          value={selectedKeys[0]}
-          onChange={(e) =>
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
-          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
-          style={{
-            marginBottom: 8,
-            display: "block",
-          }}
-        />
-        <Space>
-          <Button
-            type="primary"
-            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-            icon={<SearchOutlined />}
-            size="small"
-            style={{
-              width: 90,
-            }}
-          >
-            Search
-          </Button>
-          <Button
-            onClick={() => clearFilters && handleReset(clearFilters)}
-            size="small"
-            style={{
-              width: 90,
-            }}
-          >
-            Reset
-          </Button>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              confirm({
-                closeDropdown: false,
-              });
-              setSearchText(selectedKeys[0]);
-              setSearchedColumn(dataIndex);
-            }}
-          >
-            Filter
-          </Button>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              close();
-            }}
-          >
-            close
-          </Button>
-        </Space>
-      </div>
-    ),
-    filterIcon: (filtered) => (
-      <SearchOutlined
-        style={{
-          color: filtered ? "#1677ff" : undefined,
-        }}
-      />
-    ),
-    onFilter: (value, record) =>
-      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
-    filterDropdownProps: {
-      onOpenChange(open) {
-        if (open) {
-          setTimeout(() => searchInput.current?.select(), 100);
-        }
-      },
-    },
-    render: (text) =>
-      searchedColumn === dataIndex ? (
-        <Highlighter
-          highlightStyle={{
-            backgroundColor: "#ffc069",
-            padding: 0,
-          }}
-          searchWords={[searchText]}
-          autoEscape
-          textToHighlight={text ? text.toString() : ""}
-        />
-      ) : (
-        text
-      ),
-  });
-  //   end search handle
 
+      // search for spacific element
+    const [searchText, setSearchText] = useState('');
+    const [searchedColumn, setSearchedColumn] = useState('');
+    const searchInput = useRef(null);
+    const handleSearch = (selectedKeys, confirm, dataIndex) => {
+        confirm();
+        setSearchText(selectedKeys[0]);
+        setSearchedColumn(dataIndex);
+      };
+      const handleReset = (clearFilters) => {
+        clearFilters();
+        setSearchText('');
+      };
+      const getColumnSearchProps = (dataIndex) => ({
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
+          <div
+            style={{
+              padding: 8,
+            }}
+            onKeyDown={(e) => e.stopPropagation()}
+          >
+            <Input
+              ref={searchInput}
+              placeholder={`Search ${dataIndex}`}
+              value={selectedKeys[0]}
+              onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+              onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+              style={{
+                marginBottom: 8,
+                display: 'block',
+              }}
+            />
+            <Space>
+              <Button
+                type="primary"
+                onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                icon={<SearchOutlined />}
+                size="small"
+                style={{
+                  width: 90,
+                }}
+              >
+                Search
+              </Button>
+              <Button
+                onClick={() => clearFilters && handleReset(clearFilters)}
+                size="small"
+                style={{
+                  width: 90,
+                }}
+              >
+                Reset
+              </Button>
+              <Button
+                type="link"
+                size="small"
+                onClick={() => {
+                  confirm({
+                    closeDropdown: false,
+                  });
+                  setSearchText(selectedKeys[0]);
+                  setSearchedColumn(dataIndex);
+                }}
+              >
+                Filter
+              </Button>
+              <Button
+                type="link"
+                size="small"
+                onClick={() => {
+                  close();
+                }}
+              >
+                close
+              </Button>
+            </Space>
+          </div>
+        ),
+        filterIcon: (filtered) => (
+          <SearchOutlined
+            style={{
+              color: filtered ? '#1677ff' : undefined,
+            }}
+          />
+        ),
+        onFilter: (value, record) =>
+          record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+        filterDropdownProps: {
+          onOpenChange(open) {
+            if (open) {
+              setTimeout(() => searchInput.current?.select(), 100);
+            }
+          },
+        },
+        render: (text) =>
+          searchedColumn === dataIndex ? (
+            <Highlighter
+              highlightStyle={{
+                backgroundColor: '#ffc069',
+                padding: 0,
+              }}
+              searchWords={[searchText]}
+              autoEscape
+              textToHighlight={text ? text.toString() : ''}
+            />
+          ) : (
+            text
+          ),
+      });
+    //   end search handle
+  
   // Fetch data for repair processes table
   const fetchAllDUM = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(
-        "http://localhost:4000/AllRepairProcess"
-      );
+      const response = await axios.get("http://localhost:4000/AllRepairProcess");
+      console.log("fetch all data");
       setRepairProcesses(response.data);
-      return response.data;
+      console.log(response.data);
+      return (response.data);
     } catch (error) {
       console.error("Error fetching repair processes:", error.message);
+      console.log("error fetch data");
     } finally {
-      setLoading(false);
-    }
+              setLoading(false);
+          }
   };
+
+
 
   // Fetch devices
   const fetchDevices = async () => {
@@ -166,96 +174,122 @@ const RepairProducts = () => {
   // Fetch spare parts
   const fetchSpareParts = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:4000/api/AllSpareParts"
-      );
+      const response = await axios.get("http://localhost:4000/api/AllSpareParts");
       setSpareParts(response.data);
     } catch (error) {
       console.error("Failed to fetch spare parts:", error.message);
     }
   };
 
+
   const handleAddRepairProcess = async (values) => {
     try {
+
+      console.log("Form values received:", values);
+
       const payload = {
-        p_id: values.p_id,
+        p_id: values.p_id, 
         remarks: values.remarks,
         rep_date: values.rep_date,
         spare_parts: values.spare_parts,
       };
+  
 
-      const response = await axios.post(
-        "http://localhost:4000/AddRepairProcess",
-        payload
-      );
+      console.log("Constructed payload:", payload);
+  
 
+      const response = await axios.post("http://localhost:4000/AddRepairProcess", payload);
+  
       if (response.data.success) {
+        console.log("Repair process added successfully");
+
         fetchAllDUM();
       } else {
-        console.error(
-          "Error while adding repair process:",
-          response.data.message
-        );
+        console.error("Error while adding repair process:", response.data.message);
       }
-
+  
       return true;
     } catch (error) {
       console.error("Error in handleAddRepairProcess:", error.message);
+      console.log("errrrrror");
       return false;
     }
   };
+  
 
   const deleteRepairProcess = async (repId) => {
     try {
-      const response = await axios.delete(
-        `http://localhost:4000/api/repair/${repId}`
-      );
+      const response = await axios.delete(`http://localhost:4000/api/repair/${repId}`);
 
       if (response.status === 200) {
-        message.success("Repair process deleted successfully!");
+        message.success('Repair process deleted successfully!');
         fetchAllDUM();
       }
     } catch (error) {
-      console.error("Error deleting repair process:", error);
-      message.error("Failed to delete repair process.");
+      console.error('Error deleting repair process:', error);
+      message.error('Failed to delete repair process.');
     }
   };
 
-  const handleFinish = async (values) => {
-    try {
-      const payload = {
-        serialnumber: values.serialnumber,
-        productname: values.productname,
-        //category: values.category,
-        maintenanceStatus: values.maintenanceStatus,
-      };
+    const handleFinish = async(values) => {
+      try {
 
-      const response = await axios.post(
-        "http://localhost:4000/AddDUM",
-        payload
-      );
+        console.log("DUM data:", values);
+  
+        const payload = {
+          serialnumber: values.serialnumber,
+          productname: values.productname,
+          //category: values.category,
+          maintenanceStatus: values.maintenanceStatus,
+        };
+    
+  
+        console.log("Constructed payload:", payload);
+    
+  
+        const response = await axios.post("http://localhost:4000/AddDUM", payload);
+    
+        console.log(response.data);
+        if (response.data.success) {
+          console.log("Device Under Maintenance added successfully");
+  
+          fetchAllDUM();
+          fetchDevices();
+        } else {
+          console.error("Error while adding Device Under Maintenance:", response.data.message);
+        }
+    
+        return true;
+      } catch (error) {
+        console.error("Error in handleDeviceUnderMaintenace:", error.message);
+        console.log("errrrrror");
+        return false;
+      }
+    };
 
-      if (response.data.success) {
-        fetchAllDUM();
-        fetchDevices();
-      } else {
-        console.error(
-          "Error while adding Device Under Maintenance:",
-          response.data.message
+    const handleDelete = async () => {
+      try {
+        await axios.post("http://localhost:4000/DeleteProduct", {id : selectedDUM.p_id});
+        message.success("Device Under Maintenance Deleted!");
+        const updateddevice = devices.filter(
+          (device) => device.p_id !== selectedDUM.p_id
         );
+        setDevices(updateddevice); 
+        console.log(updateddevice);
+        fetchAllDUM(); 
+        fetchDevices();
+        handleisDUMClose();
+      } catch (error) {
+        message.error("Failed to delete device under maintenance.");
       }
+    };
 
-      return true;
-    } catch (error) {
-      console.error("Error in handleDeviceUnderMaintenace:", error.message);
-      return false;
-    }
-  };
 
-  const handleRowClick = (record) => {
+    const handleRowClick = (record) => {
     setSelectedRepair(record);
     setdetailRepairModalVisible(true);
-  };
+    console.log(selectedRepair);
+    };
 
   useEffect(() => {
     fetchAllDUM();
@@ -263,24 +297,25 @@ const RepairProducts = () => {
     fetchSpareParts();
   }, []);
 
+
   const DUMColumns = [
-    {
-      title: "Product Name",
-      dataIndex: "p_name",
-      key: "p_name",
-      ...getColumnSearchProps("p_name"),
-    },
     {
       title: "Serial Number",
       dataIndex: "serial_number",
       key: "serial_number",
-      ...getColumnSearchProps("serial_number"),
+      ...getColumnSearchProps('serial_number'),
+    },
+    {
+      title: "Product Name",
+      dataIndex: "p_name",
+      key: "p_name",
+      ...getColumnSearchProps('p_name'),
     },
     {
       title: "Status",
       dataIndex: "p_status",
       key: "p_status",
-      ...getColumnSearchProps("p_status"),
+      ...getColumnSearchProps('p_status'),
       render: (status) => {
         let color;
         switch (status) {
@@ -294,11 +329,12 @@ const RepairProducts = () => {
             color = "gray";
             break;
           default:
-            color = "black";
+            color = "black"; 
         }
         return <span style={{ color }}>{status}</span>;
       },
     },
+    
   ];
 
   const columns = [
@@ -311,12 +347,18 @@ const RepairProducts = () => {
       title: "Repair Date",
       dataIndex: "rep_date",
       key: "rep_date",
+      sorter: (a, b) => new Date(a.sl_date) - new Date(b.sl_date),
+      sortDirections: ["descend", "ascend"],
+      render: (date) => {
+        const formattedDate = convertTimestampToDate(date);
+        return <span>{formattedDate}</span>;
+      }
     },
     {
       title: "Serial Number",
       dataIndex: "serial_number",
       key: "serial_number",
-      ...getColumnSearchProps("serial_number"),
+      ...getColumnSearchProps('serial_number'),
     },
     {
       title: "Product Name",
@@ -328,12 +370,7 @@ const RepairProducts = () => {
       dataIndex: "p_status",
       key: "p_status",
       render: (status) => {
-        let color =
-          status === "Completed"
-            ? "green"
-            : status === "Pending"
-            ? "gray"
-            : "blue";
+        let color = status === "Completed" ? "green" : status === "Pending" ? "gray" : "blue";
         return <span style={{ color }}>{status}</span>;
       },
     },
@@ -345,13 +382,9 @@ const RepairProducts = () => {
         if (!spareParts || spareParts.length === 0) {
           return "No spare parts used"; // Handle null or empty array
         }
-
-        // Slice the array to show only the first 5 items
-        const limitedSpareParts = spareParts.slice(0, 5);
-
         return (
           <ul>
-            {limitedSpareParts.map((sp, index) => (
+            {spareParts.map((sp, index) => (
               <li key={index}>
                 {sp.sp_name} (Quantity: {sp.sp_quantity})
               </li>
@@ -364,63 +397,95 @@ const RepairProducts = () => {
 
   return (
     <div>
-      <h2 style={{ textAlign: "left", fontWeight: "500" }}>Repair Process</h2>
+      <h2 style = {{textAlign: "left", fontWeight: "500"}}>Repair Process</h2>
 
-      {userAccess.repaire_add && (
-        <AddRepairProcess
-          handleFinish={handleAddRepairProcess}
-          devices={devices}
-          spareParts={spareParts}
-          fetchSpareParts={fetchSpareParts}
-          fetchDevices={fetchDevices}
-        />
+      {userAccess.repaire_add && (<AddRepairProcess
+        handleFinish={handleAddRepairProcess}
+        devices={devices}
+        spareParts={spareParts}
+        fetchSpareParts={fetchSpareParts}
+        fetchDevices={fetchDevices}
+      />)}
+
+
+         <div className = "table-container">
+             <Table
+               dataSource={repairProcesses}
+               showSorterTooltip={{
+                 target: 'sorter-icon',
+               }}
+               rowKey={(record) => `${record.rep_id}-${record.sp_id}`} // Ensure rows have unique keys
+               onRow={(record) => ({
+                 onClick: () => handleRowClick(record),
+               })}
+               columns={columns}
+               loading={loading}
+               pagination={{ pageSize: 5 }}
+             />
+         </div>
+
+              <div className="div" style={{position: "relative"}}>
+           <h2 style = {{textAlign: "left", fontWeight: "500"}}>Device Under Maintenance</h2>
+           {userAccess.repaire_add && (<AddnewUnderMaintenance 
+              handleFinish= {handleFinish}
+             />)}
+
+         <div className = "table-container" style={{}}>
+             <Table
+               dataSource={devices}
+               showSorterTooltip={{
+                 target: 'sorter-icon',
+               }}
+               rowKey={"p_id"} // Ensure rows have unique keys
+               onRow={(record) => ({
+                 onClick: () => handleisDUMClick(record),
+               })}
+               columns={DUMColumns}
+               pagination={{ pageSize: 5 }}
+             />
+         </div>
+
+         </div>
+
+         {selectedDUM && (
+            <Modal
+            title="Device Under Maintenance"
+            centered
+            open={isDUM}
+            onCancel={handleisDUMClose}
+            footer={[
+              <Button key="close" onClick={handleisDUMClose}>
+                  Close
+              </Button>,
+            ]}
+            width={800} 
+            >
+            {selectedDUM && (
+            <Space direction="vertical" style={{ width: "100%" }}>
+         
+                <Button style={{ width: "100%"
+                    }}
+                      key="deleteDUM"  type="primary"
+                      onClick={handleDelete}
+                      icon={<DeleteOutlined />} iconPosition='start' danger >
+                          Delete Device Under Maintenance
+            </Button>
+            </Space>
+              
+            )}
+          </Modal>
+          
       )}
 
-      <div className="table-container">
-        <Table
-          dataSource={repairProcesses}
-          showSorterTooltip={{
-            target: "sorter-icon",
-          }}
-          rowKey={(record) => `${record.rep_id}-${record.sp_id}`} // Ensure rows have unique keys
-          onRow={(record) => ({
-            onClick: () => handleRowClick(record),
-          })}
-          columns={columns}
-          loading={loading}
-          pagination={{ pageSize: 5 }}
-        />
-      </div>
-
-      <div className="div" style={{ position: "relative" }}>
-        <h2 style={{ textAlign: "left", fontWeight: "500" }}>
-          Device Under Maintenance
-        </h2>
-        {userAccess.repaire_add && (
-          <AddnewUnderMaintenance handleFinish={handleFinish} />
-        )}
-
-        <div className="table-container" style={{}}>
-          <Table
-            dataSource={devices}
-            showSorterTooltip={{
-              target: "sorter-icon",
-            }}
-            columns={DUMColumns}
-            pagination={{ pageSize: 5 }}
-          />
-        </div>
-      </div>
-
-      <RepairDetails
-        selectedRepair={selectedRepair}
+        <RepairDetails
+        selectedRepair= {selectedRepair}
         setSelectedRepair={setSelectedRepair}
-        detailRepairModalVisible={detailRepairModalVisible}
+        detailRepairModalVisible= {detailRepairModalVisible}
         handleModalClose={setdetailRepairModalVisible}
-        fetchAllDUM={fetchAllDUM}
-        onDelete={deleteRepairProcess}
+        fetchAllDUM = {fetchAllDUM}
+        onDelete= {deleteRepairProcess}
         fetchSpareParts={fetchSpareParts}
-      />
+         />
     </div>
   );
 };

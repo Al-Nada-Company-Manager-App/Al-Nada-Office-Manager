@@ -2945,10 +2945,10 @@ app.get("/purchasesoverview", async (req, res) => {
     });
   }
 });
-// GET /debtsoverview - Get debts summarized by type
-app.get("/debtsoverview", async (req, res) => {
+
+
+app.get('/debtsoverview', async (req, res) => {
   try {
-    // Query to get the total debt amount grouped by debt type
     const result = await db.query(`
       SELECT 
         D_TYPE, 
@@ -2958,17 +2958,15 @@ app.get("/debtsoverview", async (req, res) => {
       ORDER BY D_TYPE;
     `);
 
-    // Logging the query result for debugging
+    console.log('Debts Overview:', result.rows);
 
-    // Respond with a successful result containing the summarized debts
     res.json({
       success: true,
       data: result.rows,
       message: "Debts by type retrieved successfully.",
     });
   } catch (err) {
-    // Error handling
-    console.error("Error fetching debts by type:", err);
+    console.error('Error fetching debts by type:', err);
     res.status(500).json({
       success: false,
       error: "Internal Server Error",
@@ -3587,7 +3585,45 @@ app.get("/api/total-stock", async (req, res) => {
     res.status(500).send(err.message);
   }
 });
+app.get('/api/total-purchase', async (req, res) => {
+  try {
+    const result = await db.query(`
+        SELECT SUM(PCH_TOTAL)
+        FROM PURCHASE
+    `);
+    console.log(result.rows[0].sum);
+    res.json(result.rows[0].sum);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
 
+app.get('/api/total-sales', async (req, res) => {
+  try {
+    const result = await db.query(`
+        SELECT SUM(SL_TOTAL)
+        FROM SALES
+    `);
+    console.log(result.rows[0].sum);
+    res.json(result.rows[0].sum);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+
+app.get('/api/total-debts', async (req, res) => {
+  try {
+    const result = await db.query(`
+        SELECT SUM(D_AMOUNT)
+        FROM DEBTS
+    `);
+    console.log(result.rows[0].sum);
+    res.json(result.rows[0].sum);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
 /// get suppliers product purchase count
 app.get("/api/suppliersproducts", (req, res) => {
   const query = `
