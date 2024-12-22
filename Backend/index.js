@@ -1252,7 +1252,7 @@ app.get("/AllRepairProcess", async (req, res) => {
       ORDER BY r.REP_DATE DESC NULLS LAST;
       `
     );
-    console.log("all result data", result.rows[0].spare_parts);
+
     res.json(result.rows.length > 0 ? result.rows : []);
   } catch (error) {
     console.error("Error fetching repair process data:", error.message);
