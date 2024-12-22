@@ -155,11 +155,6 @@ const PriceQuotations = () => {
       defaultSortOrder: "descend",
     },
     {
-      title: "Product Name",
-      dataIndex: "p_name",
-      ...getColumnSearchProps("p_name"),
-    },
-    {
       title: "Customer Name",
       dataIndex: "c_name",
       ...getColumnSearchProps("c_name"),
@@ -186,7 +181,7 @@ const PriceQuotations = () => {
           value: "EGP",
         },
       ],
-      onFilter: (value, record) => record.PQ_CURRENCY.indexOf(value) === 0,
+      onFilter: (value, record) => record.pq_currency.indexOf(value) === 0,
     },
     {
       title: "Duration",

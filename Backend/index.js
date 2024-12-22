@@ -1840,10 +1840,37 @@ app.post("/updatesproductphoto", upload.single("photo"), async (req, res) => {
 });
 
 app.get("/allPriceQuotation", async (req, res) => {
-  const result = await db.query("SELECT  PRICE_QUOTATION.*, CUSTOMER.C_NAME,p_name FROM  PRICE_QUOTATION ,offer,customer,stock where offer.c_id=customer.c_id and offer.pq_id=price_quotation.pq_id and offer.p_id=stock.p_id");
+  const result = await db.query("SELECT  PRICE_QUOTATION.*, CUSTOMER.C_NAME FROM  PRICE_QUOTATION ,offer,customer where offer.c_id=customer.c_id and offer.pq_id=price_quotation.pq_id group by PRICE_QUOTATION.PQ_ID,CUSTOMER.C_NAME");
+
   const rows = result.rows;
   res.json(rows);
 });
+
+app.get("/getproductspq", async (req, res) => {
+  const { pq_id } = req.query; // Extract pq_id from the query parameters
+  console.log("pq_id", pq_id);
+  if (!pq_id) {
+    return res.status(400).json({ error: "pq_id is required" });
+  }
+
+  try {
+    const result = await db.query(
+      `SELECT STOCK.*, OFFER.*, PRICE_QUOTATION.*
+       FROM STOCK
+       JOIN OFFER ON STOCK.P_ID = OFFER.P_ID
+       JOIN PRICE_QUOTATION ON OFFER.PQ_ID = PRICE_QUOTATION.PQ_ID
+       WHERE PRICE_QUOTATION.PQ_ID = $1`,
+      [pq_id]
+    );
+    console.log("result", result.rows);
+    const rows = result.rows;
+    res.json(rows); // Return the result
+  } catch (error) {
+    console.error("Error fetching products for price quotation:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 
 app.post("/deletepq", async (req, res) => {
   const id = req.body.id;
@@ -2610,37 +2637,37 @@ app.post("/AddProduct", upload.single("photo"), async (req, res) => {
   }
 });
 
-app.get("/allPriceQuotation", async (req, res) => {
-  try {
-    // Fetch price quotations along with customer details
-    const result = await db.query(`
-      SELECT 
-      pq.PQ_ID, 
-      pq.PQ_DISCOUNT, 
-      pq.PQ_CURRENCY, 
-      pq.PQ_DURATION, 
-      pq.PQ_TOTAL,
-      c.C_NAME , 
-      c.C_PHOTO 
-FROM 
-    PRICE_QUOTATION pq
-JOIN 
-    OFFER o 
-ON 
-    pq.PQ_ID = o.PQ_ID
-LEFT JOIN 
-    CUSTOMER c 
-ON 
-    o.C_ID = c.C_ID;
-    `);
+// app.get("/allPriceQuotation", async (req, res) => {
+//   try {
+//     // Fetch price quotations along with customer details
+//     const result = await db.query(`
+//       SELECT 
+//       pq.PQ_ID, 
+//       pq.PQ_DISCOUNT, 
+//       pq.PQ_CURRENCY, 
+//       pq.PQ_DURATION, 
+//       pq.PQ_TOTAL,
+//       c.C_NAME , 
+//       c.C_PHOTO 
+// FROM 
+//     PRICE_QUOTATION pq
+// JOIN 
+//     OFFER o 
+// ON 
+//     pq.PQ_ID = o.PQ_ID
+// LEFT JOIN 
+//     CUSTOMER c 
+// ON 
+//     o.C_ID = c.C_ID;
+//     `);
 
-    const rows = result.rows;
-    res.json(rows);
-  } catch (error) {
-    console.error("Database query failed:", error);
-    res.status(500).json({ error: "Failed to fetch price quotations" });
-  }
-});
+//     const rows = result.rows;
+//     res.json(rows);
+//   } catch (error) {
+//     console.error("Database query failed:", error);
+//     res.status(500).json({ error: "Failed to fetch price quotations" });
+//   }
+// });
 app.get("/getcustomersales", async (req, res) => {
   try {
     const result = await db.query(`

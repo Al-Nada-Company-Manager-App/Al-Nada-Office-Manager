@@ -28,7 +28,6 @@ const { Sider, Content } = Layout;
 const HomePage = () => {
   const { collapsed, currentContent } = useSelector((state) => state.homeMenu);
   const { SignedUser } = useSelector((state) => state.auth);
-  React.useEffect(() => {console.log(SignedUser)},[SignedUser]);
   const dashboards={
     "Manager":<DashboardMG />,
     "Technical Support":<DashboardTCH />,
