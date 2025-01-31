@@ -95,8 +95,13 @@ function THeader() {
         onClick={() => handletoggleCollapsed()}
         style={{
           fontSize: "16px",
-          width: 64,
-          height: 64,
+          textAlign: "center",
+          width: 50,
+          height: 50,
+          marginLeft: "4px",
+          borderRadius:"20px",
+          color:"black",
+          backgroundColor: "white"
         }}
       />
 

@@ -116,6 +116,7 @@ const MenuList = () => {
 
   return (
     <Menu
+      style={{backgroundColor: "#02001B"}}
       theme="dark"
       mode="inline"
       defaultSelectedKeys={["1"]}

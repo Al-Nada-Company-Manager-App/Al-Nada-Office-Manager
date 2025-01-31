@@ -6,81 +6,69 @@ header {
 	background-color: #f5f5f5; 
 	height: 64px;
   }
-  .header-right {
+  /* .header-right {
 	display: flex;
 	align-items: center;
 	justify-content: flex-end; 
 	gap: 5
 	px; 
 	margin-right: 16px; 
+  } */
+  .header-right {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 10px;
+	margin-right: 16px;
   }
+  
   .box {
 	position: relative;
 	display: flex;
 	align-items: center;
+	
   }
   
   .input {
-	padding: 10px;
-	width: 40px;
-	height: 40px;
-	background: #f9f9f9;
-	border: 2px solid #ccc;
-	border-radius: 50px;
+	padding: 10px 40px 10px 20px; /* Adjusted padding to accommodate the icon */
+	width: 300px; /* Default width */
+	height: 20px;
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: 20px; /* Rounded corners */
 	box-sizing: border-box;
-	font-family: Comic Sans MS, sans-serif;
-	font-size: 16px;
+	font-family: Arial, sans-serif;
+	font-size: 14px;
 	color: #333;
 	outline: none;
-	transition: all 0.4s ease;
+	transition: all 0.3s ease;
   }
   
   .input::placeholder {
-	opacity: 0;
-	transition: opacity 0.3s ease-in-out;
-  }
-  
-  .input:hover::placeholder,
-  .input:focus::placeholder {
-	opacity: 1;
+	color: #999;
+	opacity: 1; /* Always visible */
   }
   
   .box:hover .input,
   .box .input:focus {
-	width: 350px;
-	background: #e9e9e9;
-	border-radius: 10px;
-	border-color: #aaa;
+	width: 350px; /* Expanded width on hover/focus */
+	border-color: #02001B; /* Highlight border color */
   }
   
   .box .search-icon {
 	position: absolute;
 	top: 50%;
-	right: 10px;
+	right: 15px;
 	transform: translateY(-50%);
-	font-size: 22px;
-	color: #007bff;
+	font-size: 18px;
+	color: #999;
 	cursor: pointer;
 	transition: color 0.3s ease;
   }
   
-  .box:hover .search-icon {
-	color: #0056b3;
-  }
-  
-  .box i {
-	position: absolute;
-	top: 50%;
-	right: 15px;
-	transform: translateY(-50%);
-	font-size: 26px;
-	color: #010248;
-	transition: opacity 0.2s ease, z-index 0.2s ease;
-  }
-  
-  .box:hover i {
-	opacity: 0;
-	z-index: -2;
+  .box:hover .search-icon,
+  .box .input:focus + .search-icon {
+	color: #02001B; /* Highlight icon color on hover/focus */
   }
   
 /* Notification bell */
