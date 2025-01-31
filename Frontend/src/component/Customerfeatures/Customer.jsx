@@ -86,7 +86,7 @@ const Customer = () => {
     setSearchText("");
   };
   const handleAddMarketing = (customerId) => {
-    const e_id = SignedUser.id;
+    const e_id = SignedUser.e_id;
     const data = { e_id: e_id, c_id: customerId };
     dispatch(addMarkiting(data));
   };
@@ -251,7 +251,7 @@ const Customer = () => {
             Update
           </Button>
           )},
-          {(userAccess.customer_edit && SignedUser.Role === "SalesMan") && 
+          {(userAccess.customer_edit && SignedUser.e_role === "SalesMan") && 
             <Button
               type="link"
               className="add-marketing-btn"

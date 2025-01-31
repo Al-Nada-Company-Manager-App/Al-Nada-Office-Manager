@@ -72,11 +72,10 @@ const Users = () => {
   }, []);
 
   const handleRowClick = async(record) => {
-    if (SignedUser.id === record.e_id) {
+    if (SignedUser.e_id === record.e_id) {
       return;
     }
     dispatch(setSelectedUser(record));
-    await dispatch(getAccessRules(record.e_id));
     dispatch(setUserModalVisible(true));
   };
 

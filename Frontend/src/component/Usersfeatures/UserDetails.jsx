@@ -8,6 +8,7 @@ import {
   deactivateUser,
   setSelectedUser,
   setUserModalVisible,
+  getAccessRules,
 } from "../../Store/Users";
 import { convertTimestampToDate } from "../../utils/ConvertDate";
 import AccessRulesModal from "./EditPermissions";
@@ -39,7 +40,8 @@ const UserDetails = () => {
     dispatch(fetchUsers());
     handleModalClose();
   };
-  const handleedit = () => {
+  const handleedit = (id) => async () => {
+    await dispatch(getAccessRules(id));
     dispatch(seteditaccessModalVisible(true));
   };
   return (
@@ -59,7 +61,7 @@ const UserDetails = () => {
               <Button
                 className="user-actions-btn"
                 key="editPermisions"
-                onClick={handleedit}
+                onClick={handleedit(selectedUser.e_id)}
                 type="primary"
               >
                 Edit Permissions

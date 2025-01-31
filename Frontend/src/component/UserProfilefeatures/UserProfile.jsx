@@ -27,8 +27,8 @@ const UserProfile = () => {
   const [file, setFile] = useState(null);
   const [formData, setFormData] = useState({
     ...SignedUser,
-    BirthDate: SignedUser.BirthDate
-      ? moment(SignedUser.BirthDate).format("YYYY-MM-DD")
+    BirthDate: SignedUser.birth_date
+      ? moment(SignedUser.birth_date).format("YYYY-MM-DD")
       : "",
   });
   const [isEditing, setIsEditing] = useState(false);
@@ -41,8 +41,8 @@ const UserProfile = () => {
   const handleCancel = () => {
     setFormData({
       ...SignedUser,
-      BirthDate: SignedUser.BirthDate
-        ? moment(SignedUser.BirthDate).format("YYYY-MM-DD")
+      BirthDate: SignedUser.birth_date
+        ? moment(SignedUser.birth_date).format("YYYY-MM-DD")
         : "",
     });
     setFile(null);
@@ -64,8 +64,9 @@ const UserProfile = () => {
       });
     if (file) {
       const photoData = {};
-      photoData.E_ID = formData.id;
+      photoData.E_ID = formData.e_id;
       photoData.photo = file;
+      console.log(photoData);
       dispatch(updateuserphoto(photoData));
     }
 
@@ -111,8 +112,8 @@ const UserProfile = () => {
                       src={
                         file
                           ? URL.createObjectURL(file)
-                          : SignedUser.Photo
-                          ? "./Users/" + SignedUser.Photo
+                          : SignedUser.e_photo
+                          ? "./Users/" + SignedUser.e_photo
                           : "https://via.placeholder.com/150"
                       }
                       size={100}
@@ -144,18 +145,18 @@ const UserProfile = () => {
 
                 {/* Second Column: Name and Birth Date */}
                 <Col xs={24} md={8}>
-                  <Form.Item label="First Name" name="fName">
+                  <Form.Item label="First Name" name="f_name">
                     <Input placeholder="First Name" />
                   </Form.Item>
-                  <Form.Item label="Last Name" name="lName">
+                  <Form.Item label="Last Name" name="l_name">
                     <Input placeholder="Last Name" />
                   </Form.Item>
-                  <Form.Item label="Birth Date" name="BirthDate">
+                  <Form.Item label="Birth Date" name="birth_date">
                     <Input
                       type="date"
                       defaultValue={
-                        SignedUser.BirthDate
-                          ? moment(SignedUser.BirthDate).format("YYYY-MM-DD")
+                        SignedUser.birth_date
+                          ? moment(SignedUser.birth_date).format("YYYY-MM-DD")
                           : ""
                       }
                     />
@@ -164,7 +165,7 @@ const UserProfile = () => {
 
                 {/* Third Column: Username and Salary */}
                 <Col xs={24} md={8}>
-                  <Form.Item label="Username" name="username">
+                  <Form.Item label="Username" name="e_username">
                     <Input placeholder="Username" />
                   </Form.Item>
                   <Form.Item label="Salary" name="salary">
@@ -193,10 +194,10 @@ const UserProfile = () => {
                       height: "100%", // Ensures the column takes up full height
                     }}
                   >
-                    <Form.Item label="Address" name="Address">
+                    <Form.Item label="Address" name="e_address">
                       <Input placeholder="Address" />
                     </Form.Item>
-                    <Form.Item label="City" name="city">
+                    <Form.Item label="City" name="e_city">
                       <Input placeholder="City" />
                     </Form.Item>
                   </div>
@@ -213,10 +214,10 @@ const UserProfile = () => {
                       height: "100%", // Ensures the column takes up full height
                     }}
                   >
-                    <Form.Item label="Country" name="country">
+                    <Form.Item label="Country" name="e_country">
                       <Input placeholder="Country" />
                     </Form.Item>
-                    <Form.Item label="Zip Code" name="zipcode">
+                    <Form.Item label="Zip Code" name="e_zipcode">
                       <Input placeholder="Zip Code" />
                     </Form.Item>
                   </div>
@@ -240,7 +241,7 @@ const UserProfile = () => {
                       height: "100%", // Ensures the column takes up full height
                     }}
                   >
-                    <Form.Item label="Email" name="email">
+                    <Form.Item label="Email" name="e_email">
                       <Input type="email" placeholder="Email" />
                     </Form.Item>
                   </div>
@@ -257,7 +258,7 @@ const UserProfile = () => {
                       height: "100%", // Ensures the column takes up full height
                     }}
                   >
-                    <Form.Item label="Phone" name="phone">
+                    <Form.Item label="Phone" name="e_phone">
                       <Input placeholder="Phone" />
                     </Form.Item>
                   </div>

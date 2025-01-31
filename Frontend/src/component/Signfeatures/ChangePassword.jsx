@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import { Form, Input, Button, Modal, message } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
-import { setpasswordChangedModalVisible } from "../../Store/authSlice";
+import {
+  setpasswordChangedModalVisible,
+  changePassword,
+} from "../../Store/authSlice";
 
 function FormChangePassword() {
   const dispatch = useDispatch();
@@ -19,35 +22,37 @@ function FormChangePassword() {
 
   const handleFinish = async (values) => {
     try {
-      const response = await axios.post(
-        "http://localhost:4000/changepassword",
-        {
+      const response = await dispatch(
+        changePassword({
           username: values.username,
           newPassword: values.newPassword1,
-        }
+        })
       );
-
-      dispatch(setpasswordChangedModalVisible(false));
-      if (response.data.E_ROLE != "Manager") {
-        const message =
-          response.data.F_NAME +
-          " " +
-          response.data.L_NAME +
-          " need to be activated after password change";
-        const NotificationData = {
-          n_message: message,
-          n_type: "APPROVEUSER",
-          n_E_ID: response.data.E_ID,
-        };
-        await axios.post(
-          "http://localhost:4000/sendNotification",
-          NotificationData,
-          {
-            withCredentials: true,
-          }
-        );
+      if (response.payload.success) {
+        message.success("Password changed successfully");
+        dispatch(setpasswordChangedModalVisible(false));
+        if (response.payload.E_ROLE != "Manager") {
+          const message =
+            response.payload.F_NAME +
+            " " +
+            response.payload.L_NAME +
+            " need to be activated after password change";
+          const NotificationData = {
+            n_message: message,
+            n_type: "APPROVEUSER",
+            n_E_ID: response.payload.E_ID,
+          };
+          await axios.post(
+            "http://localhost:4000/sendNotification",
+            NotificationData,
+            {
+              withCredentials: true,
+            }
+          );
+        }
+      } else {
+        message.error(response.payload.message);
       }
-      message.success(response.data.message);
     } catch (error) {
       if (error.response) {
         message.error(error.response.data.message);

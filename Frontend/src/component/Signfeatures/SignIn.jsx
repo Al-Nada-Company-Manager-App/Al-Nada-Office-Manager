@@ -1,35 +1,26 @@
 import React, { useState } from "react";
-import axios from "axios";
 import "../../Styles/Sign.css";
 import { useSelector, useDispatch } from "react-redux";
-import { setpasswordChangedModalVisible } from "../../Store/authSlice";
+import {
+  handleLogin,
+  setpasswordChangedModalVisible,
+  checkSession,
+} from "../../Store/authSlice";
 import FormChangePassword from "./ChangePassword.jsx";
 import { Form, Input, Button, message } from "antd";
 
-const SignIn = ({ onLoginSuccess }) => {
+const SignIn = () => {
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(false);
+  const { loading } = useSelector((state) => state.auth);
 
   const handleSubmit = async (values) => {
     const { username, password } = values;
-    setLoading(true);
-    try {
-      const response = await axios.post(
-        "http://localhost:4000/login",
-        { username, password },
-        { withCredentials: true }
-      );
-      if (response.data.success) {
-        message.success("Login successful!");
-        onLoginSuccess();
-      } else {
-        message.error(response.data.message || "Login failed");
-      }
-    } catch (err) {
-      console.error("Login error:", err);
-      message.error("An error occurred during login.");
-    } finally {
-      setLoading(false);
+    const response = await dispatch(handleLogin({ username, password }));
+    if (response.payload.success) {
+      message.success("Logged in successfully");
+      dispatch(checkSession());
+    } else {
+      message.error(response.payload.message);
     }
   };
 

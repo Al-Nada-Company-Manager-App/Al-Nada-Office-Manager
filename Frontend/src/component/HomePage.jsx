@@ -36,7 +36,7 @@ const HomePage = () => {
     "Accountant":<DashboardACT/>,
   };
   const contents = {
-    1: (SignedUser && dashboards[SignedUser.Role]) || "DefaultDashboard",
+    1: (SignedUser && dashboards[SignedUser.e_role]) || "DefaultDashboard",
     3: <Users />,
     4: <ApproveUser />,
     6: <Products />,

@@ -11,7 +11,7 @@ import {
   Upload,
   Row,
   Col,
-  message
+  message,
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import axios from "axios";
@@ -53,12 +53,14 @@ function SignUpForm() {
         photoData.photo = file;
         dispatch(updateuserphoto(photoData));
       }
-    }
-    else{
+    } else {
       message.error("Error Happens");
     }
     const nmessage =
-      result.payload.fName + " " + result.payload.lName + " need to be approved";
+      result.payload.fName +
+      " " +
+      result.payload.lName +
+      " need to be approved";
     const NotificationData = {
       n_message: nmessage,
       n_type: "APPROVEUSER",

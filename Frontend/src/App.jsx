@@ -37,7 +37,7 @@ const App = () => {
         {isLoggedIn ? (
           <HomePage />
         ) : (
-          <Sign onLoginSuccess={() => dispatch(checkSession())} />
+          <Sign />
         )}
       </ConfigProvider>
     </div>

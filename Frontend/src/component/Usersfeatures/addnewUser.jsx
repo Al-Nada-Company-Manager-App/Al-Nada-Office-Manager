@@ -10,6 +10,7 @@ import {
   DatePicker,
   InputNumber,
   Upload,
+  message,
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { UserAddOutlined } from "@ant-design/icons";
@@ -40,16 +41,28 @@ const AddnewUser = () => {
       : null;
     const userData = { ...values };
 
-    const response = await dispatch(addUsers(userData));
-    if (response.payload.success) {
-      if (file) {
-        const photoData = {};
-        photoData.E_ID = response.payload.id;
-        photoData.photo = file;
-        dispatch(updateuserphoto(photoData));
+    try {
+      const response = await dispatch(addUsers(userData));
+      if (response.payload.success) {
+        if (file) {
+          const photoData = {};
+          photoData.E_ID = response.payload.newEmployee.id;
+          photoData.photo = file;
+          console.log(photoData);
+          await dispatch(updateuserphoto(photoData));
+        }
+        message.success("Employee added successfully!");
+      } else {
+        message.error(
+          response.payload.message ||
+            "Failed to add employee due to an unknown error."
+        );
       }
+    } catch (error) {
+      message.error("An error occurred while adding the employee.");
+    } finally {
+      dispatch(fetchUsers());
     }
-    dispatch(fetchUsers());
   };
   const handlenewModalClose = () => {
     dispatch(setadduserModalVisible(false));

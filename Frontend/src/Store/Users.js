@@ -6,7 +6,7 @@ export const fetchUsers = createAsyncThunk(
   "auth/fetchUsers",
   async (_, thunkAPI) => {
     try {
-      const response = await axiosInstance.get("/allUsers");
+      const response = await axiosInstance.get("employees");
       return response.data;
     } catch (error) {
       console.error("Fetch users failed:", error);
@@ -18,7 +18,7 @@ export const deleteUser = createAsyncThunk(
   "Users/deleteUser",
   async (id, thunkAPI) => {
     try {
-      const response = await axiosInstance.post("/deleteUser", { id });
+      const response = await axiosInstance.post("employees/delete", { id });
       return response.data;
     } catch (error) {
       console.error("Delete user failed:", error);
@@ -30,7 +30,7 @@ export const activateUser = createAsyncThunk(
   "Users/activateUser",
   async (id, thunkAPI) => {
     try {
-      const response = await axiosInstance.post("/activateUser", { id });
+      const response = await axiosInstance.post("employees/activate", { id });
       return response.data;
     } catch (error) {
       console.error("Activate user failed:", error);
@@ -42,7 +42,7 @@ export const deactivateUser = createAsyncThunk(
   "Users/deactivateUser",
   async (id, thunkAPI) => {
     try {
-      const response = await axiosInstance.post("/deactivateUser", { id });
+      const response = await axiosInstance.post("employees/deactivate", { id });
       return response.data;
     } catch (error) {
       console.error("Deactivate user failed:", error);
@@ -54,7 +54,7 @@ export const addUsers = createAsyncThunk(
   "Users/addUsers",
   async (values, thunkAPI) => {
     try {
-      const response = await axiosInstance.post("/addUser", values);
+      const response = await axiosInstance.post("employees/addEmployee", values);
       return response.data;
     } catch (error) {
       console.error("Add user failed:", error);
@@ -66,7 +66,7 @@ export const getAccessRules = createAsyncThunk(
   "Users/getAccessRules",
   async (id, thunkAPI) => {
     try {
-      const response = await axiosInstance.get("/getUserAccess", { params: { id } }); 
+      const response = await axiosInstance.get("employees/employeeAccess/" + id);
       return response.data;
     } catch (error) {
       console.error("Get access rules failed:", error);
@@ -78,7 +78,7 @@ export const updateAccessRules = createAsyncThunk(
   "Users/updateAccessRules",
   async (values, thunkAPI) => {
     try {
-      const response = await axiosInstance.post("/updateUserAccess", values);
+      const response = await axiosInstance.post("employees/updateAccess", values);
       return response.data;
     } catch (error) {
       console.error("Update access rules failed:", error);

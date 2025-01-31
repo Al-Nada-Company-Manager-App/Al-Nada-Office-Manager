@@ -6,7 +6,8 @@ export const updateUserProfile = createAsyncThunk(
     "UserProfile/updateUserProfile",
     async (profileData, { rejectWithValue }) => {
         try {
-            const response = await axiosInstance.post("/updateUserProfile", profileData);
+            console.log("profileData", profileData);
+            const response = await axiosInstance.post("employees/updateUserProfile", profileData);
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response?.data || "An error occurred");
@@ -17,7 +18,7 @@ export const updateuserphoto = createAsyncThunk(
     "UserProfile/updateuserphoto",
     async (photo, { rejectWithValue }) => {
         try {
-            const response = await axiosInstance.post("/updateuserphoto", photo
+            const response = await axiosInstance.post("employees/updateuserphoto", photo
                 ,{
                     headers: {
                         "Content-Type": "multipart/form-data",

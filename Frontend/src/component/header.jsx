@@ -80,7 +80,7 @@ function THeader() {
       dispatch(setDebtModalVisible(true));
     }
 
-    const ids = { n_id: Notification.n_id, e_id: SignedUser.id };
+    const ids = { n_id: Notification.n_id, e_id: SignedUser.e_id };
 
     await dispatch(deleteNotification(ids));
     dispatch(fetchNotification());
@@ -164,8 +164,8 @@ function THeader() {
         <div className="user-profile">
           <img
             src={
-              SignedUser && SignedUser.Photo
-                ? "./Users/" + SignedUser.Photo
+              SignedUser && SignedUser.e_photo
+                ? "./Users/" + SignedUser.e_photo
                 : "https://via.placeholder.com/150"
             }
             alt="User"
@@ -178,7 +178,7 @@ function THeader() {
             onClick={toggleUserDropdown}
             style={{ cursor: "pointer" }}
           >
-            {SignedUser?.fName} {SignedUser?.lName}
+            {SignedUser?.f_name} {SignedUser?.l_name}
           </span>
           {showUserDropdown && (
             <div
