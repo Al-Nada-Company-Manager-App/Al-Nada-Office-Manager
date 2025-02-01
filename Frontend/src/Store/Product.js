@@ -5,7 +5,7 @@ export const fetchProducts = createAsyncThunk(
   "Products/fetchProducts",
   async () => {
     try {
-      const response = await axiosInstance.get("/AllProducts");
+      const response = await axiosInstance.get("products");
       return response.data;
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -16,7 +16,7 @@ export const handleAddProduct = createAsyncThunk(
   "Products/handleAddProduct",
   async (product) => {
     try {
-      const response = await axiosInstance.post("/AddProduct", product);
+      const response = await axiosInstance.post("products/AddProduct", product);
       return response.data;
     } catch (error) {
       console.error("Error adding product:", error);
@@ -28,7 +28,7 @@ export const updatesproductphoto = createAsyncThunk(
   async (product) => {
 
     try {
-      await axiosInstance.post("/updatesproductphoto", product, {
+      await axiosInstance.post("products/updatesproductphoto", product, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -42,7 +42,7 @@ export const updateProduct = createAsyncThunk(
   "Products/handleUpdateProduct",
   async (product) => {
     try {
-      const response = await axiosInstance.post("/updateProduct", product);
+      const response = await axiosInstance.post("products/updateProduct", product);
       return response.data;
     } catch (error) {
       console.error("Error updating product:", error);
@@ -53,8 +53,8 @@ export const handleDeleteProduct = createAsyncThunk(
   "Products/handleDeleteProduct",
   async (id) => {
     try {
-      await axiosInstance.post("/DeleteProduct", { id });
-      return id;
+      const res = await axiosInstance.post("products/delete", { id });
+      return res.data;
     } catch (error) {
       console.error("Error deleting product:", error);
     }

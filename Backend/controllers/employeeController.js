@@ -128,7 +128,7 @@ const deleteEmployee = async (req, res) => {
   try {
     const { id } = req.body;
     await Employee.delete(id);
-    res.json({ success: true });
+    res.json({ success: true , message: "Employee deleted successfully" });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }
@@ -138,7 +138,7 @@ const deactivateEmployee = async (req, res) => {
   try {
     const { id } = req.body;
     await Employee.deactivate(id);
-    res.json({ success: true });
+    res.json({ success: true , message: "Employee deactivated successfully" });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }
@@ -148,7 +148,7 @@ const activateEmployee = async (req, res) => {
   try {
     const { id } = req.body;
     await Employee.activate(id);
-    res.json({ success: true });
+    res.json({ success: true , message: "Employee activated successfully" });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }

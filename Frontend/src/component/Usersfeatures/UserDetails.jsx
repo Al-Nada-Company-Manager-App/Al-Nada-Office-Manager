@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, Button, Row, Col } from "antd";
+import { Modal, Button, Row, Col, message } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import {
   fetchUsers,
@@ -25,18 +25,30 @@ const UserDetails = () => {
   };
 
   const handleDeleteUser = (id) => async () => {
-    await dispatch(deleteUser(id));
+    const res =await dispatch(deleteUser(id));
+    if(res.payload.success)
+      message.success(res.payload.message);
+    else
+      message.error("Failed to delete user");
     dispatch(fetchUsers());
     handleModalClose();
   };
 
   const handleactivateUser = (id) => async () => {
-    await dispatch(activateUser(id));
+    const res =await dispatch(activateUser(id));
+    if(res.payload.success)
+      message.success(res.payload.message);
+    else
+      message.error("Failed to activate user");
     dispatch(fetchUsers());
     handleModalClose();
   };
   const handledeactivateUser = (id) => async () => {
-    await dispatch(deactivateUser(id));
+    const res =await dispatch(deactivateUser(id));
+    if(res.payload.success)
+      message.success(res.payload.message);
+    else
+      message.error("Failed to deactivate user");
     dispatch(fetchUsers());
     handleModalClose();
   };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Form, Switch, Button, Collapse, Row, Col } from "antd";
+import { Modal, Form, Switch, Button, Collapse, Row, Col, message } from "antd";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { seteditaccessModalVisible,updateAccessRules } from "../../Store/Users";
@@ -24,10 +24,12 @@ const AccessRulesModal = () => {
       setLoading(true);
       const values = form.getFieldsValue();
       await dispatch(updateAccessRules({ id: selectedUserAccess.e_id, ...values }));
+      message.success("Access rules updated successfully");
       await dispatch(fetchSignedUser());
       onClose();
     } catch (error) {
       console.error(error);
+      message.error("Failed to update access rules");
     } finally {
       setLoading(false);
     }

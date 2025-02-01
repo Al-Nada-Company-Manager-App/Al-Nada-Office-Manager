@@ -4,6 +4,7 @@ import session from "express-session";
 import passport from "passport";
 import authRoutes from "./routes/authRoutes.js";
 import employeeRoutes from "./routes/employeeRoutes.js";
+import productRoutes from "./routes/productRoutes.js"
 import { Strategy } from "passport-local";
 import cors from "cors";
 import db from "./config/db.js";
@@ -34,6 +35,8 @@ app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(express.json());
 app.use("/auth", authRoutes);
 app.use("/employees", employeeRoutes);
+app.use("/products",productRoutes);
+
 
 
 passport.use(

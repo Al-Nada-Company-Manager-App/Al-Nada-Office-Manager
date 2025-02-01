@@ -9,6 +9,7 @@ import {
   InputNumber,
   Select,
   Upload,
+  message,
 } from "antd";
 import dayjs from "dayjs";
 import React, { useEffect } from "react";
@@ -47,7 +48,13 @@ const UpdateProduct = () => {
     Object.entries(values).forEach(
       ([key, value]) => (productData[key] = value)
     );
-    await dispatch(updateProduct(productData));
+    const res = await dispatch(updateProduct(productData));
+    if (res.payload.success) {
+      message.success("Product updated successfully");
+    } else {
+      message.error("Error updating product");
+    }
+
     if (file) {
       const photoData = {};
       photoData.P_ID = selectedProduct.p_id;

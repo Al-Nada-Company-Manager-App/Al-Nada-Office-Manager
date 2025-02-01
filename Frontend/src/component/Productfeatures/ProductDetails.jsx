@@ -1,4 +1,4 @@
-import { Modal, Row, Col, Button } from "antd";
+import { Modal, Row, Col, Button,message } from "antd";
 import { useState, useEffect } from "react";
 import UpdateProduct from "./updateProduct";
 import { Form } from "antd";
@@ -21,7 +21,11 @@ const ProductDetails = ({ handleSaveData, editedData, seteditedData }) => {
     dispatch(setSelecteditem(null));
   };
   const handleDelete = async (id) => {
-    await dispatch(handleDeleteProduct(id));
+    const res =await dispatch(handleDeleteProduct(id));
+    if(res.payload.success)
+      message.success(res.payload.message);
+    else
+      message.error("Failed to Delete Product");
     dispatch(fetchProducts());
     dispatch(setdetailProductModalVisible(false));
   };
