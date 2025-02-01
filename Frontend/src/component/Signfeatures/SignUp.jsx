@@ -78,8 +78,7 @@ function SignUpForm() {
   return (
     <div className="form-container sign-up-container">
       <form onSubmit={handlenewModalOpen}>
-        <h1>Create Account</h1>
-        <button style={{ margin: "20px" }}>Sign Up</button>
+        <button className="create-account-button">Create an account</button> 
       </form>
       <Modal
         title="Register"

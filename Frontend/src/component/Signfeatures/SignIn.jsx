@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import axios from "axios";
 import "../../Styles/Sign.css";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setpasswordChangedModalVisible } from "../../Store/authSlice";
 import FormChangePassword from "./ChangePassword.jsx";
 import { Form, Input, Button, message } from "antd";
+import logo from "../../assets/logo.png";
+import SignUpForm from "./SignUp";
 
 const SignIn = ({ onLoginSuccess }) => {
   const dispatch = useDispatch();
@@ -38,20 +40,16 @@ const SignIn = ({ onLoginSuccess }) => {
   };
 
   return (
-    <div children="Sign-In">
-      <div className="form-container sign-in-container">
-        <Form
-          name="sign_in"
-          layout="vertical"
-          onFinish={handleSubmit}
-          style={{ width: "100%", maxWidth: "400px", margin: "auto" }}
-        >
-          <h1>Sign in</h1>
-
+  <div className="sign-in-page">
+      <div className="logo-container">
+        <img src={logo} alt="Logo" className="logo" />
+      </div>
+      <div className="form-card">
+        <Form name="sign_in" layout="vertical" onFinish={handleSubmit} className="sign-in-form">
           <Form.Item
             name="username"
             label="Username"
-            rules={[{ required: true, message: "Please input your username!" }]}
+            // rules={[{ required: true, message: "Please input your username!" }]}
           >
             <Input placeholder="Username" />
           </Form.Item>
@@ -59,28 +57,28 @@ const SignIn = ({ onLoginSuccess }) => {
           <Form.Item
             name="password"
             label="Password"
-            rules={[{ required: true, message: "Please input your password!" }]}
+            // rules={[{ required: true, message: "Please input your password!" }]}
           >
             <Input.Password placeholder="Password" />
           </Form.Item>
-
-          <a
-            href="#"
-            onClick={openChangePassword}
-            style={{ display: "block", marginBottom: "1rem" }}
-          >
-            Forgot your password?
-          </a>
-
           <Form.Item>
-            <Button type="primary" htmlType="submit" block loading={loading}>
-              Sign In
+            <Button htmlType="submit"  loading={loading} className="login-button">
+              Log in
             </Button>
           </Form.Item>
+          <div className="forgot-password">
+            <a href="#" onClick={openChangePassword} style={{ color: "black", textDecoration: "underline" }}>Forget your password?</a>
+          </div>
         </Form>
+      <div className="signup-section">
+          <div className="separator">
+            <span className="text">New to our community</span>
+          </div>
+            <SignUpForm />
       </div>
-      <FormChangePassword />
+          <FormChangePassword />
     </div>
+  </div>
   );
 };
 
