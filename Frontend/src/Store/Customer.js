@@ -1,28 +1,30 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../Utils/axiosInstance";
 import { message, notification } from 'antd';
-
 export const fetchCustomers = createAsyncThunk(
   "Customers/fetchCustomers",
   async () => {
     try {
-      const response = await axiosInstance.get("/allcustomers");
+      const response = await axiosInstance.get("/customers");
       return response.data;
     } catch (error) {
       console.error("Error fetching customers:", error);
+      throw error; // Add proper error propagation
     }
   }
 );
+
 export const fetchSalesHistory = createAsyncThunk(
   "Customers/fetchSalesHistory",
   async (customerId) => {
     try {
       const response = await axiosInstance.get(
-        `/getCustomerSales/${customerId}`
+        `/customers/${customerId}/sales`
       );
       return response.data;
     } catch (error) {
       console.error("Error fetching sales history:", error);
+      throw error;
     }
   }
 );
@@ -31,59 +33,69 @@ export const addCustomer = createAsyncThunk(
   "Customers/addCustomer",
   async (customer) => {
     try {
-      const response = await axiosInstance.post("/addcustomer", customer);
+      const response = await axiosInstance.post("/customers", customer);
       message.success("Customer added successfully");
       return response.data;
     } catch (error) {
       console.error("Error adding customer:", error);
       message.error("Error adding customer");
+      throw error;
     }
   }
 );
+
 export const updateCustomerPhoto = createAsyncThunk(
   "Customers/updateCustomerPhoto",
-  async (customer) => {
+  async (formData) => {
     try {
-      const response = await axiosInstance.post("/updatecustomerphoto", customer
-        ,{
+      const response = await axiosInstance.put(
+        "/customers/updatecustomerphoto", 
+        formData, 
+        {
           headers: {
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "multipart/form-data", 
           },
         }
       );
       return response.data;
     } catch (error) {
       console.error("Error updating customer photo:", error);
+      throw error;
     }
   }
 );
+
 export const handleDeleteCustomer = createAsyncThunk(
   "Customers/handleDeleteCustomer",
   async (id) => {
     try {
-      const response = await axiosInstance.post ("/deletecustomer", {id});
+      const response = await axiosInstance.delete(`/customers/${id}`);
       message.success("Customer deleted successfully");
       return response.data;
     } catch (error) {
       console.error("Error deleting customer:", error);
       message.error("Error deleting customer");
-    }
-  }
-);
-export const updateCustomer = createAsyncThunk(
-  "Customers/updateCustomer",
-  async (customer) => {
-    try {
-      const response = await axiosInstance.post("/updatecustomer", customer);
-      message.success("Customer updated successfully");
-      return response.data;
-    } catch (error) {
-      console.error("Error updating customer:", error);
-      message.error("Error updating customer");
+      throw error;
     }
   }
 );
 
+export const updateCustomer = createAsyncThunk(
+  "Customers/updateCustomer",
+  async (customer) => {
+    try {
+      const response = await axiosInstance.put(
+        `/customers/${customer.C_ID}`,
+        customer
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error updating customer:", error);
+      message.error("Error updating customer");
+      throw error;
+    }
+  }
+);
 export const addMarkiting = (data) => async (dispatch) => {
   try {
       const response = await axiosInstance.post('/addMarketing', data);  // Post data to the server
@@ -167,7 +179,7 @@ const customerSlice = createSlice({
         state.SalesLoading = true;
       })
       .addCase(fetchSalesHistory.fulfilled, (state, action) => {
-        state.customerSalesData = action.payload;
+        state.customerSalesData = action.payload.salesHistory;
         state.SalesLoading = false;
       })
       .addCase(fetchSalesHistory.rejected, (state) => {

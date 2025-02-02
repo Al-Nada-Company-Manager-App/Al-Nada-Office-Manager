@@ -5,6 +5,7 @@ import {
   Button,
   Modal,
   Upload,
+  message,
 } from "antd";
 import  {useSelector,useDispatch} from "react-redux";
 import { updateCustomerPhoto,setFile,fetchCustomers,addCustomer, setaddCustomerModalVisible} from "../../Store/Customer";
@@ -29,6 +30,7 @@ const handleAddCustomer = async (values) => {
     );
     const response= await dispatch(addCustomer(CutomerData));
     if(response.payload.success){
+        message.success("Customer added successfully");
         if(file){
             const photoData ={};
             photoData.C_ID=response.payload.c_id;
@@ -36,6 +38,9 @@ const handleAddCustomer = async (values) => {
             photoData.C_NAME=CutomerData.C_NAME;
             await dispatch(updateCustomerPhoto(photoData));
         }
+    }
+    else{
+        message.error("Error adding customer");
     }
 
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Input, Button, Modal, Upload } from "antd";
+import { Form, Input, Button, Modal, Upload, message } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import {
   fetchCustomers,
@@ -20,22 +20,32 @@ const UpdateCustomerModal = () => {
   };
 
   const handleUpdateCustomer = async (values) => {
-    const CutomerData = {};
-    CutomerData.C_ID = selectedCustomer.c_id;
-
-    Object.entries(values).forEach(
-      ([key, value]) => (CutomerData[key] = value)
-    );
-
-    await dispatch(updateCustomer(CutomerData));
-    const photoData = {};
-    if (file) {
-      photoData.C_ID = selectedCustomer.c_id;
-      photoData.photo = file;
-      photoData.C_NAME = CutomerData.C_NAME;
-      await dispatch(updateCustomerPhoto(photoData));
+    const customerData = {
+      C_ID: selectedCustomer.c_id, // Include the customer ID
+      ...values, // Spread other form values
+    };
+  
+    // Update customer details
+    const res = await dispatch(updateCustomer(customerData));
+    if(res.payload.success){
+      message.success("Customer updated successfully");
     }
-
+    else{
+      message.error("Error updating customer");
+    }
+  
+    // Update customer photo if a file is selected
+    if (file) {
+      const formData = new FormData();
+      formData.append("C_ID", selectedCustomer.c_id); // Append the customer ID
+      formData.append("photo", file); // Append the photo file
+  
+      console.log("FormData:", formData); // Debugging
+  
+      await dispatch(updateCustomerPhoto(formData)); // Dispatch the photo update
+    }
+  
+    // Refresh the customer list and close the modal
     dispatch(fetchCustomers());
     handleupdateClose();
   };
