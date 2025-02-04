@@ -88,6 +88,7 @@ export const updateCustomer = createAsyncThunk(
         `/customers/${customer.C_ID}`,
         customer
       );
+      message.success("Customer updated successfully");
       return response.data;
     } catch (error) {
       console.error("Error updating customer:", error);

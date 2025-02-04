@@ -32,12 +32,12 @@ const UpdateSupplierModal = () => {
     );
 
     await dispatch(updateSupplier(SupplierData));
-    const photoData = {};
+    console.log("file", file);
     if (file) {
-      photoData.S_ID = selectedSupplier.s_id;
-      photoData.photo = file;
-      photoData.S_NAME = SupplierData.S_NAME;
-      await dispatch(updateSupplierPhoto(photoData));
+      const formData = new FormData();
+      formData.append("S_ID", selectedSupplier.s_id);
+      formData.append("photo", file);
+      await dispatch(updateSupplierPhoto(formData));
     }
     dispatch(fetchSuppliers());
     handleupdateClose();

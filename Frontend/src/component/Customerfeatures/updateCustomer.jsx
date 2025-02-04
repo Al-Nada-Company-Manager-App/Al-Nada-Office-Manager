@@ -21,31 +21,18 @@ const UpdateCustomerModal = () => {
 
   const handleUpdateCustomer = async (values) => {
     const customerData = {
-      C_ID: selectedCustomer.c_id, // Include the customer ID
-      ...values, // Spread other form values
+      C_ID: selectedCustomer.c_id,
+      ...values, 
     };
   
-    // Update customer details
-    const res = await dispatch(updateCustomer(customerData));
-    if(res.payload.success){
-      message.success("Customer updated successfully");
-    }
-    else{
-      message.error("Error updating customer");
-    }
-  
-    // Update customer photo if a file is selected
+    await dispatch(updateCustomer(customerData));
     if (file) {
       const formData = new FormData();
       formData.append("C_ID", selectedCustomer.c_id); // Append the customer ID
-      formData.append("photo", file); // Append the photo file
-  
-      console.log("FormData:", formData); // Debugging
-  
+      formData.append("photo", file); // Append the photo file  
       await dispatch(updateCustomerPhoto(formData)); // Dispatch the photo update
     }
   
-    // Refresh the customer list and close the modal
     dispatch(fetchCustomers());
     handleupdateClose();
   };

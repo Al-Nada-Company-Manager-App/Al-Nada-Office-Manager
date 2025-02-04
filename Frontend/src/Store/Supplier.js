@@ -1,11 +1,12 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../Utils/axiosInstance";
+import { message } from "antd";
 
 export const fetchSuppliers = createAsyncThunk(
   "Suppliers/fetchSuppliers",
   async () => {
     try {
-      const response = await axiosInstance.get("/allsuppliers");
+      const response = await axiosInstance.get("/suppliers");
       return response.data;
     } catch (error) {
       console.error("Error fetching suppliers:", error);
@@ -17,7 +18,7 @@ export const fetchPurchaseHistory = createAsyncThunk(
   async (supplierId) => {
     try {
       const response = await axiosInstance.get(
-        `/getSupplierPurchase/${supplierId}`
+        `/suppliers/${supplierId}/purchases`
       );
       return response.data;
     } catch (error) {
@@ -30,18 +31,20 @@ export const addSupplier = createAsyncThunk(
   "Suppliers/addSupplier",
   async (supplier) => {
     try {
-      const response = await axiosInstance.post("/addsupplier", supplier);
+      const response = await axiosInstance.post("/suppliers", supplier);
+      message.success("Supplier added successfully");
       return response.data;
     } catch (error) {
       console.error("Error adding supplier:", error);
+      message.error("Error adding supplier");
     }
   }
 );
 export const updateSupplierPhoto = createAsyncThunk(
   "Suppliers/updateSupplierPhoto",
-  async (supplier) => {
+  async (formData) => {
     try {
-      const response = await axiosInstance.post("/updatesupplierphoto", supplier
+      const response = await axiosInstance.put("/suppliers/updatesupplierphoto", formData
         ,{
           headers: {
             "Content-Type": "multipart/form-data",
@@ -50,7 +53,7 @@ export const updateSupplierPhoto = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      console.error("Error updating customer photo:", error);
+      console.error("Error updating supplier photo:", error);
     }
   }
 );
@@ -58,10 +61,12 @@ export const handleDeleteSupplier = createAsyncThunk(
   "Suppliers/handleDeleteSupplier",
   async (id) => {
     try {
-      const response = await axiosInstance.post ("/deleteSupplier", {id});
+      const response = await axiosInstance.delete(`/suppliers/${id}`);
+      message.success("Supplier deleted successfully");
       return response.data;
     } catch (error) {
       console.error("Error deleting supplier:", error);
+      message.error("Error deleting supplier");
     }
   }
 );
@@ -69,10 +74,12 @@ export const updateSupplier = createAsyncThunk(
   "Suppliers/updateSupplier",
   async (supplier) => {
     try {
-      const response = await axiosInstance.post("/updatesupplier", supplier);
+      const response = await axiosInstance.put(`/suppliers/${supplier.S_ID}`, supplier);
+      message.success("Supplier updated successfully");
       return response.data;
     } catch (error) {
       console.error("Error updating supplier:", error);
+      message.error("Error updating supplier");
     }
   }
 );
@@ -132,7 +139,7 @@ const supplierSlice = createSlice({
         state.PurchaseLoading = true;
       })
       .addCase(fetchPurchaseHistory.fulfilled, (state, action) => {
-        state.supplierPurchasesData = action.payload;
+        state.supplierPurchasesData = action.payload.purchasesHistory;
         state.PurchaseLoading = false;
       })
       .addCase(fetchPurchaseHistory.rejected, (state) => {

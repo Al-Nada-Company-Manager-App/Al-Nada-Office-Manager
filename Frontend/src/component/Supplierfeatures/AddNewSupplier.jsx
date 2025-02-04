@@ -34,11 +34,10 @@ const AddNewSupplier = ({ handleFinish }) => {
     const response = await dispatch(addSupplier(SupplierData));
     if (response.payload.success) {
       if (file) {
-        const photoData = {};
-        photoData.S_ID = response.payload.s_id;
-        photoData.photo = file;
-        photoData.S_NAME = SupplierData.S_NAME;
-        await dispatch(updateSupplierPhoto(photoData));
+        const formData = new FormData();
+        formData.append("S_ID", response.payload.s_id);
+        formData.append("photo", file);
+        await dispatch(updateSupplierPhoto(formData));
       }
     }
     dispatch(fetchSuppliers());
