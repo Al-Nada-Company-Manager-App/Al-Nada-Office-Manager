@@ -1,24 +1,18 @@
 import { useEffect, useState } from 'react';
 import { Pie } from '@ant-design/plots';
-import axios from 'axios';
+import {useSelector, useDispatch} from 'react-redux';
+import { fetchStockCategoryData } from '../../../Store/Dashboards';
 
 const StockCategoryChart = () => {
-    const [data, setData] = useState([]);
+    const dispatch = useDispatch();
+    const stockCategoryData = useSelector(state => state.Dashboards.stockOverviewData);
 
     useEffect(() => {
-        async function fetchData() {
-            const res = await axios.get('http://localhost:4000/api/stocks/summary');
-            const formattedData = res.data.map(item => ({
-                type: item.p_category,
-                value: item.total_quantity,
-            }));
-            setData(formattedData);
-        }
-        fetchData();
-    }, []);
+        dispatch(fetchStockCategoryData());
+    }, [dispatch]);
 
     const config = {
-        data,
+        data: stockCategoryData,
         angleField: 'value',
         colorField: 'type',
         legend: { position: 'right' },

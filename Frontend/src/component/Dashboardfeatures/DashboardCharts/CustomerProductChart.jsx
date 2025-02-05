@@ -1,24 +1,18 @@
 import { useEffect, useState } from 'react';
 import { Bar } from '@ant-design/plots';
-import axios from 'axios';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchCustomerProductData } from '../../../Store/Dashboards';
 
 const CustomerProductChart = () => {
-    const [data, setData] = useState([]);
+    const dispatch = useDispatch();
+    const customerProductData = useSelector(state => state.Dashboards.customerProductData);
 
     useEffect(() => {
-        async function fetchData() {
-            const res = await axios.get('http://localhost:4000/api/customersproducts');
-            const formattedData = res.data.map(item => ({
-                type: item.customername,
-                value: item.productcount,
-            }));
-            setData(formattedData);
-        }
-        fetchData();
-    }, []);
+        dispatch(fetchCustomerProductData());
+    }, [dispatch]);
 
     const config = {
-        data,
+        data: customerProductData,
         xField: 'type',
         yField: 'value',
         seriesField: 'type',

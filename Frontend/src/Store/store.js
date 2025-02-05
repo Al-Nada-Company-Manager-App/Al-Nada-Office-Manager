@@ -11,12 +11,16 @@ import Debts from "./Debts";
 import Purchases from "./Purchase"
 import Suppliers from "./Supplier";
 import UserProfile from "./UserProfile";
+import Dashboards from "./Dashboards";
+
+
+
 const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredActions: ['auth/fetchUsers/fulfilled'], // Ignore specific actions
-        ignoredPaths: ['Users.file'], // Ignore specific paths in state
+        ignoredActions: ['auth/fetchUsers/fulfilled'], 
+        ignoredPaths: ['Users.file'], 
       },
     }),
   reducer: {
@@ -32,6 +36,7 @@ const store = configureStore({
     Purchases: Purchases,
     Suppliers: Suppliers,
     UserProfile: UserProfile,
+    Dashboards: Dashboards,
   },
 });
 

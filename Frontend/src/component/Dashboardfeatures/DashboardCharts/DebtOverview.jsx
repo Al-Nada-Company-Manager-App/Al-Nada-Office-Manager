@@ -1,31 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Column } from "@ant-design/plots";
-import axios from "axios";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchDebtOverviewDate } from "../../../Store/Dashboards";
 
 const DebtsOverviewChart = () => {
-  const [debtsData, setDebtsData] = useState([]);
+  const dispatch = useDispatch();
+  const debtsData = useSelector((state) => state.Dashboards.debtsData);
 
   useEffect(() => {
-    const fetchOverviewData = async () => {
-        try {
-          const debtsRes = await axios.get("http://localhost:4000/debtsoverview");
-          console.log("Debts Response:", debtsRes.data);
-      
-          const processedData = (debtsRes.data.data || []).map((item) => {
-            if (["DEBT_IN", "INSURANCE"].includes(item.d_type)) {
-              return { ...item, total_debt: Math.abs(item.total_debt) };
-            }
-            return item;
-          });
-      
-          setDebtsData(processedData);
-        } catch (error) {
-          console.error("Error fetching overview data:", error);
-        }
-      };
-
-    fetchOverviewData();
-  }, []);
+    dispatch(fetchDebtOverviewDate());
+  }, [dispatch]);
 
   const config = {
     data: debtsData,

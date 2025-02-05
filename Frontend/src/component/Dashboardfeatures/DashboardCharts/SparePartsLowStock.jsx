@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
 import { Table } from "antd";
-import axios from "axios";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchSparePartsLowStock } from "../../../Store/Dashboards";
 
 const SparePartsLowStock = () => {
-  const [data, setData] = useState([]);
+  const dispatch = useDispatch();
+  const sparePartsLowStock = useSelector(
+    (state) => state.Dashboards.sparesLowData
+  );
 
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await axios.get("http://localhost:4000/api/low-stock-alert");
-      setData(response.data);
-    };
-    fetchData();
-  }, []);
+    dispatch(fetchSparePartsLowStock());
+  }, [dispatch]);
 
   const columns = [
     { title: "Spare Part Name", dataIndex: "p_name", key: "p_name" },
@@ -20,13 +20,14 @@ const SparePartsLowStock = () => {
 
   return (
     <>
-    <div style={{height: "300px"}}>
-  <Table 
-  dataSource={data} 
-  columns={columns} 
-  rowKey="p_name" />
-  </div>
-  </>
+      <div style={{ height: "300px" }}>
+        <Table
+          dataSource={sparePartsLowStock}
+          columns={columns}
+          rowKey="p_name"
+        />
+      </div>
+    </>
   );
 };
 

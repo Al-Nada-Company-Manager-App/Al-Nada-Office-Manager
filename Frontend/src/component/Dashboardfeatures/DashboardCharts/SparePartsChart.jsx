@@ -1,20 +1,19 @@
 import { useEffect, useState } from "react";
 import { Bar } from "@ant-design/plots";
-import axios from "axios";
+import {useSelector,useDispatch} from "react-redux";  
+import { fetchSparePartsData } from "../../../Store/Dashboards";
 
 const SparePartsChart = () => {
-  const [data, setData] = useState([]);
+  const dispatch = useDispatch();
+  const sparePartsData = useSelector(state => state.Dashboards.sparesData);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await axios.get("http://localhost:4000/api/spare-parts-used");
-      setData(response.data);
-    };
-    fetchData();
-  }, []);
+    dispatch(fetchSparePartsData());
+  }, [dispatch]);
+    
 
   const config = {
-    data,
+    data: sparePartsData,
     xField: "spare_part_name",
     yField: "total_used",
     seriesField: "total_used",

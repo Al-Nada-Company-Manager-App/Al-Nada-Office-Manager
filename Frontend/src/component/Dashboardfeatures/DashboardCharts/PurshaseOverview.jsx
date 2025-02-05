@@ -1,29 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { Line } from "@ant-design/plots";
-import axios from "axios";
+import { useSelector,useDispatch } from "react-redux";
+import { fetchPurchaseOverviewData } from "../../../Store/Dashboards";
 
 const PurchaseOverviewChart = () => {
-  const [purchasesData, setPurchasesData] = useState([]);
+  const dispatch = useDispatch();
+  const purchasesData = useSelector((state) => state.Dashboards.purchasesData);
 
   useEffect(() => {
-    const fetchOverviewData = async () => {
-      try {
-        const purchasesRes = await axios.get('http://localhost:4000/purchasesoverview');
-            console.log('Parchase Response:', purchasesRes.data);
-            setPurchasesData(purchasesRes.data.data); 
-      } catch (error) {
-        console.error("Error fetching overview data:", error);
-      }
-    };
-
-    fetchOverviewData();
-  }, []);
+    dispatch(fetchPurchaseOverviewData());
+  }, [dispatch]);
 
   const config = {
-    data: purchasesData, // Correctly assign the array directly
-    xField: "month", // Field representing months
-    yField: "total_purchases", // Field representing sales numbers
-    seriesField: "type", // Field to distinguish between data series
+    data: purchasesData, 
+    xField: "month", 
+    yField: "total_purchases", 
+    seriesField: "type", 
     legend: { position: "top-left" },
     barWidthRatio: 0.4,
     xAxis: {

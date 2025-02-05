@@ -1,20 +1,18 @@
 import { useEffect, useState } from "react";
 import { Pie } from "@ant-design/plots";
-import axios from "axios";
+import { useSelector,useDispatch } from "react-redux";
+import { fetchRepairStatusData } from "../../../Store/Dashboards";
 
 const RepairStatusChart = () => {
-  const [data, setData] = useState([]);
+  const dispatch = useDispatch();
+  const repairsData = useSelector((state) => state.Dashboards.repairStatusData);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await axios.get("http://localhost:4000/api/repair-status");
-      setData(response.data);
-    };
-    fetchData();
-  }, []);
+    dispatch(fetchRepairStatusData());
+  }, [dispatch]);
 
   const config = {
-    data,
+    data: repairsData,
     angleField: "status_count",
     colorField: "p_status",
     radius: 1,

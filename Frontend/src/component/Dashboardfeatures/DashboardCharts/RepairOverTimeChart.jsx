@@ -1,20 +1,18 @@
 import { useEffect, useState } from "react";
 import { Line } from "@ant-design/plots";
-import axios from "axios";
+import { useSelector,useDispatch } from "react-redux";
+import { fetchRepairsOverTime } from "../../../Store/Dashboards";
 
 const RepairsOverTimeChart = () => {
-  const [data, setData] = useState([]);
+  const dispatch = useDispatch();
+  const repairsData = useSelector((state) => state.Dashboards.repairsOverTimeData);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await axios.get("http://localhost:4000/api/repairs-over-time");
-      setData(response.data);
-    };
-    fetchData();
-  }, []);
+    dispatch(fetchRepairsOverTime());
+  }, [dispatch]);
 
   const config = {
-    data,
+    data: repairsData,
     xField: "rep_date",
     yField: "repairs_count",
     point: { size: 5, shape: "circle" },

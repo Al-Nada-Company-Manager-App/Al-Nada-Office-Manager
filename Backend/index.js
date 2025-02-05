@@ -7,6 +7,7 @@ import employeeRoutes from "./routes/employeeRoutes.js";
 import productRoutes from "./routes/productRoutes.js"
 import customerRoutes from "./routes/customerRoutes.js";
 import supplierRoutes from "./routes/supplierRoutes.js";
+import dashboardRoutes from "./routes/dashboardRoutes.js";
 import { Strategy } from "passport-local";
 import cors from "cors";
 import db from "./config/db.js";
@@ -40,6 +41,7 @@ app.use("/employees", employeeRoutes);
 app.use("/products",productRoutes);
 app.use("/customers", customerRoutes);
 app.use("/suppliers", supplierRoutes);
+app.use("/dashboard", dashboardRoutes);
 
 
 

@@ -1,29 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { Line } from "@ant-design/plots";
-import axios from "axios";
+import {useSelector, useDispatch} from "react-redux";
+import { fetchSalesOverviewData } from "../../../Store/Dashboards";
+
 
 const SalesOverviewChart = () => {
-  const [salesData, setSalesData] = useState([]);
+  const dispatch = useDispatch();
+  const salesOverviewData = useSelector((state) => state.Dashboards.salesOverviewData);
 
   useEffect(() => {
-    const fetchOverviewData = async () => {
-      try {
-        const salesRes = await axios.get("http://localhost:4000/salesoverview");
-        console.log("Sales Response:", salesRes.data);
-        setSalesData(salesRes.data.data);
-      } catch (error) {
-        console.error("Error fetching overview data:", error);
-      }
-    };
-
-    fetchOverviewData();
-  }, []);
+    dispatch(fetchSalesOverviewData());
+  }, [dispatch]);
 
   const config = {
-    data: salesData, // Correctly assign the array directly
-    xField: "month", // Field representing months
-    yField: "total_sales", // Field representing sales numbers
-    seriesField: "type", // Field to distinguish between data series
+    data: salesOverviewData, 
+    xField: "month", 
+    yField: "total_sales", 
+    seriesField: "type", 
     legend: { position: "top-left" },
     barWidthRatio: 0.4,
     xAxis: {

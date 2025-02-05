@@ -3482,6 +3482,7 @@ app.post("/addMarketing", async (req, res) => {
     });
   }
 });
+
 app.get("/getcustomerscount", async (req, res) => {
   try {
     const result = await db.query(`

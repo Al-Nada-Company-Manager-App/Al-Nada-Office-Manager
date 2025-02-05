@@ -19,9 +19,9 @@ import DashboardACT from "./Dashboardfeatures/DashboardACT";
 import { useSelector, useDispatch } from "react-redux";
 import DashboardMG from './Dashboardfeatures/DashboardMG';
 import UserProfile from "./UserProfilefeatures/UserProfile";
-import DashBoardSM from "./Dashboardfeatures/DashBoardSM";
+import DashboardSM from "./Dashboardfeatures/DashBoardSM";
 import DashboardTCH from "./Dashboardfeatures/DashboardTCH";
-import DashBoardSC from "./Dashboardfeatures/DashBoardSC";
+import DashboardSC from "./Dashboardfeatures/DashBoardSC";
 const { Sider, Content } = Layout;
 
 
@@ -31,8 +31,8 @@ const HomePage = () => {
   const dashboards={
     "Manager":<DashboardMG />,
     "Technical Support":<DashboardTCH />,
-    "SalesMan":<DashBoardSM />,
-    "Secartary": <DashBoardSC />, 
+    "SalesMan":<DashboardSM />,
+    "Secartary": <DashboardSC />, 
     "Accountant":<DashboardACT/>,
   };
   const contents = {
