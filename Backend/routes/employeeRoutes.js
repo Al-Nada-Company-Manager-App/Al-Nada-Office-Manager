@@ -10,9 +10,9 @@ router.get("/employeeAccess/:id", employeeController.getEmployeeAccess);
 router.get("/signedUser", employeeController.signedUser);
 router.post("/addEmployee", employeeController.addEmployee);
 router.post("/updateAccess", employeeController.updateEmployeeAccess);
-router.post("/delete", employeeController.deleteEmployee);
-router.post("/deactivate", employeeController.deactivateEmployee);
-router.post("/activate", employeeController.activateEmployee);
+router.delete("/delete/:id", employeeController.deleteEmployee);
+router.put("/deactivate/:id", employeeController.deactivateEmployee);
+router.put("/activate/:id", employeeController.activateEmployee);
 router.post("/updateuserphoto", upload.single("photo"), employeeController.updateEmployeePhoto);
 router.post("/updateUserProfile", employeeController.updateUserProfile);
 

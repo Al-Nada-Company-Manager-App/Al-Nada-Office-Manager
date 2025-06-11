@@ -8,7 +8,7 @@ import AddnewDebt from './addnewDebt';
 import DebtDetails from './DebtsDetails';
 import { useSelector, useDispatch } from 'react-redux';
 import  {fetchDebts,setselectedDebt,setDebtModalVisible} from "../../Store/Debts";
-import {convertTimestampToDate} from '../../utils/ConvertDate';
+import {convertTimestampToDate} from '../../Utils/ConvertDate';
 
 
 const Debts = () => {

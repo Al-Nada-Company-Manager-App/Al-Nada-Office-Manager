@@ -3,9 +3,9 @@ import { SearchOutlined } from "@ant-design/icons";
 import { Button, Input, Space, Table } from "antd";
 import Highlighter from "react-highlight-words";
 import axios from "axios";
-import "../../Styles/pq.css"; // Updated styling for Price Quotation
-import PQDetails from "./PQDetails"; // Component to view PQ details
-import AddNewPriceQuotation from "./AddNewPQ"; // Component to add a new PQ
+import "../../Styles/PQ.css"; 
+import PQDetails from "./PQDetails"; 
+import AddNewPriceQuotation from "./AddNewPQ"; 
 import { useSelector, useDispatch } from "react-redux";
 import {
   fetchPriceQuotations,

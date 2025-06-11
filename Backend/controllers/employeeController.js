@@ -96,6 +96,10 @@ const employeeController = {
   updateEmployeeAccess: async (req, res) => {
     try {
       const { id, ...access } = req.body;
+      const user = await Employee.getById(id);
+      if (!user) {
+        return res.status(404).json({ message: "Username does not exist." });
+      }
       await Employee.updateAccess(id, access);
       res.json({ success: true, message: "User access updated successfully" });
     } catch (error) {
@@ -118,7 +122,7 @@ const employeeController = {
   },
   deleteEmployee: async (req, res) => {
     try {
-      const { id } = req.body;
+      const { id } = req.params;
       await Employee.delete(id);
       res.json({ success: true , message: "Employee deleted successfully" });
     } catch (error) {
@@ -127,7 +131,7 @@ const employeeController = {
   },
   deactivateEmployee: async (req, res) => {
     try {
-      const { id } = req.body;
+      const { id } = req.params;
       await Employee.deactivate(id);
       res.json({ success: true , message: "Employee deactivated successfully" });
     } catch (error) {
@@ -136,7 +140,7 @@ const employeeController = {
   },
   activateEmployee: async (req, res) => {
     try {
-      const { id } = req.body;
+      const { id } = req.params;
       await Employee.activate(id);
       res.json({ success: true , message: "Employee activated successfully" });
     } catch (error) {

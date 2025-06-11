@@ -17,7 +17,7 @@ import {
   fetchProductsinSale,
 } from "../../Store/Sales";
 import { PlusOutlined } from "@ant-design/icons";
-import {convertTimestampToDate} from '../../utils/ConvertDate';
+import {convertTimestampToDate} from '../../Utils/ConvertDate';
 import {addtodum,clearaddedDum} from "../../Store/Sales";
 
 

@@ -10,7 +10,7 @@ import {
   setUserModalVisible,
   getAccessRules,
 } from "../../Store/Users";
-import { convertTimestampToDate } from "../../utils/ConvertDate";
+import { convertTimestampToDate } from "../../Utils/ConvertDate";
 import AccessRulesModal from "./EditPermissions";
 import {seteditaccessModalVisible} from "../../Store/Users";
 const UserDetails = () => {

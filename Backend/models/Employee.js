@@ -211,6 +211,7 @@ class Employee {
   }
 
   static async update(id, employeeData) {
+
     const result = await db.query(
       `UPDATE EMPLOYEE SET 
         F_NAME = $1,
@@ -223,9 +224,8 @@ class Employee {
         E_CITY = $8,
         E_COUNTRY = $9,
         E_ZIPCODE = $10,
-        E_USERNAME = $11,
-        E_PASSWORD = $12
-      WHERE E_ID = $13
+        E_USERNAME = $11
+      WHERE E_ID = $12
       RETURNING *
       `,
       [
@@ -240,8 +240,7 @@ class Employee {
         employeeData.e_country,
         employeeData.e_zipcode,
         employeeData.e_username,
-        employeeData.e_password,
-        employeeData.e_id,
+        employeeData.e_id
       ]
     );
     return result.rows[0];
@@ -259,7 +258,15 @@ class Employee {
     values.push(id);
 
     const query = `UPDATE ACCESS_Actions SET ${setClause} WHERE E_ID = $${values.length}`;
-    await db.query(query, values);
+    console.log(query, values);
+    try {
+      await db.query(query, values);
+    }
+    catch (error) {
+      console.error("Error updating access:", error);
+      throw new Error("Failed to update access");
+    }
+
   }
 
   static async delete(id) {
