@@ -52,7 +52,7 @@ const supplierController = {
 
   updateSupplier: async (req, res) => {
     try {
-      await Supplier.update(req.body.S_ID, req.body);
+      await Supplier.update(req.params.id, req.body);
       res.json({ success: true });
     } catch (err) {
       console.error("Update Supplier Error:", err);

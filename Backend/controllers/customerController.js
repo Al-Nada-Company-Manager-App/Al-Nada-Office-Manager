@@ -28,10 +28,10 @@ const customerController = {
   },
   updateCustomerPhoto: async (req, res) => {
     try {
-      const { C_ID } = req.body; // Extract C_ID from the request body
-      const C_PHOTO = req.file ? req.file.filename : null; // Get the uploaded file
+      const { C_ID } = req.body; 
+      const C_PHOTO = req.file ? req.file.filename : null; 
 
-      await Customer.updatePhoto(C_ID, C_PHOTO); // Update the photo in the database
+      await Customer.updatePhoto(C_ID, C_PHOTO);
       res.send("Customer photo updated successfully");
     } catch (err) {
       console.error("Update Photo Error:", err);
@@ -51,7 +51,7 @@ const customerController = {
 
   updateCustomer: async (req, res) => {
     try {
-      await Customer.update(req.body.C_ID, req.body);
+      await Customer.update(req.params.id, req.body);
       res.json({ success: true });
     } catch (err) {
       console.error("Update Customer Error:", err);

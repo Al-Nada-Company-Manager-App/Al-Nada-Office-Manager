@@ -38,12 +38,12 @@ class Supplier {
         S_COUNTRY = $4, S_ZIPCODE = $5, S_FAX = $6 
        WHERE S_ID = $7`,
       [
-        updateData.s_name,
-        updateData.s_address,
-        updateData.s_city,
-        updateData.s_country,
-        updateData.s_zipcode,
-        updateData.s_fax,
+        updateData.S_NAME,
+        updateData.S_ADDRESS,
+        updateData.S_CITY,
+        updateData.S_COUNTRY,
+        updateData.S_ZIPCODE,
+        updateData.S_FAX,
         id,
       ]
     );

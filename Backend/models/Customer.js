@@ -40,13 +40,13 @@ class Customer {
         C_COUNTRY = $4, C_ZIPCODE = $5, C_FAX = $6 
        WHERE C_ID = $7`,
       [
-        updateData.c_name,
-        updateData.c_address,
-        updateData.c_city,
-        updateData.c_country,
-        updateData.c_zipcode,
-        updateData.c_fax,
-        id
+        updateData.C_NAME,
+        updateData.C_ADDRESS,
+        updateData.C_CITY,
+        updateData.C_COUNTRY,
+        updateData.C_ZIPCODE,
+        updateData.C_FAX,
+        id,
       ]
     );
   }

@@ -38,7 +38,7 @@ const salesController = {
   updateSale: async (req, res) => {
     try {
       console.log(req.body);
-      await Sales.updateSale(req.body.SL_ID, req.body);
+      await Sales.updateSale(req.params.id, req.body);
       res.json({ success: true });
     } catch (error) {
       res.status(400).json({ error: error.message });

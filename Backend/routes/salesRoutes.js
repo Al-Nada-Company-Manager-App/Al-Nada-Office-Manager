@@ -5,9 +5,9 @@ const router = express.Router();
 
 // RESTful routes
 router.get('/', salesController.getAllSales);
-router.post('/', salesController.createSale);
 router.get('/:id/products/:saleType', salesController.getProductsInSale);
+router.post('/', salesController.createSale);
 router.put('/:id', salesController.updateSale);
-router.delete('/:id', salesController.deleteSale);
+router.delete('/delete/:id', salesController.deleteSale);
 
 export default router;
