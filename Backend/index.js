@@ -4,16 +4,19 @@ import session from "express-session";
 import passport from "passport";
 import authRoutes from "./routes/authRoutes.js";
 import employeeRoutes from "./routes/employeeRoutes.js";
-import productRoutes from "./routes/productRoutes.js"
+import productRoutes from "./routes/productRoutes.js";
 import customerRoutes from "./routes/customerRoutes.js";
 import supplierRoutes from "./routes/supplierRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
-import salesRoutes from "./routes/salesRoutes.js";  
+import salesRoutes from "./routes/salesRoutes.js";
+import purchaseRoutes from "./routes/purchaseRoutes.js";
+import debtRoutes from "./routes/debtRoutes.js";
 import { Strategy } from "passport-local";
 import cors from "cors";
 import db from "./config/db.js";
 import bcrypt from "bcrypt";
 import multer from "multer";
+
 const app = express();
 
 // Session configuration
@@ -39,13 +42,13 @@ app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(express.json());
 app.use("/auth", authRoutes);
 app.use("/employees", employeeRoutes);
-app.use("/products",productRoutes);
+app.use("/products", productRoutes);
 app.use("/customers", customerRoutes);
 app.use("/suppliers", supplierRoutes);
 app.use("/dashboard", dashboardRoutes);
 app.use("/sales", salesRoutes);
-
-
+app.use("/purchases", purchaseRoutes);
+app.use("/debts", debtRoutes);
 
 passport.use(
   new Strategy(
@@ -100,8 +103,6 @@ passport.deserializeUser(async (id, done) => {
     done(err);
   }
 });
-
-
 
 // Start server
 const PORT = 4000;

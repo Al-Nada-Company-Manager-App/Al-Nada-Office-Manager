@@ -3,7 +3,7 @@ import axiosInstance from "../Utils/axiosInstance";
 
 export const fetchDebts = createAsyncThunk("Debts/fetchDebts", async () => {
   try {
-    const response = await axiosInstance.get("/allDebts");
+    const response = await axiosInstance.get("/debts/");
     return response.data;
   } catch (error) {
     console.error("Error fetching sales:", error);

@@ -3,7 +3,7 @@ import axiosInstance from "../Utils/axiosInstance";
 
 export const fetchPurchases = createAsyncThunk("Purchase/fetchPurchases", async () => {
   try {
-    const response = await axiosInstance.get("/allPurchase");
+    const response = await axiosInstance.get("/purchases/");
     return response.data;
   } catch (error) {
     console.error("Error fetching Purchases:", error);
@@ -11,7 +11,7 @@ export const fetchPurchases = createAsyncThunk("Purchase/fetchPurchases", async 
 });
 export const deletePurchase = createAsyncThunk("Purchase/deletePurchase", async (id) => {
   try {
-    const response = await axiosInstance.post("/deletePurchase", { id });
+    const response = await axiosInstance.post("/purchases/delete", { id });
     return response.data;
   } catch (error) {
     console.error("Error deleting Purchase:", error);
