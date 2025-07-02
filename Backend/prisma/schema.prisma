@@ -1,0 +1,310 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model access_actions {
+  e_id            Int      @id
+  users_page      Boolean? @default(false)
+  users_add       Boolean? @default(false)
+  users_edit      Boolean? @default(false)
+  users_delete    Boolean? @default(false)
+  users_view      Boolean? @default(false)
+  products_page   Boolean? @default(false)
+  products_add    Boolean? @default(false)
+  products_edit   Boolean? @default(false)
+  products_delete Boolean? @default(false)
+  products_view   Boolean? @default(false)
+  repaire_page    Boolean? @default(false)
+  repaire_add     Boolean? @default(false)
+  repaire_edit    Boolean? @default(false)
+  repaire_delete  Boolean? @default(false)
+  repaire_view    Boolean? @default(false)
+  repaire_adddum  Boolean? @default(false)
+  sales_page      Boolean? @default(false)
+  sales_add       Boolean? @default(false)
+  sales_edit      Boolean? @default(false)
+  sales_delete    Boolean? @default(false)
+  sales_view      Boolean? @default(false)
+  price_page      Boolean? @default(false)
+  price_add       Boolean? @default(false)
+  price_edit      Boolean? @default(false)
+  price_delete    Boolean? @default(false)
+  price_view      Boolean? @default(false)
+  debts_page      Boolean? @default(false)
+  debts_add       Boolean? @default(false)
+  debts_edit      Boolean? @default(false)
+  debts_delete    Boolean? @default(false)
+  debts_view      Boolean? @default(false)
+  purchase_page   Boolean? @default(false)
+  purchase_add    Boolean? @default(false)
+  purchase_edit   Boolean? @default(false)
+  purchase_delete Boolean? @default(false)
+  purchase_view   Boolean? @default(false)
+  customer_page   Boolean? @default(false)
+  customer_add    Boolean? @default(false)
+  customer_edit   Boolean? @default(false)
+  customer_delete Boolean? @default(false)
+  customer_view   Boolean? @default(false)
+  supplier_page   Boolean? @default(false)
+  supplier_add    Boolean? @default(false)
+  supplier_edit   Boolean? @default(false)
+  supplier_delete Boolean? @default(false)
+  supplier_view   Boolean? @default(false)
+  employee        employee @relation(fields: [e_id], references: [e_id], onDelete: Cascade)
+}
+
+model adddum {
+  p_id  Int
+  sl_id Int
+  stock stock @relation(fields: [p_id], references: [p_id], onDelete: Cascade)
+  sales sales @relation(fields: [sl_id], references: [sl_id], onDelete: Cascade)
+
+  @@id([p_id, sl_id])
+}
+
+model customer {
+  c_id           Int              @id @default(autoincrement())
+  c_name         String?          @db.VarChar(50)
+  c_address      String?          @db.VarChar(100)
+  c_city         String?          @db.VarChar(50)
+  c_country      String?          @db.VarChar(50)
+  c_zipcode      String?          @db.VarChar(50)
+  c_fax          String?          @db.VarChar(50)
+  c_phone        String?          @db.VarChar(50)
+  c_email        String?          @db.VarChar(100)
+  c_photo        String?          @db.VarChar(100)
+  marketing      marketing[]
+  offer          offer[]
+  prepare_report prepare_report[]
+  sales          sales[]
+}
+
+model debts {
+  d_id         Int            @id @default(autoincrement())
+  d_date       DateTime?      @db.Date
+  d_type       String?        @db.VarChar(50)
+  d_amount     Float?
+  d_currency   String?        @db.VarChar(50)
+  sl_id        Int?
+  sales        sales?         @relation(fields: [sl_id], references: [sl_id], onDelete: Cascade)
+  notification notification[]
+}
+
+model employee {
+  e_id                  Int                     @id @default(autoincrement())
+  f_name                String?                 @db.VarChar(50)
+  l_name                String?                 @db.VarChar(50)
+  birth_date            DateTime?               @db.Date
+  salary                Int?
+  e_role                String?                 @db.VarChar(50)
+  e_photo               String?                 @db.VarChar(100)
+  e_address             String?                 @db.VarChar(100)
+  e_email               String?                 @db.VarChar(100)
+  e_phone               String?                 @db.VarChar(50)
+  e_city                String?                 @db.VarChar(50)
+  e_country             String?                 @db.VarChar(50)
+  e_zipcode             String?                 @db.VarChar(50)
+  e_username            String?                 @unique @db.VarChar(50)
+  e_password            String?                 @db.VarChar(255)
+  e_gender              String?                 @db.VarChar(50)
+  e_active              Boolean?                @default(false)
+  access_actions        access_actions?
+  marketing             marketing[]
+  notification          notification[]
+  notification_employee notification_employee[]
+  prepare_report        prepare_report[]
+}
+
+model marketing {
+  m_id     Int       @id @default(autoincrement())
+  m_date   DateTime? @db.Date
+  e_id     Int?
+  c_id     Int?
+  customer customer? @relation(fields: [c_id], references: [c_id], onDelete: Cascade)
+  employee employee? @relation(fields: [e_id], references: [e_id], onDelete: Cascade)
+}
+
+model notification {
+  n_id                  Int                     @id @default(autoincrement())
+  n_date                DateTime?               @db.Date
+  n_type                String?                 @db.VarChar(50)
+  n_message             String?
+  n_status              String?                 @db.VarChar(50)
+  e_id                  Int?
+  p_id                  Int?
+  d_id                  Int?
+  debts                 debts?                  @relation(fields: [d_id], references: [d_id], onDelete: Cascade)
+  employee              employee?               @relation(fields: [e_id], references: [e_id], onDelete: Cascade)
+  stock                 stock?                  @relation(fields: [p_id], references: [p_id], onDelete: Cascade)
+  notification_employee notification_employee[]
+}
+
+model notification_employee {
+  n_id         Int
+  e_id         Int
+  employee     employee     @relation(fields: [e_id], references: [e_id], onDelete: Cascade)
+  notification notification @relation(fields: [n_id], references: [n_id], onDelete: Cascade)
+
+  @@id([n_id, e_id])
+}
+
+model offer {
+  pq_id           Int
+  p_id            Int
+  c_id            Int?
+  customer        customer?       @relation(fields: [c_id], references: [c_id])
+  stock           stock           @relation(fields: [p_id], references: [p_id], onDelete: Cascade)
+  price_quotation price_quotation @relation(fields: [pq_id], references: [pq_id], onDelete: Cascade)
+
+  @@id([pq_id, p_id])
+}
+
+model prepare_report {
+  rpt_id   Int
+  e_id     Int?
+  c_id     Int?
+  p_id     Int
+  customer customer? @relation(fields: [c_id], references: [c_id])
+  employee employee? @relation(fields: [e_id], references: [e_id])
+  stock    stock     @relation(fields: [p_id], references: [p_id], onDelete: Cascade)
+  report   report    @relation(fields: [rpt_id], references: [rpt_id], onDelete: Cascade)
+
+  @@id([rpt_id, p_id])
+}
+
+model price_quotation {
+  pq_id       Int     @id @default(autoincrement())
+  pq_discount Int?
+  pq_currency String? @db.VarChar(50)
+  pq_duration String? @db.VarChar(50)
+  pq_total    Float?
+  offer       offer[]
+}
+
+model purchase {
+  pch_id          Int              @id @default(autoincrement())
+  pch_date        DateTime?        @db.Date
+  pch_total       Float?
+  pch_tax         Int?
+  pch_cost        Int?
+  pch_billnum     Int?             @unique
+  pch_currency    String?          @db.VarChar(50)
+  pch_expense     Int?
+  pch_customscost Int?
+  pch_customsnum  Int?
+  s_id            Int?
+  supplier        supplier?        @relation(fields: [s_id], references: [s_id])
+  purchase_items  purchase_items[]
+}
+
+model purchase_items {
+  p_id        Int
+  pch_id      Int
+  pi_quantity Int?
+  p_costprice Float?
+  p_category  String?  @db.VarChar(50)
+  pi_total    Float?
+  stock       stock    @relation(fields: [p_id], references: [p_id], onDelete: Cascade)
+  purchase    purchase @relation(fields: [pch_id], references: [pch_id], onDelete: Cascade)
+
+  @@id([p_id, pch_id])
+}
+
+model repair {
+  rep_id         Int              @id @default(autoincrement())
+  p_id           Int?
+  remarks        String?
+  rep_date       DateTime?        @db.Date
+  stock          stock?           @relation(fields: [p_id], references: [p_id])
+  repair_process repair_process[]
+}
+
+model repair_process {
+  rep_id      Int
+  sp_id       Int
+  sp_quantity Int?
+  repair      repair @relation(fields: [rep_id], references: [rep_id], onDelete: Cascade)
+  stock       stock  @relation(fields: [sp_id], references: [p_id], onDelete: Cascade)
+
+  @@id([rep_id, sp_id])
+}
+
+model report {
+  rpt_id         Int              @id @default(autoincrement())
+  rp_type        String?          @db.VarChar(50)
+  prepare_report prepare_report[]
+}
+
+model sales {
+  sl_id       Int          @id @default(autoincrement())
+  sl_date     DateTime?    @db.Date
+  sl_total    Float?
+  sl_discount Float?
+  sl_tax      Float?
+  sl_status   String?      @db.VarChar(50)
+  sl_type     String?      @db.VarChar(50)
+  sl_inamount Float?
+  sl_cost     Float?
+  sl_billnum  Int?         @unique
+  sl_payed    Float?
+  sl_currency String?      @db.VarChar(50)
+  c_id        Int?
+  adddum      adddum[]
+  debts       debts[]
+  customer    customer?    @relation(fields: [c_id], references: [c_id])
+  sell_items  sell_items[]
+}
+
+model sell_items {
+  p_id        Int
+  sl_id       Int
+  si_quantity Int?
+  si_total    Float?
+  stock       stock  @relation(fields: [p_id], references: [p_id], onDelete: Cascade)
+  sales       sales  @relation(fields: [sl_id], references: [sl_id], onDelete: Cascade)
+
+  @@id([p_id, sl_id])
+}
+
+model stock {
+  p_id           Int              @id @default(autoincrement())
+  p_name         String?          @db.VarChar(50)
+  p_costprice    Float?
+  p_sellprice    Float?
+  p_quantity     Int?
+  p_photo        String?          @db.VarChar(100)
+  p_description  String?
+  p_category     String?          @db.VarChar(50)
+  model_code     String?          @db.VarChar(50)
+  expire_date    DateTime?        @db.Date
+  p_status       String?          @db.VarChar(50)
+  serial_number  String?          @unique @db.VarChar(50)
+  adddum         adddum[]
+  notification   notification[]
+  offer          offer[]
+  prepare_report prepare_report[]
+  purchase_items purchase_items[]
+  repair         repair[]
+  repair_process repair_process[]
+  sell_items     sell_items[]
+}
+
+model supplier {
+  s_id      Int        @id @default(autoincrement())
+  s_name    String?    @db.VarChar(50)
+  s_address String?    @db.VarChar(100)
+  s_city    String?    @db.VarChar(50)
+  s_country String?    @db.VarChar(50)
+  s_zipcode String?    @db.VarChar(50)
+  s_fax     String?    @db.VarChar(50)
+  s_phone   String?    @db.VarChar(50)
+  s_email   String?    @db.VarChar(50)
+  s_photo   String?    @db.VarChar(100)
+  purchase  purchase[]
+}

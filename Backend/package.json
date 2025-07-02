@@ -11,6 +11,7 @@
   "author": "schema squad",
   "license": "ISC",
   "dependencies": {
+    "@prisma/client": "^6.11.0",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.3",
     "connect-pg-simple": "^10.0.0",
@@ -22,5 +23,12 @@
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "pg": "^8.13.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.10",
+    "nodemon": "^3.1.10",
+    "prisma": "^6.11.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
   }
 }

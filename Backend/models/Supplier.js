@@ -1,72 +1,68 @@
-import db from "../config/db.js";
+import prisma from "../config/db.js";
 
 class Supplier {
   // Get all suppliers
   static async getAll() {
-    const result = await db.query("SELECT * FROM SUPPLIER");
-    return result.rows;
+    return await prisma.supplier.findMany();
   }
 
   // Delete supplier
   static async delete(id) {
-    await db.query("DELETE FROM SUPPLIER WHERE S_ID = $1", [id]);
+    await prisma.supplier.delete({
+      where: { s_id: parseInt(id) },
+    });
   }
 
   // Create new supplier
   static async create(supplierData) {
-    const result = await db.query(
-      `INSERT INTO SUPPLIER 
-      (S_NAME, S_ADDRESS, S_CITY, S_COUNTRY, S_ZIPCODE, S_FAX, S_PHOTO) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING S_ID`,
-      [
-        supplierData.S_NAME,
-        supplierData.S_ADDRESS,
-        supplierData.S_CITY,
-        supplierData.S_COUNTRY,
-        supplierData.S_ZIPCODE,
-        supplierData.S_FAX,
-        supplierData.S_PHOTO || null,
-      ]
-    );
-    return result.rows[0];
+    const result = await prisma.supplier.create({
+      data: {
+        s_name: supplierData.S_NAME,
+        s_address: supplierData.S_ADDRESS,
+        s_city: supplierData.S_CITY,
+        s_country: supplierData.S_COUNTRY,
+        s_zipcode: supplierData.S_ZIPCODE,
+        s_fax: supplierData.S_FAX,
+        s_photo: supplierData.S_PHOTO || null,
+      },
+      select: { s_id: true },
+    });
+    return { S_ID: result.s_id };
   }
 
   // Update supplier
   static async update(id, updateData) {
-    await db.query(
-      `UPDATE SUPPLIER SET 
-        S_NAME = $1, S_ADDRESS = $2, S_CITY = $3, 
-        S_COUNTRY = $4, S_ZIPCODE = $5, S_FAX = $6 
-       WHERE S_ID = $7`,
-      [
-        updateData.S_NAME,
-        updateData.S_ADDRESS,
-        updateData.S_CITY,
-        updateData.S_COUNTRY,
-        updateData.S_ZIPCODE,
-        updateData.S_FAX,
-        id,
-      ]
-    );
+    await prisma.supplier.update({
+      where: { s_id: parseInt(id) },
+      data: {
+        s_name: updateData.S_NAME,
+        s_address: updateData.S_ADDRESS,
+        s_city: updateData.S_CITY,
+        s_country: updateData.S_COUNTRY,
+        s_zipcode: updateData.S_ZIPCODE,
+        s_fax: updateData.S_FAX,
+      },
+    });
   }
 
   // Update supplier photo
   static async updatePhoto(id, filename) {
     console.log("filename", filename);
     console.log("id", id);
-    await db.query("UPDATE SUPPLIER SET S_PHOTO = $1 WHERE S_ID = $2", [
-      filename,
-      id,
-    ]);
+    await prisma.supplier.update({
+      where: { s_id: parseInt(id) },
+      data: { s_photo: filename },
+    });
   }
 
-  // Get supplier with sales
+  // Get supplier with purchases
   static async getWithPurchases(id) {
-    const purchasesResult = await db.query(
-      `SELECT * FROM PURCHASE WHERE S_ID = $1 ORDER BY PCH_DATE DESC`,
-      [id]
-    );
+    const purchasesResult = await prisma.purchase.findMany({
+      where: { s_id: parseInt(id) },
+      orderBy: { pch_date: "desc" },
+    });
     return {
-      purchasesHistory: purchasesResult.rows,
+      purchasesHistory: purchasesResult,
     };
   }
 }

@@ -1,135 +1,139 @@
-import db from "../config/db.js";
+import prisma from "../config/db.js";
 
 class Debt {
   // Get all debts with customer information
   static async getAllDebts() {
-    const result = await db.query(`
-      SELECT 
-        C.C_NAME,
-        C.C_PHOTO,
-        D.SL_ID,
-        D.D_ID,
-        D.D_DATE,
-        D.D_TYPE,
-        D.D_AMOUNT,
-        D.D_CURRENCY
-      FROM 
-        DEBTS D
-      LEFT JOIN 
-        SALES S ON D.SL_ID = S.SL_ID
-      LEFT JOIN 
-        CUSTOMER C ON S.C_ID = C.C_ID;
-    `);
-    return result.rows;
+    return await prisma.debts.findMany({
+      include: {
+        sales: {
+          include: {
+            customer: {
+              select: {
+                c_name: true,
+                c_photo: true,
+              },
+            },
+          },
+        },
+      },
+    });
   }
 
   // Add a new debt
   static async addDebt(debtData) {
     const { debtDate, debtType, debtAmount, currency, sl_id } = debtData;
-    const result = await db.query(
-      `INSERT INTO DEBTS (D_DATE, D_TYPE, D_AMOUNT, D_CURRENCY, SL_ID) 
-       VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-      [debtDate, debtType, debtAmount, currency, sl_id]
-    );
-    return result.rows[0];
+    return await prisma.debts.create({
+      data: {
+        d_date: new Date(debtDate),
+        d_type: debtType,
+        d_amount: debtAmount,
+        d_currency: currency,
+        sl_id: sl_id,
+      },
+    });
   }
 
   // Update debt and related sales data
   static async updateDebt(debtId, debtData) {
     const { SL_ID, D_TYPE, D_AMOUNT, D_DATE } = debtData;
 
-    // Get sale total
-    const saleResult = await db.query(
-      `SELECT SL_TOTAL FROM SALES WHERE SL_ID = $1`,
-      [SL_ID]
-    );
+    await prisma.$transaction(async (tx) => {
+      // Get sale total
+      const sale = await tx.sales.findUnique({
+        where: { sl_id: parseInt(SL_ID) },
+        select: { sl_total: true },
+      });
 
-    if (saleResult.rows.length === 0) {
-      throw new Error("Sale not found");
-    }
+      if (!sale) {
+        throw new Error("Sale not found");
+      }
 
-    const { sl_total } = saleResult.rows[0];
+      const { sl_total } = sale;
 
-    if (D_TYPE === "INSURANCE") {
-      // Update sales insurance amount
-      await db.query(`UPDATE SALES SET SL_INAMOUNT = $1 WHERE SL_ID = $2`, [
-        -D_AMOUNT,
-        SL_ID,
-      ]);
+      if (D_TYPE === "INSURANCE") {
+        // Update sales insurance amount
+        await tx.sales.update({
+          where: { sl_id: parseInt(SL_ID) },
+          data: { sl_inamount: -D_AMOUNT },
+        });
 
-      // Update debt
-      await db.query(
-        `UPDATE DEBTS 
-         SET D_AMOUNT = $1, D_DATE = $2 
-         WHERE D_ID = $3 AND D_TYPE = 'INSURANCE'`,
-        [D_AMOUNT, D_DATE, debtId]
-      );
-    } else {
-      // Update debt type based on amount
-      const newType = D_AMOUNT < 0 ? "DEBT_IN" : "DEBT_OUT";
+        // Update debt
+        await tx.debts.updateMany({
+          where: {
+            d_id: parseInt(debtId),
+            d_type: "INSURANCE",
+          },
+          data: {
+            d_amount: D_AMOUNT,
+            d_date: new Date(D_DATE),
+          },
+        });
+      } else {
+        // Update debt type based on amount
+        const newType = D_AMOUNT < 0 ? "DEBT_IN" : "DEBT_OUT";
 
-      await db.query(
-        `UPDATE DEBTS 
-         SET D_AMOUNT = $1, D_DATE = $2, D_TYPE = $3 
-         WHERE D_ID = $4`,
-        [D_AMOUNT, D_DATE, newType, debtId]
-      );
+        await tx.debts.update({
+          where: { d_id: parseInt(debtId) },
+          data: {
+            d_amount: D_AMOUNT,
+            d_date: new Date(D_DATE),
+            d_type: newType,
+          },
+        });
 
-      // Update sales paid amount
-      await db.query(`UPDATE SALES SET SL_PAYED = $1 WHERE SL_ID = $2`, [
-        sl_total + D_AMOUNT,
-        SL_ID,
-      ]);
-    }
+        // Update sales paid amount
+        await tx.sales.update({
+          where: { sl_id: parseInt(SL_ID) },
+          data: { sl_payed: sl_total + D_AMOUNT },
+        });
+      }
+    });
 
     return { success: true };
   }
 
   // Delete a debt
   static async deleteDebt(debtId) {
-    const result = await db.query(
-      `DELETE FROM DEBTS WHERE D_ID = $1 RETURNING *`,
-      [debtId]
-    );
-    return result.rows[0];
+    return await prisma.debts.delete({
+      where: { d_id: parseInt(debtId) },
+    });
   }
 
   // Get debt by ID
   static async getDebtById(debtId) {
-    const result = await db.query(`SELECT * FROM DEBTS WHERE D_ID = $1`, [
-      debtId,
-    ]);
-    return result.rows[0];
+    return await prisma.debts.findUnique({
+      where: { d_id: parseInt(debtId) },
+    });
   }
 
   // Get debts by sale ID
   static async getDebtsBySlId(slId) {
-    const result = await db.query(`SELECT * FROM DEBTS WHERE SL_ID = $1`, [
-      slId,
-    ]);
-    return result.rows;
+    return await prisma.debts.findMany({
+      where: { sl_id: parseInt(slId) },
+    });
   }
 
   // Get total debts summary
   static async getTotalDebts() {
-    const result = await db.query(`
-      SELECT SUM(D_AMOUNT) as total_amount
-      FROM DEBTS
-    `);
-    return result.rows[0];
+    const result = await prisma.debts.aggregate({
+      _sum: {
+        d_amount: true,
+      },
+    });
+    return { total_amount: result._sum.d_amount };
   }
 
   // Get debts overview by type
   static async getDebtsOverview() {
-    const result = await db.query(`
-      SELECT 
-        D_TYPE, 
-        SUM(D_AMOUNT) AS total_debt
-      FROM DEBTS
-      GROUP BY D_TYPE
-      ORDER BY D_TYPE;
-    `);
-    return result.rows;
+    return await prisma.debts.groupBy({
+      by: ["d_type"],
+      _sum: {
+        d_amount: true,
+      },
+      orderBy: {
+        d_type: "asc",
+      },
+    });
   }
 }
 

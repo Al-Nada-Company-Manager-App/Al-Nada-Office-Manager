@@ -1,6 +1,5 @@
 // controllers/employeeController.js
 import Employee from "../models/Employee.js";
-import db from "../config/db.js";
 
 const employeeController = {
   signedUser: async (req, res) => {
@@ -19,7 +18,7 @@ const employeeController = {
 
       res.json({ user: req.user, access: userAccess });
     } catch (error) {
-      console.error("Error in signedUser controller:", error); 
+      console.error("Error in signedUser controller:", error);
       res.status(500).json({ error: "Internal server error" });
     }
   },
@@ -59,13 +58,12 @@ const employeeController = {
   addEmployee: async (req, res) => {
     try {
       const { username } = req.body;
-      const userExists = await db.query(
-        "SELECT * FROM EMPLOYEE WHERE E_USERNAME = $1",
-        [username]
-      );
-      if (userExists.rows.length > 0) {
-        return res
-          .json({ success: false, message: "Username already in use!" });
+      const userExists = await Employee.checkUsernameExists(username);
+      if (userExists) {
+        return res.json({
+          success: false,
+          message: "Username already in use!",
+        });
       }
 
       const employeeData = req.body;
@@ -110,10 +108,7 @@ const employeeController = {
     const E_PHOTO = req.file ? req.file.filename : null;
     const E_ID = req.body.E_ID;
     try {
-      await db.query("UPDATE Employee SET E_PHOTO = $1 WHERE E_ID = $2", [
-        E_PHOTO,
-        E_ID,
-      ]);
+      await Employee.updatePhoto(E_ID, E_PHOTO);
       res.send("Employee photo updated successfully");
     } catch (err) {
       console.error(err);
@@ -124,7 +119,7 @@ const employeeController = {
     try {
       const { id } = req.params;
       await Employee.delete(id);
-      res.json({ success: true , message: "Employee deleted successfully" });
+      res.json({ success: true, message: "Employee deleted successfully" });
     } catch (error) {
       res.status(500).json({ error: "Internal server error" });
     }
@@ -133,7 +128,7 @@ const employeeController = {
     try {
       const { id } = req.params;
       await Employee.deactivate(id);
-      res.json({ success: true , message: "Employee deactivated successfully" });
+      res.json({ success: true, message: "Employee deactivated successfully" });
     } catch (error) {
       res.status(500).json({ error: "Internal server error" });
     }
@@ -142,13 +137,11 @@ const employeeController = {
     try {
       const { id } = req.params;
       await Employee.activate(id);
-      res.json({ success: true , message: "Employee activated successfully" });
+      res.json({ success: true, message: "Employee activated successfully" });
     } catch (error) {
       res.status(500).json({ error: "Internal server error" });
     }
   },
-
-
 };
 
 export default employeeController;

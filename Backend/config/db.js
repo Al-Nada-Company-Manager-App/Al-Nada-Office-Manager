@@ -1,19 +1,17 @@
-import pg from "pg";
+import { PrismaClient } from "../generated/prisma/index.js";
 
-const db = new pg.Client({
-  user: "postgres",
-  host: "localhost",
-  database: "Al Nada",
-  password: "NEW@22wntg",
-  port: 5432,
-});
+const prisma = new PrismaClient();
 
-db.connect((err) => {
-  if (err) {
-    console.error("Database connection error:", err.stack);
-  } else {
-    console.log("Connected to the database");
+// Test the connection
+async function connectDB() {
+  try {
+    await prisma.$connect();
+    console.log("Connected to the database with Prisma");
+  } catch (error) {
+    console.error("Database connection error:", error);
   }
-});
+}
 
-export default db;
+connectDB();
+
+export default prisma;

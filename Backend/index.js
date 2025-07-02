@@ -13,7 +13,7 @@ import purchaseRoutes from "./routes/purchaseRoutes.js";
 import debtRoutes from "./routes/debtRoutes.js";
 import { Strategy } from "passport-local";
 import cors from "cors";
-import db from "./config/db.js";
+import Employee from "./models/Employee.js";
 import bcrypt from "bcrypt";
 import multer from "multer";
 
@@ -55,11 +55,7 @@ passport.use(
     { usernameField: "username" },
     async (username, password, done) => {
       try {
-        const result = await db.query(
-          "SELECT * FROM EMPLOYEE WHERE E_USERNAME = $1",
-          [username]
-        );
-        const user = result.rows[0];
+        const user = await Employee.findByUsername(username);
         if (!user) {
           return done(null, false, { message: "User not found" });
         }
@@ -90,10 +86,7 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (id, done) => {
   try {
-    const result = await db.query("SELECT * FROM EMPLOYEE WHERE E_ID = $1", [
-      id,
-    ]);
-    const user = result.rows[0];
+    const user = await Employee.findByIdForAuth(id);
     if (user) {
       done(null, user);
     } else {

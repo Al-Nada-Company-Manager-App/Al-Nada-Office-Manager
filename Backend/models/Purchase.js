@@ -1,18 +1,18 @@
-import db from "../config/db.js";
+import prisma from "../config/db.js";
 
 class Purchase {
   // Get all purchases with supplier info
   static async getAllPurchases() {
-    const result = await db.query(`
-      SELECT 
-        PURCHASE.*, 
-        SUPPLIER.S_NAME,
-        SUPPLIER.S_PHOTO
-      FROM 
-        PURCHASE
-      JOIN 
-        SUPPLIER ON PURCHASE.S_ID = SUPPLIER.S_ID`);
-    return result.rows;
+    return await prisma.purchase.findMany({
+      include: {
+        supplier: {
+          select: {
+            s_name: true,
+            s_photo: true,
+          },
+        },
+      },
+    });
   }
 
   // Create a new purchase with all related data
@@ -32,51 +32,49 @@ class Purchase {
         products,
       } = PURCHASE_DATA;
 
-      const purchaseResult = await db.query(
-        `INSERT INTO PURCHASE 
-          (S_ID, PCH_DATE, PCH_TOTAL, PCH_TAX, PCH_COST, PCH_BILLNUM, PCH_CURRENCY, PCH_EXPENSE, PCH_CUSTOMSCOST, PCH_CUSTOMSNUM) 
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
-         RETURNING PCH_ID`,
-        [
-          supplier.s_id,
-          purchasedate,
-          total,
-          tax,
-          cost,
-          billNumber,
-          currency,
-          expense,
-          customscost,
-          customsnum,
-        ]
-      );
+      const result = await prisma.$transaction(async (tx) => {
+        const purchaseResult = await tx.purchase.create({
+          data: {
+            s_id: supplier.s_id,
+            pch_date: new Date(purchasedate),
+            pch_total: total,
+            pch_tax: tax,
+            pch_cost: cost,
+            pch_billnum: billNumber,
+            pch_currency: currency,
+            pch_expense: expense,
+            pch_customscost: customscost,
+            pch_customsnum: customsnum,
+          },
+        });
 
-      const purchaseId = purchaseResult.rows[0].pch_id;
+        const purchaseId = purchaseResult.pch_id;
 
-      const productValues = products
-        .map(
-          (product) =>
-            `(${product.p_id}, ${purchaseId}, ${product.quantity}, ${
-              product.quantity * product.costprice
-            })`
-        )
-        .join(", ");
+        for (const product of products) {
+          await tx.purchase_items.create({
+            data: {
+              p_id: product.p_id,
+              pch_id: purchaseId,
+              pi_quantity: product.quantity,
+              pi_total: product.quantity * product.costprice,
+            },
+          });
 
-      await db.query(
-        `INSERT INTO PURCHASE_ITEMS (P_ID, PCH_ID, PI_QUANTITY, PI_TOTAL) 
-         VALUES ${productValues}`
-      );
+          await tx.stock.update({
+            where: { p_id: product.p_id },
+            data: {
+              p_quantity: {
+                increment: product.quantity,
+              },
+              p_costprice: product.costprice,
+            },
+          });
+        }
 
-      for (const product of products) {
-        await db.query(
-          `UPDATE STOCK 
-           SET P_QUANTITY = P_QUANTITY + $1 , P_COSTPRICE = $2
-           WHERE P_ID = $3`,
-          [product.quantity, product.costprice, product.p_id]
-        );
-      }
+        return purchaseId;
+      });
 
-      return purchaseId;
+      return result;
     } catch (error) {
       console.error("Error creating Purchase:", error);
       throw error;
@@ -86,33 +84,24 @@ class Purchase {
   // Get products in a specific purchase
   static async getProductsInPurchase(PCH_ID) {
     try {
-      const result = await db.query(
-        `SELECT 
-          PURCHASE_ITEMS.P_ID,
-          PURCHASE_ITEMS.PCH_ID,
-          PURCHASE_ITEMS.PI_QUANTITY,
-          PURCHASE_ITEMS.P_COSTPRICE,
-          PURCHASE_ITEMS.P_CATEGORY,
-          PURCHASE_ITEMS.PI_TOTAL,
-          STOCK.P_NAME,
-          STOCK.P_SELLPRICE,
-          STOCK.P_QUANTITY,
-          STOCK.P_PHOTO,
-          STOCK.P_DESCRIPTION,
-          STOCK.MODEL_CODE,
-          STOCK.EXPIRE_DATE,
-          STOCK.P_STATUS,
-          STOCK.SERIAL_NUMBER
-        FROM 
-          PURCHASE_ITEMS
-        JOIN 
-          STOCK ON PURCHASE_ITEMS.P_ID = STOCK.P_ID
-        WHERE 
-          PURCHASE_ITEMS.PCH_ID = $1
-      `,
-        [PCH_ID]
-      );
-      return result.rows;
+      return await prisma.purchase_items.findMany({
+        where: { pch_id: parseInt(PCH_ID) },
+        include: {
+          stock: {
+            select: {
+              p_name: true,
+              p_sellprice: true,
+              p_quantity: true,
+              p_photo: true,
+              p_description: true,
+              model_code: true,
+              expire_date: true,
+              p_status: true,
+              serial_number: true,
+            },
+          },
+        },
+      });
     } catch (error) {
       console.error("Error fetching products in purchase:", error);
       throw error;
@@ -124,52 +113,67 @@ class Purchase {
     try {
       const { cost, tax, customscost, expense, total, products } = updateData;
 
-      await db.query(
-        `UPDATE PURCHASE 
-         SET PCH_TOTAL = $1, PCH_TAX = $2, PCH_COST = $3,
-             PCH_EXPENSE = $4, PCH_CUSTOMSCOST = $5
-         WHERE PCH_ID = $6`,
-        [total, tax, cost, expense, customscost, PCH_ID]
-      );
+      await prisma.$transaction(async (tx) => {
+        await tx.purchase.update({
+          where: { pch_id: parseInt(PCH_ID) },
+          data: {
+            pch_total: total,
+            pch_tax: tax,
+            pch_cost: cost,
+            pch_expense: expense,
+            pch_customscost: customscost,
+          },
+        });
 
-      const currentProducts = await db.query(
-        `SELECT P_ID, PI_QUANTITY FROM PURCHASE_ITEMS WHERE PCH_ID = $1`,
-        [PCH_ID]
-      );
+        // Get current products to reverse their quantities
+        const currentProducts = await tx.purchase_items.findMany({
+          where: { pch_id: parseInt(PCH_ID) },
+          select: {
+            p_id: true,
+            pi_quantity: true,
+          },
+        });
 
-      for (const item of currentProducts.rows) {
-        await db.query(
-          `UPDATE STOCK 
-           SET P_QUANTITY = P_QUANTITY - $1 
-           WHERE P_ID = $2`,
-          [item.pi_quantity, item.p_id]
-        );
-      }
+        // Reverse the stock quantities
+        for (const item of currentProducts) {
+          await tx.stock.update({
+            where: { p_id: item.p_id },
+            data: {
+              p_quantity: {
+                decrement: item.pi_quantity,
+              },
+            },
+          });
+        }
 
-      await db.query(`DELETE FROM PURCHASE_ITEMS WHERE PCH_ID = $1`, [PCH_ID]);
+        // Delete existing purchase items
+        await tx.purchase_items.deleteMany({
+          where: { pch_id: parseInt(PCH_ID) },
+        });
 
-      const productValues = products
-        .map(
-          (product) =>
-            `(${product.p_id}, ${PCH_ID}, ${product.quantity}, ${
-              product.costprice
-            }, ${product.quantity * product.costprice})`
-        )
-        .join(", ");
+        // Add new purchase items
+        for (const product of products) {
+          await tx.purchase_items.create({
+            data: {
+              p_id: product.p_id,
+              pch_id: parseInt(PCH_ID),
+              pi_quantity: product.quantity,
+              p_costprice: product.costprice,
+              pi_total: product.quantity * product.costprice,
+            },
+          });
 
-      await db.query(
-        `INSERT INTO PURCHASE_ITEMS (P_ID, PCH_ID, PI_QUANTITY, P_COSTPRICE, PI_TOTAL) 
-         VALUES ${productValues}`
-      );
-
-      for (const product of products) {
-        await db.query(
-          `UPDATE STOCK 
-           SET P_QUANTITY = P_QUANTITY + $1 , P_COSTPRICE = $2
-           WHERE P_ID = $3`,
-          [product.quantity, product.costprice, product.p_id]
-        );
-      }
+          await tx.stock.update({
+            where: { p_id: product.p_id },
+            data: {
+              p_quantity: {
+                increment: product.quantity,
+              },
+              p_costprice: product.costprice,
+            },
+          });
+        }
+      });
     } catch (error) {
       console.error("Error updating Purchase:", error);
       throw error;
@@ -178,7 +182,9 @@ class Purchase {
 
   // Delete a purchase
   static async deletePurchase(PCH_ID) {
-    await db.query("DELETE FROM PURCHASE WHERE PCH_ID = $1", [PCH_ID]);
+    await prisma.purchase.delete({
+      where: { pch_id: parseInt(PCH_ID) },
+    });
   }
 }
 
