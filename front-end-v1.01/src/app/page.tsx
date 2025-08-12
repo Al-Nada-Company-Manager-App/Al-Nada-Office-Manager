@@ -1,12 +1,34 @@
 "use client";
 import { FC } from "react";
-import MultiBlobBackground from "@/components/MultiBlobBackground";
+import PNGBlobFromImage from "@/components/PNGBlobFromImage";
+import { Canvas } from "@react-three/fiber";
 
 const Home: FC = () => {
   return (
-    <div className="relative min-h-screen bg-[#0c0c1d] text-white overflow-hidden">
-      {/* 3D Blobs Background */}
-      <MultiBlobBackground />
+    <div
+      className="relative min-h-screen text-white overflow-hidden"
+      style={{ background: "#0d0d0d" }}
+    >
+      {/* Three.js Canvas with built-in background glows */}
+      <div className="pointer-events-none absolute inset-0 z-0">
+        <Canvas
+          camera={{ position: [0, 0, 8], fov: 60 }}
+          gl={{ alpha: false, antialias: true }}
+          style={{ background: "#0d0d0d" }}
+        >
+          <ambientLight intensity={0.02} />
+          <group position={[0, 0, 0]}>
+            <PNGBlobFromImage
+              src="/blobCluster.png"
+              mode="alpha"
+              size={13}
+              rimGlow={2.2}
+              threshold={0.1}
+              pulseAmp={0.08}
+            />
+          </group>
+        </Canvas>
+      </div>
 
       {/* Foreground Content */}
       <div className="max-w-6xl mx-auto px-6 py-24 relative z-10">
@@ -54,6 +76,8 @@ const Home: FC = () => {
             </div>
           ))}
         </div>
+
+        {/* (Removed standalone PNG demo section; background now uses PNG) */}
       </div>
     </div>
   );
