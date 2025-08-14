@@ -12,7 +12,7 @@ import path from "path";
 const db = new pg.Client({
   user: "postgres",
   host: "localhost",
-  database: "Al Nada",
+  database: "al_nada",
   password: "NEW@22wntg",
   port: 5432,
 });

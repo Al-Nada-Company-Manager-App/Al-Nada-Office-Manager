@@ -8,7 +8,7 @@ import {
   deleteDebt,
   fetchDebts,
 } from "../../Store/Debts";
-import { convertTimestampToDate } from "../../utils/ConvertDate";
+import { convertTimestampToDate } from "../../Utils/ConvertDate"
 import UpdateDebtModal from "./updateDebt";
 const DebtDetails = () => {
   const dispatch = useDispatch();

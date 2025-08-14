@@ -17,9 +17,8 @@ import {
   fetchProductsinSale,
 } from "../../Store/Sales";
 import { PlusOutlined } from "@ant-design/icons";
-import {convertTimestampToDate} from '../../utils/ConvertDate';
-import {addtodum,clearaddedDum} from "../../Store/Sales";
-
+import { convertTimestampToDate } from "../../Utils/ConvertDate";
+import { addtodum, clearaddedDum } from "../../Store/Sales";
 
 const Sales = () => {
   const dispatch = useDispatch();
@@ -146,8 +145,10 @@ const Sales = () => {
     dispatch(fetchSales());
   }, []);
 
-  const handleRowClick = async(record) => {
-    await dispatch(fetchProductsinSale({ saleId: record.sl_id , saleType: record.sl_type }));
+  const handleRowClick = async (record) => {
+    await dispatch(
+      fetchProductsinSale({ saleId: record.sl_id, saleType: record.sl_type })
+    );
     dispatch(setSelectedSale(record));
     dispatch(setSaleModalVisible(true));
   };
@@ -214,8 +215,8 @@ const Sales = () => {
       onFilter: (value, record) => record.sl_currency.indexOf(value) === 0,
     },
     {
-        title: "Type",
-        dataIndex: "sl_type",
+      title: "Type",
+      dataIndex: "sl_type",
     },
     {
       title: "Status",
@@ -252,25 +253,25 @@ const Sales = () => {
   const openSaleModal = () => {
     dispatch(setaddSaleModalVisible(true));
     dispatch(clearaddedDum());
-  }
+  };
 
   return (
     <>
-     {userAccess.sales_add && (
-      <Button
-        type="primary"
-        onClick={openSaleModal}
-        style={{
-          marginBottom: "16px",
-          backgroundColor: "#389e0d",
-          marginLeft: "auto",
-          display: "flex",
-          alignItems: "center",
-        }}
-        icon={<PlusOutlined />}
-      >
-        Add Sale
-      </Button>
+      {userAccess.sales_add && (
+        <Button
+          type="primary"
+          onClick={openSaleModal}
+          style={{
+            marginBottom: "16px",
+            backgroundColor: "#389e0d",
+            marginLeft: "auto",
+            display: "flex",
+            alignItems: "center",
+          }}
+          icon={<PlusOutlined />}
+        >
+          Add Sale
+        </Button>
       )}
       <AddNewSale />
       <div

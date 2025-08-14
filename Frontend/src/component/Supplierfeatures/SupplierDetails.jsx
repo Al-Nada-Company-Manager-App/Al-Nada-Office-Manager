@@ -9,7 +9,7 @@ import {
   setSelectedSupplier,
   setupdateSupplierModalVisible,
 } from "../../Store/Supplier";
-import UpdateSupplierModal from "./updateSupplier";
+import UpdateSupplierModal from "./UpdateSupplier";
 const purchaseColumns = [
   {
     title: "Purchase ID",

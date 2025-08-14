@@ -5,7 +5,7 @@ import {
   fetchSalesHistory,
   setCustomerModalVisible,
 } from "../../Store/Customer";
-import { convertTimestampToDate } from "../../utils/ConvertDate";
+import { convertTimestampToDate } from "../../Utils/ConvertDate";
 
 const salesColumns = [
   {

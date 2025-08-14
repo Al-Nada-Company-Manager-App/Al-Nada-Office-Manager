@@ -9,7 +9,7 @@ import {
   setSelectedSale,
 } from "../../Store/Sales";
 import UpdateSaleModal from "./updateSales";
-import { convertTimestampToDate } from "../../utils/ConvertDate";
+import { convertTimestampToDate } from "../../Utils/ConvertDate";
 
 const SaleDetails = () => {
   const dispatch = useDispatch();

@@ -9,9 +9,9 @@ import {
   setSelectedUser,
   setUserModalVisible,
 } from "../../Store/Users";
-import { convertTimestampToDate } from "../../utils/ConvertDate";
+import { convertTimestampToDate } from "../../Utils/ConvertDate";
 import AccessRulesModal from "./EditPermissions";
-import {seteditaccessModalVisible} from "../../Store/Users";
+import { seteditaccessModalVisible } from "../../Store/Users";
 const UserDetails = () => {
   const dispatch = useDispatch();
   const { userAccess } = useSelector((state) => state.auth);
@@ -66,8 +66,7 @@ const UserDetails = () => {
               </Button>
             ),
             userAccess.users_edit &&
-              (
-              selectedUser.e_active === true ? (
+              (selectedUser.e_active === true ? (
                 <Button
                   className="user-actions-btn"
                   key="deactivateUser"
@@ -86,17 +85,17 @@ const UserDetails = () => {
                   Activate User
                 </Button>
               )),
-              userAccess.users_delete && (
-                <Button
-                  className="user-actions-btn"
-                  key="deleteUser"
-                  onClick={handleDeleteUser(selectedUser.e_id)}
-                  type="primary"
-                  danger
-                >
-                  Delete User
-                </Button>
-              ),
+            userAccess.users_delete && (
+              <Button
+                className="user-actions-btn"
+                key="deleteUser"
+                onClick={handleDeleteUser(selectedUser.e_id)}
+                type="primary"
+                danger
+              >
+                Delete User
+              </Button>
+            ),
           ]}
           width={800} // Increased modal width
         >
@@ -176,11 +175,7 @@ const UserDetails = () => {
         </Modal>
       )}
       <AccessRulesModal />
-
-
     </>
   );
 };
 export default UserDetails;
-
-
