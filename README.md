@@ -13,6 +13,16 @@ Designed for efficiency and scalability, this app empowers the business to track
 
 ---
 
+## 🔄 Upcoming Update
+
+The next major update for **Al Nada Manager App** will include:
+
+- **Frontend:** Migration from React.js to **Next.js (TypeScript)** for better performance and SEO.  
+- **Backend:** Migration from JavaScript to **Express.js (TypeScript)** for type safety and maintainability.  
+- **Database Layer:** Integration of **Prisma ORM** with PostgreSQL for improved database management.
+  
+---
+
 ## 📌 Features
 
 - **Inventory Management:** Add, edit, delete, and track products.  
@@ -92,6 +102,37 @@ This project is licensed under the [MIT License](LICENSE).
 
 ---
 
-## ✨ Author
-**Ahmed Fathi**  
-GitHub: [ahmedfathy0-0](https://github.com/ahmedfathy0-0)
+## ✨ Contributors  
+
+<table>
+<tr>
+  <td align = "center"> 
+	<a href = "https://github.com/ahmedfathy0-0">
+	  <img src = "https://github.com/ahmedfathy0-0.png" width = 100>
+	  <br />
+	  <sub> Ahmed Fathy </sub>
+	</a>
+  </td>
+  <td align = "center"> 
+	<a href = "https://github.com/hagar3bdelsalam">
+	  <img src = "https://github.com/hagar3bdelsalam.png" width = 100>
+	  <br />
+	  <sub> Hagar Abdelsalam </sub>
+	</a>
+  </td>
+  <td align = "center"> 
+	<a href = "https://github.com/Mohamed-Kamal0">
+	  <img src = "https://github.com/Mohamed-Kamal0.png" width = 100>
+	  <br />
+	  <sub> Mohamed Kamal  </sub>
+	</a>
+  </td>
+  <td align = "center"> 
+	<a href = "https://github.com/Nawalhossam">
+	  <img src = "https://github.com/Nawalhossam.png" width = 100>
+	  <br />
+	  <sub> Nawal Hossam </sub>
+	</a>
+  </td>
+</tr>
+</table>
