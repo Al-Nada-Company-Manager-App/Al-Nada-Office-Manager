@@ -17,7 +17,7 @@ Designed for efficiency and scalability, this app empowers the business to track
 
 The next major update for **Al Nada Manager App** will include:
 
-- **Frontend:** Migration from React.js to **Next.js (TypeScript)** for better performance and SEO.  
+- **Frontend:** Migration from React.js to **React.js (TypeScript)** for stronger type safety and maintainability.  
 - **Backend:** Migration from JavaScript to **Express.js (TypeScript)** for type safety and maintainability.  
 - **Database Layer:** Integration of **Prisma ORM** with PostgreSQL for improved database management.
   
