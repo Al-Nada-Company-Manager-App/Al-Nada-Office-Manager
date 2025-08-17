@@ -1,4 +1,4 @@
-# 📦 Al Nada Manager App
+# <img src="Frontend/public/logo.png" alt="Al Nada Logo" width="60" align="center" /> Al Nada Manager App
 
 A **full-stack sales and inventory management system** built for **Al Nada Scientific Office** to streamline management of products, sales, purchases, suppliers, customers, and debts.  
 Designed for efficiency and scalability, this app empowers the business to track operations in real time.
